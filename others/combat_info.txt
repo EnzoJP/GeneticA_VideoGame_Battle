@@ -1,0 +1,49 @@
+
+---- Sleeping Table ----
+
+-> Stats
+
+Vida: 1700
+Maná: 500
+
+-> Fortalezas y debilidades
+
+- Slash (Físicos comunes): aguanta
+- Strike (Hablididad de físico): anula
+- Pierce (físico perforante): aguanta
+- Fuego: 0.25x
+- Hielo: Normal
+- Viento: Normal
+- Luz: Anula
+- Oscuridad: anula
+- Nuclear: Normal
+
+-> Ataques y probabilidades
+
+- Strike Attack: Normal attack using the Strike attribute. (-)
+- Maragidyne: Deals heavy Fire damage to all foes. (39%)
+- Hamaon (Light): instant kill, 1 foe (high odds). (40% chance) (25%)
+- Megidola: Deals heavy Almighty damage to all foes. (15%)
+- Evil Touch: Instills Fear in 1 foe. (40% chance) (19%)
+- Ghastly Wail: Instantly kills all foes who are fearful. (-)
+- Fear Boost: Increases odds of instilling Fear by 25%. (2%)
+
+#Nota: las probabilidades se vieron de analizar videos del combate ya que ninguna fuente pública
+(como el Megami Tensei Wiki o análisis de combate) revela los pesos o algoritmos internos que determinan qué ataque usa el jefe en cada turno.
+
+-> análisis para sacar probabilidades
+
+Número de peleas observadas 20
+
+- Strike Attack: POR SI MANA LLEGA A CERO
+- Maragidyne: IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+|||||||||  = 65 - 39%
+- Hamaon (Light): IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+|||||||||| = 42 - 25% 
+- Megidola: IIIIIIIIIIIIIIIIIII
+||||||| = 26 - 15%
+- Evil Touch: IIIIIIIIIIIIIIIIIIIIIIIIII
+|||||| = 32 - 19%
+- Fear Boost: 2%
+- Ghastly Wail: SOLO SI MIEMBROS TIENEN ESTADO DE FEAR
+Total = 167
