@@ -1,6 +1,9 @@
 Miembros de la Party :
 
 (Todos a nivel 46-50)
+HP de todos entre 300 y 400
+SP entre 180 y 280?
+Todo buffo o debuffo dura 3 turnos
 
 -------- Protagonista --------
 
@@ -8,20 +11,29 @@ HP:
 SP:
 
 Sin debilidades
+Strong to fire
 
--> Habilidades:
+-> Habilidades: (darle una pool con muchas habilidades, un par que sean inútiles como hamaon o marin karin)
 - Recarm: Revive a un aliado. Coste: 20 SP.
 - Mediarama: Cura a la party. Coste: 16 SP.
 - Rakunda: Sube defensa a un miembro. Coste: 6 SP
+- Rebellion?
 - 
 
 -------------- Miembros --------------
 
-CADA MIEMBRO (MENOS EL PROTAGONISTA) PUEDE TENER UN MáXIMO DE 8 HABILIDADES
-A definir: Probabilidad de ataque crítico (físico) | Daño por all out attack | Posibilidad de elegir si hacer all out attack o no?
-Los miembros que tienen ataques a muchos objetivos no usarán ese ataque (a menos que no tengan otra posibilidad)
+CADA MIEMBRO (MENOS EL PROTAGONISTA) PUEDE TENER UN MáXIMO DE 5 HABILIDADES
+
+All out attack se hace automaticamente cuando un miembro pega un ataque crítico
+
+Orden: Makoto, ST, Yukari, Akihiko, Junpei
+
+Probabilidad de ataque crítico (físico) -- asignado al programar
+
+posibilidad de que el prota use objetos- SI, 2 o 3 asignados 
 
 -------- Miembro 2: Junpei --------
+Ataca
 
 HP: 
 SP:
@@ -30,16 +42,15 @@ Resiste: Fuego
 Débil a: viento
 
 -> Habilidades:
-- Agilao: medium fire damage to one foe. Coste: 6 sp
 - Rakukaja: Increases 1 ally's defense by 25%. Coste: 6 sp.
 - Counterstrike: Counter physical attacks (mmed odds). (15% chance). PASIVA.
 - Marakukaja: Increases party's defense by 25%. Coste: 12 SP
 - Torrent Shot: Deals light Pierce damage to one foe (2-3 hits) Coste: 10% HP
-- Kill Rush: Deals light Strike damage to one foe. (1-2 hits) Coste: 10% HP
 - Blade of Fury: Deals medium Slash damage to all foes. (2-3 hits) Coste: 16% HP 
 - Spring of Life: Restores 8% HP each turn in battle. PASIVA
 
 -------- Miembro 3: Akihiko --------
+Se concentra en buffos y debuffos, y si ya no puede tirar mas buffos o debuffos ataca
 
 HP: 
 SP:
@@ -48,18 +59,16 @@ Bloquea: Electricidad
 Débil a: Hielo
 
 -> Habilidades:
-- Zionga: Deals medium Elec damage / shocks one foe (10% chance of shocking). Coste: 8 SP
+- Zionga: Deals medium Elec damage / shocks one foe (10% chance of shocking). Coste: 8 SP (Cuando está shockeado tiene una chance de recuperarse en el prox turno, si no lo hace se recupera en el otro ??)
 - Tarunda: Decreases 1 foe's Attack by 25%*. Coste: 6 SP
 - Rakunda: Decreases 1 foes' Defense by 25%*. Coste: 6 SP
-- Diarama: Moderately restores 1 ally's HP. Coste: 8 SP (Poner diarama o no?)
 - Elec Boost: Strengthens Elec attacks by 25%. PASIVA
 - Sonic Punch: Deals light Strike damage to one foe. Coste: 9%.
 - Sukunda: Decreases 1 foe's Hit/Evasion rate by 10%*. Coste: 6 sp.
-- Mazionga: Deals medium Elec damage / Shocks all foes. (8% chance of shocking) Coste: 16 sp.
-
-A definir bien: Diarama lo va a tirar cuando haya un miembro de la party con HP por debajo de la mitad. Si son varios, prioriza al protagonista. Si el protagonista tiene más de la mitad de HP y son varios heridos, cura de forma aleatoria.
 
 -------- Miembro 4: Yukari --------
+
+Si estan todos full vida o más del 70% de la vida, entonces puede atacar. Sino, cura.
 
 HP: 
 SP:
@@ -68,13 +77,46 @@ Bloquea: Viento
 Débil a: Electricidad
 
 -> Habilidades:
-- Patra: Dispels Panic, Fear, and Distress (1 ally). Coste: 3 sp.
-- Mediarama: Moderately restores party's HP. Coste: 16 SP.
-- Me Patra: Dispels Panic, Fear, and Distress (party). Coste: 6 SP.
-- Recarm: Revives an ally, restoring 50% of HP. Coste: 20 SP.
+- Mediarama: Moderately restores party's HP. Coste: 16 SP. (Lo va a tirar si hay por lo menos 2 miembros con vida baja, si hay solo uno tira diarama)
+- Me Patra: Dispels Panic, Fear, and Distress (party). Coste: 6 SP. (Solo lo tira si mmiembros se ven afectados por algun estado)
+- Recarm: Revives an ally, restoring 50% of HP. Coste: 20 SP. (Solo lo usa si hay un miembro caído)
 - Garula: Deals medium Wind damage to one foe. Coste: 6 SP.
 - Diarama: Moderately restores 1 ally's HP. Coste: 8 sp.
-- Magarula: Deals medium Wind damage to all foes. Coste: 12 sp.
-- Charmdi: Dispels Charm (1 ally). Coste: 5 sp.
+
+A definir bien: Diarama lo va a tirar cuando haya un miembro de la party con HP por debajo de la mitad. Si son varios, prioriza al protagonista. Si el protagonista tiene más de la mitad de HP y son varios heridos, cura de forma aleatoria. (Si hay miembros de la party con vida por debajo del 70%[o por debajo de hp en el que pueda morir], entonces hay una probabilidad de que le tire diarama)
 
 --------------- Análisis de daños recibidos (hacer promedio por cada ataque) ---------------
+Despues analizar daños por all out attack ( si es que se incluye )
+
+Maragydine:
+Makoto: 71, 76, 72, 97, 101, 116, 125, 160, 170, 104, 110, 104, 102, 103, 161
+yukari: 214, 201, 156, 159, 168, 168, 227, 253, 261, 258, 250, 250, 203, 206
+junpei: 17, 12, 15, 14, 16, 19, 20, 29, 28, 22, 21, 20, 21, 21, 31, 22, 22
+akihiko: 218, 166  , 252, 266, 269, 260, 254, 237
+
+Megidola: 
+Makoto: 86, 194, 192, 147, 161, 180, 219, 198, 203, 159, 162, 164
+yukari: 153, 153, 208, 223, 172, 171, 188, 214, 203, 208
+junpei: 100, 131, 204, 208, 151, 208, 227, 229, 227
+akihiko: 155, 184, 190
+
+All-out-attack: 233 (https://www.youtube.com/watch?v=wUBju-FizZ4)
+
+https://www.youtube.com/watch?v=MCmukXZPh_Q&t=319s - > uno que tiene la party definida como yo 
+https://www.youtube.com/watch?v=-CZGqF2YjPg&t=17s otro mas
+
+
+--- HP Y SP ---
+
+- M 367 256, J 431 269, Y 307 353
+- M 423 267, J 381 207, Y 287 271, A 415 207
+- Mlvl47 354 247, Alvl46 372 223
+- (Todos lvl45) M 366 241, Y 284 267, J 397 199
+- M 337 235
+- M 333 232, Y 279 284, A 365 207
+- M 358 249, J 360 179
+- M 346 241, J 397 199
+- Mlvl45 449 241, Ylvl43 287 271, Alvl42 350 209, Jlvl36 336 182
+- M 346 241, Y 276 280, A 341 204
+- Mlvl47 353 247, Jlvl40 387 194, Ylvl43 287 271
+- M 358 249, J 360 179

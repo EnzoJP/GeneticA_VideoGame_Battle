@@ -13,6 +13,7 @@ Maná (SP): 500
 - Pierce (físico perforante): aguanta
 - Fuego: 0.25x
 - Hielo: Normal
+- Electricidad: Normal
 - Viento: Normal
 - Luz: Anula
 - Oscuridad: anula
