@@ -7,8 +7,8 @@ Todo buffo o debuffo dura 3 turnos
 
 -------- Protagonista --------
 
-HP: 
-SP:
+HP: 366
+SP: 246
 
 Sin debilidades
 Strong to fire
@@ -35,8 +35,8 @@ posibilidad de que el prota use objetos- SI, 2 o 3 asignados
 -------- Miembro 2: Junpei --------
 Ataca
 
-HP: 
-SP:
+HP: 381
+SP: 201
 
 Resiste: Fuego
 Débil a: viento
@@ -52,8 +52,8 @@ Débil a: viento
 -------- Miembro 3: Akihiko --------
 Se concentra en buffos y debuffos, y si ya no puede tirar mas buffos o debuffos ataca
 
-HP: 
-SP:
+HP: 369
+SP: 210
 
 Bloquea: Electricidad
 Débil a: Hielo
@@ -70,8 +70,8 @@ Débil a: Hielo
 
 Si estan todos full vida o más del 70% de la vida, entonces puede atacar. Sino, cura.
 
-HP: 
-SP:
+HP: 287
+SP: 285
 
 Bloquea: Viento
 Débil a: Electricidad
@@ -89,16 +89,24 @@ A definir bien: Diarama lo va a tirar cuando haya un miembro de la party con HP 
 Despues analizar daños por all out attack ( si es que se incluye )
 
 Maragydine:
-Makoto: 71, 76, 72, 97, 101, 116, 125, 160, 170, 104, 110, 104, 102, 103, 161
+Makoto: 71, 76, 72, 97, 101, 116, 125, 160, 170, 104, 110, 104, 102, 103, 161 
+promedio: 112
 yukari: 214, 201, 156, 159, 168, 168, 227, 253, 261, 258, 250, 250, 203, 206
+promedio: 198
 junpei: 17, 12, 15, 14, 16, 19, 20, 29, 28, 22, 21, 20, 21, 21, 31, 22, 22
+promedio: 21
 akihiko: 218, 166  , 252, 266, 269, 260, 254, 237
+promedio: 240
 
 Megidola: 
 Makoto: 86, 194, 192, 147, 161, 180, 219, 198, 203, 159, 162, 164
+promedio: 172
 yukari: 153, 153, 208, 223, 172, 171, 188, 214, 203, 208
+promedio: 189
 junpei: 100, 131, 204, 208, 151, 208, 227, 229, 227
+promedio: 187
 akihiko: 155, 184, 190
+promedio: 176
 
 All-out-attack: 233 (https://www.youtube.com/watch?v=wUBju-FizZ4)
 
@@ -120,3 +128,14 @@ https://www.youtube.com/watch?v=-CZGqF2YjPg&t=17s otro mas
 - M 346 241, Y 276 280, A 341 204
 - Mlvl47 353 247, Jlvl40 387 194, Ylvl43 287 271
 - M 358 249, J 360 179
+
+
+Promedios: 
+
+Makoto -> HP: 366 SP: 246
+
+Junpei -> HP: 381 SP: 201
+
+Yukari -> HP: 287 SP: 285
+
+Akihiko -> HP: 369 SP: 210 
