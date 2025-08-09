@@ -7,7 +7,8 @@ class Makoto:
         self.strong = "fire"
         self.critic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10 
+        self.fail_rate = 0.10
+        self.list_of_actions = ["basic_attack", "recarm", "mediarama", "rakunda"]
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -36,7 +37,9 @@ class Yukari:
         self.weak = "electric"
         self.citic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10 
+        self.fail_rate = 0.10
+        self.list_of_actions = ["basic_attack", "me_patra", "mediarama", "diarama", "garula"]
+
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -73,7 +76,8 @@ class Junpei:
         self.critic_rate = 0.10 
         self.prob_counter_phisical = 0.15 #pasiva
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10 
+        self.fail_rate = 0.10
+        self.list_of_actions = ["basic_attack", "rakukaja", "marakukaja", "torrent_shot", "blade_of_fury"]
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -81,10 +85,6 @@ class Junpei:
     
     def rakukaja(self):
         print(f"{self.name} usa rakukaja!")
-        return
-    
-    def counterstrike(self):
-        print(f"{self.name} usa counterstrike!")
         return
     
     def marakukaja(self):
@@ -98,12 +98,8 @@ class Junpei:
     def blade_of_fury(self):
         print(f"{self.name} usa blade of fury!")
         return
-    
-    def spring_of_life(self):
-        print(f"{self.name} usa spring of life!")
-        return
-    
 
+    
 class Akihiko:
 
     def __init__(self):
@@ -114,7 +110,8 @@ class Akihiko:
         self.weak = "ice"
         self.critic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10 
+        self.fail_rate = 0.10
+        self.list_of_actions = ["basic_attack", "zionga", "traunda", "rakunda", "sonic_punch", "sukunda"]
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")

@@ -23,7 +23,7 @@ def main():
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            combat.start_combat(party_list)
+            combat.start_combat(party_list,sleeping_table)
             menu_finished = True
         elif choice == "2":
             combat.simulate_combat(party_list)
@@ -32,5 +32,11 @@ def main():
             menu_finished = True
         else:
             print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
+    print("Starting the game...")
+
+
 
 
