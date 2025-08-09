@@ -22,12 +22,12 @@ Maná (SP): 500
 -> Ataques y probabilidades
 
 - Strike Attack: Normal attack using the Strike attribute. (Si SP=0)
-- Maragidyne: Deals heavy Fire damage to all foes. (39%)
-- Hamaon (Light): instant kill, 1 foe (high odds). (40% chance) (25%)
-- Megidola: Deals heavy Almighty damage to all foes. (15%)
-- Evil Touch: Instills Fear in 1 foe. (40% chance) (19%)
-- Ghastly Wail: Instantly kills all foes who are fearful. (Si miembros de la party (al menos uno) tienen el estado de fear o miedo)
-- Fear Boost: Increases odds of instilling Fear by 25%. (2%)
+- Maragidyne: Deals heavy Fire damage to all foes. (39%)  Coste: 24 SP.
+- Hamaon (Light): instant kill, 1 foe (high odds). (40% chance) (25%) Coste 12 SP.
+- Megidola: Deals heavy Almighty damage to all foes. (15%) Coste: 65 SP.
+- Evil Touch: Instills Fear in 1 foe. (40% chance) (19%) Coste: 5 SP.
+- Ghastly Wail: Instantly kills all foes who are fearful. (Si miembros de la party (al menos uno) tienen el estado de fear o miedo) Coste: 15 SP.
+- Fear Boost: Increases odds of instilling Fear by 25%. PASIVA
 
 #Nota: las probabilidades se vieron de analizar videos del combate ya que ninguna fuente pública
 (como en Megami Tensei Wiki o análisis de combate) revela los pesos o algoritmos internos que determinan qué ataque usa el jefe en cada turno. Además, no se puede obtener el código fuente (no es público).
@@ -38,13 +38,12 @@ Número de peleas observadas 20
 
 - Strike Attack: POR SI MANA LLEGA A CERO
 - Maragidyne: IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-|||||||||  = 65 - 39%
+|||||||||  = 65 - 40%
 - Hamaon (Light): IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 |||||||||| = 42 - 25% 
 - Megidola: IIIIIIIIIIIIIIIIIII
 ||||||| = 26 - 15%
 - Evil Touch: IIIIIIIIIIIIIIIIIIIIIIIIII
-|||||| = 32 - 19%
-- Fear Boost: 2%
+|||||| = 32 - 20%
 - Ghastly Wail: SOLO SI MIEMBROS (al menos uno) TIENEN ESTADO DE FEAR
 Total = 167

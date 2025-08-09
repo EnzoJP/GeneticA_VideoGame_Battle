@@ -5,8 +5,9 @@ class Makoto:
         self.HP = 366
         self.SP = 246
         self.strong = "fire"
-        self.critic_rate = 0.05 #cambiar luego
+        self.critic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
+        self.fail_rate = 0.10 
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -33,8 +34,9 @@ class Yukari:
         self.SP = 285
         self.block= "wind"
         self.weak = "electric"
-        self.citic_rate = 0.05 #cambiar luego
+        self.citic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
+        self.fail_rate = 0.10 
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -68,9 +70,10 @@ class Junpei:
         self.SP = 201
         self.strong = "fire"
         self.weak = "wind"
-        self.critic_rate = 0.05 #cambiar luego
+        self.critic_rate = 0.10 
         self.prob_counter_phisical = 0.15 #pasiva
         self.status = "normal" #normal es el estado por defecto
+        self.fail_rate = 0.10 
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
@@ -109,8 +112,9 @@ class Akihiko:
         self.SP = 210
         self.block = "electric"
         self.weak = "ice"
-        self.critic_rate = 0.05 #cambiar luego
+        self.critic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
+        self.fail_rate = 0.10 
 
     def basic_attack(self):
         print(f"{self.name} usa basic attack!")
