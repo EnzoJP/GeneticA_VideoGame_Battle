@@ -13,12 +13,13 @@ SP: 246
 Sin debilidades
 Strong to fire
 
--> Habilidades: (darle una pool con muchas habilidades, un par que sean inútiles como hamaon o marin karin)
+-> Habilidades: 
 - Recarm: Revive a un aliado. Coste: 20 SP.
 - Mediarama: Cura a la party. Coste: 16 SP.
 - Rakunda: Sube defensa a un miembro. Coste: 6 SP
-- Rebellion?
-- 
+- Bufula: Deals medium Ice damage / Freezes one foe. (10% chance of freezing). Coste: 8 SP
+- Hamaon (Light): instant kill, 1 foe (high odds). (40% chance). Coste: 12 SP
+- Torrent Shot: Deals light Pierce damage to one foe. (2-3 hits). Coste: 10% HP
 
 -------------- Miembros --------------
 
@@ -129,17 +130,20 @@ https://www.youtube.com/watch?v=-CZGqF2YjPg&t=17s otro mas
 - Mlvl47 353 247, Jlvl40 387 194, Ylvl43 287 271
 - M 358 249, J 360 179
 
-
 Promedios: 
-
 Makoto -> HP: 366 SP: 246
-
 Junpei -> HP: 381 SP: 201
-
 Yukari -> HP: 287 SP: 285
-
 Akihiko -> HP: 369 SP: 210 
 
+---- Items ----
+
+Items: 
+Soma 1 :  Fully restores party's HP and SP.
+Magic Mirror 1 : Barrier that reflects magic 1x (party).
+Precious Egg 2 :  Fully restores an ally's SP.
+
+---- Tácticas ----
 
 Akihiko:
 Tiene que ver si el enemigo está debuffeado 
@@ -157,7 +161,3 @@ Junpei:
 Si miembros de la party no tienen buffo de defensa, tira marakukaja
 En cualquier otro caso, ataca
  
-Items: 
-Soma 1 :  Fully restores party's HP and SP.
-Magic Mirror 1 : Barrier that reflects magic 1x (party).
-Precious Egg 2 :  Fully restores an ally's SP.

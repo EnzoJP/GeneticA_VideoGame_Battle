@@ -4,7 +4,7 @@ import combat.party as party
 
 def start_combat(party_members, enemy):
     #the order is Makoto, Sleeping table, Yukari, Akihiko, Junpei
-    # only makoto can decide the attack the others are Pseudo-random
+    # only makoto can decide the attack the others are Pseudo-random (defined tactics)
     print("Combat started!")
     protagonist = party_members[0]
     fight_list = [protagonist, enemy] + party_members[1:]
@@ -22,8 +22,8 @@ def start_combat(party_members, enemy):
                     enemy.maragidyne()
                 elif attack == "hamaon":
                     enemy.hamaon()
-                elif attack == "magidola":
-                    enemy.magidola()
+                elif attack == "megidola":
+                    enemy.megidola()
                 elif attack == "evil_touch":
                     enemy.evil_touch()
                 elif attack == "ghastly_wail":
@@ -45,13 +45,16 @@ def start_combat(party_members, enemy):
                     choice = input("Enter your choice: ")
                     if choice.isdigit() and 1 <= int(choice) <= len(member.list_of_actions):
                         action = member.list_of_actions[int(choice) - 1]
-                        getattr(member, action)() # call the method by name
+                        if action in ["recarm", "mediarama", "rakunda", "use_item"]:
+                            getattr(member, action)(party_members) # calls with party_members as parameter 
+                        elif action in ["basic_attack"]:
+                            getattr(member, action)(enemy) # calls with enemy as parameter
                         selection_choice = True
                     else:
                         print("Invalid choice. Please try again.")
 
             if member != protagonist:
-                ##pseudo_aleatorias they follow tactics
+                # pseudo_aleatorias (they follow tactics)
                 print(f"{member.name}'s turn:")
                 print("Select an action:")
 
@@ -93,7 +96,7 @@ def simulate_combat(party_members, enemy):
     print("Simulating combat...")
     menu_finished = False
     while menu_finished == False:
-        print("Select a algotithm to use for combat simulation:")
+        print("Select an algorithm to use for combat simulation:")
 
         print("1. Random")
         print("2. genetico modelo")
