@@ -51,7 +51,7 @@ def start_combat(party_members, enemy):
                         print("Invalid choice. Please try again.")
 
             if member != protagonist:
-                #pseudo_aleatorias
+                ##pseudo_aleatorias they follow tactics
                 print(f"{member.name}'s turn:")
                 print("Select an action:")
 
@@ -64,19 +64,13 @@ def start_combat(party_members, enemy):
                 elif member.name == "Junpei":
                     actions = member.list_of_actions
                     
-            
-                   
+    if enemy.HP <= 0:
+        print(f"{enemy.name} Victory!, The enemy has been defeated!")
+    if protagonist.HP <= 0:
+        print(f"{protagonist.name} has fallen! Game Over.")
 
+    
 
-
-                
-
-
-                        
-                
-                
-
-            
 
 def show_status(party_members, enemy):
     print("Party Status:")
@@ -109,7 +103,9 @@ def simulate_combat(party_members, enemy):
         choice = input("Enter your choice (1-4): ")
 
         if choice in ['1', '2', '3', '4']:
-            #algos
+            if choice == '1':
+                import genetics.random as random_algo
+                random_algo.start_combat_random(party_members, enemy)
             menu_finished = True
         else:
             print("Invalid choice. Please try again.")

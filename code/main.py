@@ -26,7 +26,7 @@ def main():
             combat.start_combat(party_list,sleeping_table)
             menu_finished = True
         elif choice == "2":
-            combat.simulate_combat(party_list)
+            combat.simulate_combat(party_list,sleeping_table)
         elif choice == "3":
             print("Exiting the game.")
             menu_finished = True

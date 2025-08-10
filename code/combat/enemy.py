@@ -45,26 +45,37 @@ class Enemy:
 
         
     def basic_attack(self):
+        #Normal attack using the Strike attribute. (Si SP=0)
         print(f"{self.name} usa basic attack!")
         return
     
     def maragidyne(self):
+        #Deals heavy Fire damage to all foes. (39%)  Coste: 24 SP.
         print(f"{self.name} usa maragidyne!")
         return
     
     def hamaon(self):
+        #instant kill, 1 foe (high odds). (40% chance) (25%) Coste 12 SP
         print(f"{self.name} usa hamaon!")
         return
     
     def magidola(self):
+        #Deals heavy Almighty damage to all foes. (15%) Coste: 65 SP.
         print(f"{self.name} usa magidola!")
         return
     
     def evil_touch(self):
+        #Instills Fear in 1 foe. (40% chance) (19%) Coste: 5 SP.
+        #and the 25% increase because of the fear boost
+        if random.random() < 0.25: #25% chance to inflict fear
+            print(f"{self.name} inflicts fear on the target!")
+        else:
+            print(f"{self.name} fails to inflict fear.")
         print(f"{self.name} usa evil touch!")
         return
     
     def ghastly_wail(self):
+        #Instantly kills all foes who are fearful.
         print(f"{self.name} usa ghastly wail!")
         return
     
