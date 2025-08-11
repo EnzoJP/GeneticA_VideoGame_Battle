@@ -111,7 +111,7 @@ class Yukari:
         self.status = "normal" #normal es el estado por defecto
         self.fail_rate = 0.10
         self.list_of_actions = ["basic_attack", "me_patra", "mediarama", "recarm", "diarama", "garula"]
-
+        self.reflect = None
 
     def basic_attack(self, enemy):
         #basic attack 
@@ -169,6 +169,7 @@ class Junpei:
         self.status = "normal" #normal es el estado por defecto
         self.fail_rate = 0.10
         self.list_of_actions = ["basic_attack", "rakukaja", "marakukaja", "torrent_shot", "blade_of_fury"]
+        self.reflect = None
 
     def basic_attack(self, enemy):
         #Normal attack
@@ -221,6 +222,7 @@ class Akihiko:
         self.status = "normal" #normal es el estado por defecto
         self.fail_rate = 0.10
         self.list_of_actions = ["basic_attack", "zionga", "tarunda", "rakunda", "sonic_punch", "sukunda"]
+        self.reflect = None
 
     def basic_attack(self, enemy):
         #Normal attack

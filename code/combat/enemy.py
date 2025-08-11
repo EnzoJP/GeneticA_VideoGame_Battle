@@ -14,6 +14,7 @@ class Enemy:
         self.critic_rate = 0.10
         self.list_of_actions = ["basic_attack", "maragidyne", "hamaon", "megidola", "evil_touch", "ghastly_wail"]
         self.weak = ""
+        self.reflect = None
 
     def attacks_rate(self, party):
         # party es una lista de los personajes en combate

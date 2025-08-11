@@ -1,5 +1,6 @@
 import combat.enemy as enemy
 import combat.party as party
+import random
 
 
 def start_combat(party_members, enemy):
@@ -19,17 +20,56 @@ def start_combat(party_members, enemy):
                 if attack == "basic_attack":
                     enemy.basic_attack(party_members)
                 elif attack == "maragidyne":
-                    enemy.maragidyne(party_members)
+                        # check if the members are not under magic mirror
+                        if any(m.reflect is not None for m in party_members):
+                            # if the member is under magic mirror, skip their turn
+                            print(f"{member.name} uses maragidyne!")
+                            print("The party is under Magic Mirror!")
+                            # the enemy skips their turn and reset the reflect status of the party
+                            for m in party_members:
+                                if m.reflect is not None:
+                                    m.reflect = None
+                            #for each memeber the enemy takes a small amount of damage between 40-60
+                            for m in party_members:
+                                if m.HP > 0 and m != enemy:
+                                    damage = random.randint(40, 60)
+                                    enemy.HP -= damage
+                                    print(f"{enemy.name} takes {damage} damage from the enemy's maragidyne!")
+                            continue
+                        else:
+                            enemy.maragidyne(party_members)
                 elif attack == "hamaon":
-                    enemy.hamaon(party_members)
+                    print(f"{member.name} uses hamaon!")
+                    if any(m.reflect is not None for m in party_members):
+                        print("The attack was reflected but is not effective!")
+                        for m in party_members:
+                            if m.reflect is not None:
+                                m.reflect = None
+                        continue
+                    else:
+                        enemy.hamaon(party_members)
                 elif attack == "megidola":
-                    enemy.megidola(party_members)
+                    print(f"{member.name} uses megidola!")
+                    if any(m.reflect is not None for m in party_members):
+                        print("the party is under Magic Mirror!")
+                        for m in party_members:
+                            if m.reflect is not None:
+                                m.reflect = None
+                        for m in party_members:
+                            if m.HP > 0 and m != enemy:
+                                damage = random.randint(40, 60)
+                                enemy.HP -= damage
+                                print(f"{enemy.name} takes {damage} damage from the enemy's megidola!")
+                        continue
+                    else:
+                        enemy.megidola(party_members)
                 elif attack == "evil_touch":
                     enemy.evil_touch(party_members)
                 elif attack == "ghastly_wail":
                     enemy.ghastly_wail(party_members)
                 continue #skip turn
-            
+
+
             if member.status != "normal":
                 if member.status == "fear":
                     print(f"{member.name} is too scared to act!")
