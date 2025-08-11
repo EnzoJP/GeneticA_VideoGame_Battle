@@ -70,8 +70,9 @@ class Makoto:
             self.items[item] -= 1
             if item == "Soma":
                 for member in party_members:
-                    member.HP = member.max_HP
-                    member.SP = member.max_SP
+                    if member.status != "fallen":
+                        member.HP = member.max_HP
+                        member.SP = member.max_SP
                 print(f"{self.name} uses {item}!")
             elif item == "Precious Egg":
                 print("Select an ally or yourself")
@@ -90,9 +91,8 @@ class Makoto:
                         choice = input("Enter the number of the ally: ")
             elif item == "Magic Mirror":
                 for member in party_members: # Ver cómo hacer que se salga el reflect despues de que les peguen
-                    member.reflect = "pierce"
-                    member.reflect = "strike"
-                    member.reflect = "slash"
+                    member.reflect = ["ice", "fire", "electricity", "wind", "light", "dark", "almighty"]
+                    # ver que no instakillee al boss si refleja hamaon
                 print(f"{self.name} uses {item}!")
         else:
             print("Invalid item or item not available.")

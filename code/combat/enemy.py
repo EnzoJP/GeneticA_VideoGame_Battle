@@ -81,15 +81,14 @@ class Enemy:
             self.SP -= 24
             print(f"{self.name} uses maragidyne!")
             for member in party:
+                damage = random.randint(196, 238)
                 if member.status == "fallen":
                     continue
                 else:
                     if self.critic_rate > random.random():
-                        damage = 180 * 2  # ??
+                        damage *= 1.5  # ??
                     if member.weak == "fire":
-                        damage = 180 * 1.4  # Increased damage if weak
-                    else:
-                        damage = 180 #despues cambiar daños
+                        damage *= 1.25  # Increased damage if weak
 
                     if self.fail_rate > random.random():
                         print(f"The attack missed! on [{member.name}]")
@@ -101,7 +100,7 @@ class Enemy:
                             member.status = "fallen"
                             member.HP = 0  # eliminate HP to avoid negative values
 
-    def hamaon(self, party):
+    def hamaon(self, party):  # considerar prob de fail tambien!
         #instant kill, 1 foe (high odds). (40% chance) (25%) Coste 12 SP
         if self.SP >= 12:
             self.SP -= 12
@@ -131,11 +130,9 @@ class Enemy:
                     if self.fail_rate > random.random():
                         print(f"The attack missed! on [{member.name}]")
                     else: 
+                        damage = random.randint(172, 189)
                         if self.critic_rate > random.random():
-                            damage = 160 * 2  # ??
-                        else:
-                            damage = 160 #despues cambiar daños
-                        
+                            damage *= 1.5  # ??
                         member.HP -= damage
                         print(f"{self.name} deals {damage} damage to {member.name}!")
                         if member.HP <= 0:
