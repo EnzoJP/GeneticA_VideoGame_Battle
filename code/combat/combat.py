@@ -17,17 +17,17 @@ def start_combat(party_members, enemy):
             if member == enemy:
                 attack = enemy.attacks_rate(party_members)
                 if attack == "basic_attack":
-                    enemy.basic_attack()
+                    enemy.basic_attack(party_members)
                 elif attack == "maragidyne":
-                    enemy.maragidyne()
+                    enemy.maragidyne(party_members)
                 elif attack == "hamaon":
-                    enemy.hamaon()
+                    enemy.hamaon(party_members)
                 elif attack == "megidola":
-                    enemy.megidola()
+                    enemy.megidola(party_members)
                 elif attack == "evil_touch":
-                    enemy.evil_touch()
+                    enemy.evil_touch(party_members)
                 elif attack == "ghastly_wail":
-                    enemy.ghastly_wail()
+                    enemy.ghastly_wail(party_members)
                 continue #skip turn
             
             if member.status != "normal":

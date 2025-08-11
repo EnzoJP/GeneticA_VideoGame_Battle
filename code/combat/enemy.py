@@ -13,6 +13,7 @@ class Enemy:
         self.fail_rate = 0.15
         self.critic_rate = 0.10
         self.list_of_actions = ["basic_attack", "maragidyne", "hamaon", "megidola", "evil_touch", "ghastly_wail"]
+        self.weak = ""
 
     def attacks_rate(self, party):
         # party es una lista de los personajes en combate
@@ -55,7 +56,10 @@ class Enemy:
         if self.fail_rate > random.random():
             print("The attack missed!")
         else:
+            
             target = random.choice(party)
+            if target.status == "fallen":
+                target = random.choice([m for m in party if m.status != "fallen"])  # Choose another target if fallen
             damage = 70  # Base damage
             if target.strong == "strike":
                 damage *= 0.6  # Less damage if party member is strong
@@ -65,6 +69,10 @@ class Enemy:
                 damage *= 1.4  # Increased damage if party member is weak
             target.HP -= damage
             print(f"{self.name} deals {damage} damage to {target.name}!")
+            if target.HP <= 0:
+                print(f"{target.name} has fallen!")
+                target.status = "fallen"
+                target.HP = 0  # eliminate HP to avoid negative values
         
     
     def maragidyne(self, party):
@@ -73,28 +81,39 @@ class Enemy:
             self.SP -= 24
             print(f"{self.name} uses maragidyne!")
             for member in party:
-                if self.critic_rate > random.random():
-                    damage = 180 * 2  # ??
-                if member.weak == "fire":
-                    damage = 180 * 1.4  # Increased damage if weak
+                if member.status == "fallen":
+                    continue
                 else:
-                    damage = 180 #despues cambiar daños
+                    if self.critic_rate > random.random():
+                        damage = 180 * 2  # ??
+                    if member.weak == "fire":
+                        damage = 180 * 1.4  # Increased damage if weak
+                    else:
+                        damage = 180 #despues cambiar daños
 
-                if self.fail_rate > random.random():
-                    print("The attack missed!")
-                else:
-                    member.HP -= damage
-                    print(f"{self.name} deals {damage} damage to {member.name}!")
+                    if self.fail_rate > random.random():
+                        print(f"The attack missed! on [{member.name}]")
+                    else:
+                        member.HP -= damage
+                        print(f"{self.name} deals {damage} damage to {member.name}!")
+                        if member.HP <= 0:
+                            print(f"{member.name} has fallen!")
+                            member.status = "fallen"
+                            member.HP = 0  # eliminate HP to avoid negative values
 
     def hamaon(self, party):
         #instant kill, 1 foe (high odds). (40% chance) (25%) Coste 12 SP
         if self.SP >= 12:
             self.SP -= 12
             target = random.choice(party)
+            if target.status == "fallen":
+                target = random.choice([m for m in party if m.status != "fallen"])
             print(f"{self.name} uses Hamaon on {target.name}!")
             if random.random() < 0.40:  # 40% prob 
                 target.HP = 0
                 print(f"{target.name} was killed!")
+                target.status = "fallen"
+                target.HP = 0  # eliminate HP to avoid negative values
             else:
                 print(f"{target.name} resisted the attack.")
         else:
@@ -106,22 +125,34 @@ class Enemy:
             self.SP -= 65
             print(f"{self.name} uses megidola!")
             for member in party:
-                if self.fail_rate > random.random():
-                    print("The attack missed!")
-                else: 
-                    if self.critic_rate > random.random():
-                        damage = 160 * 2  # ??
-                    else:
-                        damage = 160 #despues cambiar daños
-                    
-                    member.HP -= damage
-                    print(f"{self.name} deals {damage} damage to {member.name}!")
+                if member.status == "fallen":
+                    continue
+                else:
+                    if self.fail_rate > random.random():
+                        print(f"The attack missed! on [{member.name}]")
+                    else: 
+                        if self.critic_rate > random.random():
+                            damage = 160 * 2  # ??
+                        else:
+                            damage = 160 #despues cambiar daños
+                        
+                        member.HP -= damage
+                        print(f"{self.name} deals {damage} damage to {member.name}!")
+                        if member.HP <= 0:
+                            print(f"{member.name} has fallen!")
+                            member.status = "fallen"
+                            member.HP = 0  # eliminate HP to avoid negative values
     
     def evil_touch(self, party):
         #Instills Fear in 1 foe. (40% chance) (19%) Coste: 5 SP.
         #and the 25% increase because of the fear boost
+        if self.SP < 5:
+            print(f"{self.name} does not have enough SP to use Evil Touch!")
+            return
         print(f"{self.name} uses evil touch!")
         target = random.choice(party)
+        if target.status == "fallen":
+            target = random.choice([m for m in party if m.status != "fallen"])
         if random.random() < 0.25: #25% chance to inflict fear
             print(f"{self.name} inflicts fear on {target.name}!")
             target.status = "fear"
@@ -131,8 +162,14 @@ class Enemy:
     
     def ghastly_wail(self, party): 
         #Instantly kills all foes who are fearful. 15 SP
+        if self.SP < 15:
+            print(f"{self.name} does not have enough SP to use Ghastly Wail!")
+            return
         print(f"{self.name} uses ghastly wail!")
         for member in party:
             if member.status == "fear":
                 member.HP = 0
                 print(f"{member.name} was obliterated!")
+                member.status = "fallen"
+                member.HP = 0  # eliminate HP to avoid negative values
+        

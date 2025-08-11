@@ -9,6 +9,7 @@ class Makoto:
         self.HP = 366
         self.SP = 246
         self.strong = "fire"
+        self.weak = ""
         self.reflect = None
         self.critic_rate = 0.10 
         self.status = "normal" #normal es el estado por defecto
@@ -60,7 +61,11 @@ class Makoto:
 
     
     def use_item(self, party_members):
+        print(self.items)
         item = input("Enter the item you want to use: ")
+        while item not in self.items or self.items[item] <= 0:
+            print("Invalid item or item not available. Please try again.")
+            item = input("Enter the item you want to use: ")
         if item in self.items and self.items[item] > 0:
             self.items[item] -= 1
             if item == "Soma":
@@ -73,10 +78,16 @@ class Makoto:
                 for i, member in enumerate(party_members):
                     print(f"{i}. {member.name} (SP: {member.SP})")
                 choice = input()
-                if choice.isdigit() and 1 <= int(choice) <= len(party_members): # agregar chequeo 
-                    target = party_members[int(choice) - 1]
-                    target.SP = target.max_SP
-                    print(f"{self.name} uses {item}!")
+                condition = False
+                while condition == False:
+                    if choice.isdigit() and 0 <= int(choice) <= len(party_members): # agregar chequeo 
+                        target = party_members[int(choice) - 1]
+                        target.SP = target.max_SP
+                        print(f"{self.name} uses {item}!")
+                        condition = True
+                    else:
+                        print("Invalid choice. Please try again.")
+                        choice = input("Enter the number of the ally: ")
             elif item == "Magic Mirror":
                 for member in party_members: # Ver cómo hacer que se salga el reflect despues de que les peguen
                     member.reflect = "pierce"
