@@ -16,6 +16,10 @@ def start_combat(party_members, enemy):
                 print(f"{member.name} has fallen!")
                 continue #skip turn if dead
             if member == enemy:
+                if enemy.status != "normal":
+                    print(f"{enemy.name} is affected by {enemy.status} and cannot act!")
+                    enemy.status = "normal" # reset status after missing a turn
+                    continue
                 attack = enemy.attacks_rate(party_members)
                 if attack == "basic_attack":
                     enemy.basic_attack(party_members)
@@ -83,11 +87,12 @@ def start_combat(party_members, enemy):
                 while selection_choice == False:
                     show_member_actions(member)
                     choice = input("Enter your choice: ")
+                    print("-------------------------------------------------------------------")
                     if choice.isdigit() and 1 <= int(choice) <= len(member.list_of_actions):
                         action = member.list_of_actions[int(choice) - 1]
-                        if action in ["recarm", "mediarama", "rakunda", "use_item"]:
+                        if action in ["recarm","mediarama", "rakunda", "use_item"]:
                             getattr(member, action)(party_members) # calls with party_members as parameter 
-                        elif action in ["basic_attack"]:
+                        elif action in ["basic_attack","bufula","torrent_shot", "hamaon"]:
                             getattr(member, action)(enemy) # calls with enemy as parameter
                         selection_choice = True
                     else:
@@ -96,7 +101,7 @@ def start_combat(party_members, enemy):
             if member != protagonist:
                 # pseudo_aleatorias (they follow tactics)
                 print(f"{member.name}'s turn:")
-                print("Select an action:")
+                # hacer lista de acciones dependiendo del personaje y su sp disponible
 
                 if member.name == "Yukari":
                     actions = member.list_of_actions

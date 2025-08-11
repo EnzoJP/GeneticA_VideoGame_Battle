@@ -156,6 +156,7 @@ class Enemy:
             target.status = "fear"
         else:
             print(f"{self.name} fails to inflict fear.")
+        self.SP -= 5  
         
     
     def ghastly_wail(self, party): 
@@ -170,4 +171,5 @@ class Enemy:
                 print(f"{member.name} was obliterated!")
                 member.status = "fallen"
                 member.HP = 0  # eliminate HP to avoid negative values
+        self.SP -= 15
         
