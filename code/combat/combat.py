@@ -90,9 +90,9 @@ def start_combat(party_members, enemy):
                     print("-------------------------------------------------------------------")
                     if choice.isdigit() and 1 <= int(choice) <= len(member.list_of_actions):
                         action = member.list_of_actions[int(choice) - 1]
-                        if action in ["recarm","mediarama", "rakunda", "use_item"]:
+                        if action in ["recarm","mediarama", "use_item"]:
                             getattr(member, action)(party_members) # calls with party_members as parameter 
-                        elif action in ["basic_attack","bufula","torrent_shot", "hamaon"]:
+                        elif action in ["basic_attack","bufula","torrent_shot", "hamaon","rakunda"]:
                             getattr(member, action)(enemy) # calls with enemy as parameter
                         selection_choice = True
                     else:
@@ -111,7 +111,29 @@ def start_combat(party_members, enemy):
 
                 elif member.name == "Junpei":
                     actions = member.list_of_actions
-                    
+            if member != enemy:
+                if member.def_buff_turns > 0:
+                    member.def_buff_turns -= 1
+                    if member.def_buff_turns == 0:
+                        print(f"{member.name}'s defense buff has worn off.")
+                if member.atk_buff_turns > 0:
+                    member.atk_buff_turns -= 1
+                    if member.atk_buff_turns == 0:
+                        print(f"{member.name}'s attack buff has worn off.")
+                if member.ev_buff_turns > 0:
+                    member.ev_buff_turns -= 1
+                    if member.ev_buff_turns == 0:
+                        print(f"{member.name}'s evasion buff has worn off.")
+
+        if enemy.atk_debuff_turns > 0:
+            enemy.atk_debuff_turns -= 1
+            if enemy.atk_debuff_turns == 0:
+                print(f"{enemy.name}'s attack debuff has worn off.")
+        if enemy.def_debuff_turns > 0:
+            enemy.def_debuff_turns -= 1
+            if enemy.def_debuff_turns == 0:
+                print(f"{enemy.name}'s defense debuff has worn off.")
+
     if enemy.HP <= 0:
         print(f"{enemy.name} Victory!, The enemy has been defeated!")
     if protagonist.HP <= 0:

@@ -11,9 +11,14 @@ class Makoto:
         self.strong = "fire"
         self.weak = ""
         self.reflect = None
-        self.critic_rate = 0.10 
+        self.critic_rate = 0.15
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10
+        self.fail_rate = 0.15
+        self.defense = 24
+        self.attack = 20
+        self.atk_buff_turns = 0
+        self.def_buff_turns = 0
+        self.ev_buff_turns = 0
         self.list_of_actions = ["basic_attack", "recarm", "mediarama", "rakunda","bufula","torrent_shot","hamaon","use_item"]
         self.items = {
             "Soma": 1,
@@ -21,29 +26,63 @@ class Makoto:
             "Magic Mirror": 1
         }
 
+    def get_defense(self):
+        # Return current defense, applying buff if active
+        if self.def_buff_turns > 0:
+            return self.defense * 1.25
+        return self.defense
+    
+    def get_attack(self):
+        # Return current attack, applying buff if active
+        if self.atk_buff_turns > 0:
+            return self.attack * 1.25
+        return self.attack
+
+    def get_evasion(self):
+        # Return current evasion, applying buff if active
+        if self.ev_buff_turns > 0:
+            return self.fail_rate - 0.10
+        return self.fail_rate
+
     def basic_attack(self, enemy):
         print(f"{self.name} uses basic attack!")
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 60  # Base damage
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 60 * attack_value / enemy_defense  # Base damage
             if [m for m in enemy.strong if m == "slash"]:
                 damage *= 0.6  # Less damage if enemy is strong
             elif [m for m in enemy.block if m == "slash"]:
                 damage *= 0
             elif enemy.weak == "slash":
                 damage *= 1.4  # Increased damage if enemy is weak
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(180,240)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
     def bufula(self, enemy):
         #Deals medium Ice damage / Freezes one foe. (10% chance of freezing). Coste: 8 SP
         print(f"{self.name} uses bufula!")
         self.SP -= 8
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 100
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 100 * attack_value / enemy_defense
+            print ("damage inicial ", damage)
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [m for m in enemy.strong if m == "ice"]:
@@ -52,6 +91,7 @@ class Makoto:
                 damage *= 0
             elif enemy.weak == "ice":
                 damage *= 1.4
+            print("dammage final ", damage)
             enemy.HP -= damage
             print(f"{self.name} deals {damage} damage to {enemy.name}!")
             if random.random() < 0.10:  # 10% chance to freeze
@@ -62,10 +102,13 @@ class Makoto:
         #Deals light Pierce damage to one foe. (2-3 hits). Coste: 10% HP
         print(f"{self.name} uses torrent shot!")
         self.HP -= 0.10 * self.HP
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 80
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 80 * attack_value / enemy_defense
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [m for m in enemy.strong if m == "pierce"]:
@@ -74,14 +117,24 @@ class Makoto:
                 damage *= 0
             elif enemy.weak == "pierce":
                 damage *= 1.4
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
     def hamaon(self, enemy):
         #(Light): instant kill, 1 foe (high odds). (40% chance). Coste: 12 SP
         print(f"{self.name} uses hamaon!")
         self.SP -= 12
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
             if [m for m in enemy.block if m == "light"]:
@@ -93,41 +146,34 @@ class Makoto:
                     enemy.status = "fallen"
 
 
-
     def recarm(self, party_members):
         #Revives an ally, restoring 50% of HP. Coste: 20 SP.
         print(f"{self.name} uses recarm!")
         self.SP -= 20
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            for member in party_members:
-                if member.status == "fallen":
-                    member.status = "normal"
-                    member.HP = 0.50 * member.max_HP
-                    print(f"{self.name} revives {member.name} with 50% HP!")
-                    break
+        for member in party_members:
+            if member.status == "fallen":
+                member.status = "normal"
+                member.HP = 0.50 * member.max_HP
+                print(f"{self.name} revives {member.name} with 50% HP!")
+                break
     
     def mediarama(self, party_members):
         #Moderately restores party's HP. Coste: 16 SP.
         print(f"{self.name} uses mediarama!")
         self.SP -= 16
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            for member in party_members:
-                if member.status != "fallen":
-                    member.HP += 100
-                    if member.HP > member.max_HP:
-                        member.HP = member.max_HP
-            print("Party's HP restored by 100!")
+        for member in party_members:
+            if member.status != "fallen":
+                member.HP += 100
+                if member.HP > member.max_HP:
+                    member.HP = member.max_HP
+        print("Party's HP restored by 100!")
     
-    def rakunda(self, party_members):
-        #increases 1 ally defense by 25%. Coste: 6 SP
+    def rakunda(self, enemy):
+        #Decreases 1 foes' Defense by 25%. Coste: 6 SP
         print(f"{self.name} uses rakunda!")
         self.SP -= 6
-        return
-
+        enemy.def_debuff_turns = 3
+        print(f"{enemy.name}'s Defense decreased for 3 turns!")
     
     def use_item(self, party_members):
         print(self.items)
@@ -178,75 +224,104 @@ class Yukari:
         self.weak = "electric"
         self.critic_rate = 0.10
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10
+        self.fail_rate = 0.15
+        self.defense = 24
+        self.attack = 20
+        self.atk_buff_turns = 0
+        self.def_buff_turns = 0
+        self.ev_buff_turns = 0
         self.list_of_actions = ["basic_attack", "me_patra", "mediarama", "recarm", "diarama", "garula"]
         self.reflect = None
+
+    def get_defense(self):
+        # Return current defense, applying buff if active
+        if self.def_buff_turns > 0:
+            return self.defense * 1.25
+        return self.defense
+    
+    def get_attack(self):
+        # Return current attack, applying buff if active
+        if self.atk_buff_turns > 0:
+            return self.attack * 1.25
+        return self.attack
+
+    def get_evasion(self):
+        # Return current evasion, applying buff if active
+        if self.ev_buff_turns > 0:
+            return self.fail_rate - 0.10
+        return self.fail_rate
 
     def basic_attack(self, enemy):
         #basic attack 
         print(f"{self.name} uses basic attack!")
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 60  # Base damage
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 60 * attack_value / enemy_defense  # Base damage
             if [ m for m in enemy.strong if m == "strike"]:
                 damage *= 0.6  # Less damage if enemy is strong
             elif [ m for m in enemy.block if m == "strike"]:
                 damage *= 0
             elif enemy.weak == "pierce":
                 damage *= 1.4  # Increased damage if enemy is weak
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
     def me_patra(self, party_members):
         #Dispels Panic, Fear, and Distress (party). Coste: 6 SP. 
         print(f"{self.name} uses me Patra!")
         self.SP -= 6
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            for member in party_members:
-                if member.status in ["panic", "fear", "distress"]:
-                    member.status = "normal"
-                    print(f"{member.name} is cured of {member.status}!")
-            print("Party's status ailments cured!")
+        for member in party_members:
+            if member.status in ["panic", "fear", "distress"]:
+                member.status = "normal"
+                print(f"{member.name} is cured of {member.status}!")
+        print("Party's status ailments cured!")
     
     def mediarama(self, party_members):
         #Moderately restores party's HP. Coste: 16 SP. 
         print(f"{self.name} uses mediarama!")
         self.SP -= 16
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            for member in party_members:
-                if member.status != "fallen":
-                    member.HP += 100
-                    if member.HP > member.max_HP:
-                        member.HP = member.max_HP
-            print("Party's HP restored by 100!")
+        for member in party_members:
+            if member.status != "fallen":
+                member.HP += 100
+                if member.HP > member.max_HP:
+                    member.HP = member.max_HP
+        print("Party's HP restored by 100!")
 
     def recarm(self, member):
         #Revives an ally, restoring 50% of HP. Coste: 20 SP.
         print(f"{self.name} uses recarm!")
         self.SP -= 20
-        if self.fail_rate > random.random():
-            print("The attack missed!")
+        if member.status == "fallen":
+            member.status = "normal"
+            member.HP = 0.50 * member.max_HP
+            print(f"{self.name} revives {member.name} with 50% HP!")
         else:
-            if member.status == "fallen":
-                member.status = "normal"
-                member.HP = 0.50 * member.max_HP
-                print(f"{self.name} revives {member.name} with 50% HP!")
-            else:
-                print(f"{member.name} is not fallen and cannot be revived.")
+            print(f"{member.name} is not fallen and cannot be revived.")
     
     def garula(self, enemy):
         #Deals medium Wind damage to one foe. Coste: 6 SP.
         print(f"{self.name} uses garula!")
         self.SP -= 6
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 80
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 80 * attack_value / enemy_defense
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [ m for m in enemy.strong if m == "wind"]:
@@ -262,13 +337,10 @@ class Yukari:
         #Moderately restores 1 ally's HP. Coste: 8 sp.
         print(f"{self.name} uses diarama!")
         self.SP -= 8
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            member.HP += 100
-            if member.HP > member.max_HP:
-                member.HP = member.max_HP
-            print(f"{self.name} restores 100 HP to {member.name}!")
+        member.HP += 100
+        if member.HP > member.max_HP:
+            member.HP = member.max_HP
+        print(f"{self.name} restores 100 HP to {member.name}!")
     
 class Junpei:
 
@@ -280,47 +352,89 @@ class Junpei:
         self.SP = 201
         self.strong = "fire"
         self.weak = "wind"
-        self.critic_rate = 0.20 
+        self.critic_rate = 0.25
         self.prob_counter_phisical = 0.15 #pasiva
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10
+        self.fail_rate = 0.15
+        self.defense = 24
+        self.attack = 20
+        self.atk_buff_turns = 0
+        self.def_buff_turns = 0
+        self.ev_buff_turns = 0
         self.list_of_actions = ["basic_attack", "rakukaja", "marakukaja", "torrent_shot", "blade_of_fury"]
         self.reflect = None
+
+    def get_defense(self):
+        # Return current defense, applying buff if active
+        if self.def_buff_turns > 0:
+            return self.defense * 1.25
+        return self.defense
+    
+    def get_attack(self):
+        # Return current attack, applying buff if active
+        if self.atk_buff_turns > 0:
+            return self.attack * 1.25
+        return self.attack
+
+    def get_evasion(self):
+        # Return current evasion, applying buff if active
+        if self.ev_buff_turns > 0:
+            return self.fail_rate - 0.10
+        return self.fail_rate
 
     def basic_attack(self, enemy):
         #Normal attack
         print(f"{self.name} uses basic attack!")
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 60  # Base damage
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 60 * attack_value / enemy_defense  # Base damage
             if [ m for m in enemy.strong if m == "slash"]:
                 damage *= 0.6  # Less damage if the enemy is strong
             elif [ m for m in enemy.block if m == "slash"]:
                 damage *= 0
             elif enemy.weak == "slash":
                 damage *= 1.4  # Increased damage if the enemy is weak
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
-    def rakukaja(self):
+    def rakukaja(self, member):
         #Increases 1 ally's defense by 25%. Coste: 6 sp.
         print(f"{self.name} uses rakukaja!")
-        return
-    
-    def marakukaja(self):
+        self.SP -= 6
+        member.def_buff_turns = 3
+        print(f"{member.name}'s Defense increased for 3 turns!")
+
+    def marakukaja(self, party_members):
         #Increases party's defense by 25%. Coste: 12 SP
         print(f"{self.name} uses marakukaja!")
-        return
+        for member in party_members:
+            member.def_buff_turns = 3
+        print("Party's Defense increased for 3 turns!")
     
     def torrent_shot(self,enemy):
         #Deals light Pierce damage to one foe (2-3 hits) Coste: 10% HP
         print(f"{self.name} uses torrent shot!")
         self.HP -= 0.10 * self.HP
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 80
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 80 * attack_value / enemy_defense
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [ m for m in enemy.strong if m == "pierce"]:
@@ -329,17 +443,29 @@ class Junpei:
                 damage *= 0
             elif enemy.weak == "pierce":
                 damage *= 1.4
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
     
     def blade_of_fury(self,enemy):
         #Deals medium Slash damage to all foes. (2-3 hits) Coste: 16% HP
         print(f"{self.name} uses blade of fury!")
         self.HP -= 0.16 * self.HP
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 100
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 100 * attack_value / enemy_defense
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [ m for m in enemy.strong if m == "slash"]:
@@ -348,8 +474,17 @@ class Junpei:
                 damage *= 0
             elif enemy.weak == "slash":
                 damage *= 1.4
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
     
 class Akihiko:
@@ -362,37 +497,75 @@ class Akihiko:
         self.SP = 210
         self.block = "electric"
         self.weak = "ice"
-        self.critic_rate = 0.10 
+        self.critic_rate = 0.10
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.10
+        self.fail_rate = 0.15
+        self.defense = 24
+        self.attack = 20
+        self.atk_buff_turns = 0
+        self.def_buff_turns = 0
+        self.ev_buff_turns = 0
         self.list_of_actions = ["basic_attack", "zionga", "tarunda", "rakunda", "sonic_punch", "sukunda"]
         self.reflect = None
+
+    def get_defense(self):
+        # Return current defense, applying buff if active
+        if self.def_buff_turns > 0:
+            return self.defense * 1.25
+        return self.defense
+    
+    def get_attack(self):
+        # Return current attack, applying buff if active
+        if self.atk_buff_turns > 0:
+            return self.attack * 1.25
+        return self.attack
+
+    def get_evasion(self):
+        # Return current evasion, applying buff if active
+        if self.ev_buff_turns > 0:
+            return self.fail_rate - 0.10
+        return self.fail_rate
 
     def basic_attack(self, enemy):
         #Normal attack
         print(f"{self.name} uses basic attack!")
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 60  # Base damage
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 60 * attack_value / enemy_defense  # Base damage
             if [ m for m in enemy.strong if m == "strike"]:
                 damage *= 0.6  # Less damage if the enemy is strong
             elif [m for m in enemy.block if m == "strike"]:
                 damage *= 0
             elif enemy.weak == "strike":
                 damage *= 1.4  # Increased damage if the enemy is weak
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random():
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
     
     def zionga(self,enemy):
         #Deals medium Elec damage / shocks one foe (10% chance of shocking). Coste: 8 SP
         print(f"{self.name} usa zionga!")
         self.SP -= 8
-        #el resultado se eleva por 25% por su habilidad pasiva
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        # el resultado se eleva por 25% por su habilidad pasiva
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 100
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = (60 * 1.25 ) * attack_value / enemy_defense # 1.25 por pasiva
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [ m for m in enemy.strong if m == "electric"]:
@@ -403,7 +576,7 @@ class Akihiko:
                 damage *= 1.4
             enemy.HP -= damage
             print(f"{self.name} deals {damage} damage to {enemy.name}!")
-            if random.random() < 0.25:  # 10% chance to shock
+            if random.random() < 0.10:  # 10% chance to shock
                 enemy.status = "shocked"
                 print(f"{enemy.name} is shocked!")
     
@@ -411,50 +584,52 @@ class Akihiko:
         #Decreases 1 foe's Attack by 25%*. Coste: 6 SP
         print(f"{self.name} usa tarunda!")
         self.SP -= 6
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            pass
-    
-    def rakunda(self,enemy):
+        enemy.atk_debuff_turns = 3
+        print(f"{self.name} decreases the Attack of {enemy.name} by 25%!")
+
+    def rakunda(self, enemy):
         #Decreases 1 foes' Defense by 25%*. Coste: 6 SP
         print(f"{self.name} usa rakunda!")
         self.SP -= 6
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            pass 
-    
+        enemy.def_debuff_turns = 3
+        print(f"{self.name} decreases the Defense of {enemy.name} by 25%!")
+
     def sonic_punch(self,enemy):
         #Deals light Strike damage to one foe. Coste: 9%.
         print(f"{self.name} usa sonic punch!")
         self.SP -= 9
-        if self.fail_rate > random.random():
+        fail_rate = self.get_evasion()
+        if fail_rate > random.random():
             print("The attack missed!")
         else:
-            damage = 70
-            if self.critic_rate > random.random():
-                damage *= 1.5
+            attack_value = self.get_attack()
+            enemy_defense = enemy.get_defense()
+            damage = 70 * attack_value / enemy_defense
             if [ m for m in enemy.strong if m == "strike"]:
                 damage *= 0.6
             elif [m for m in enemy.block if m == "strike"]:
+                flag = True
                 damage *= 0
             elif enemy.weak == "strike":
                 damage *= 1.4
-            enemy.HP -= damage
-            print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            if self.critic_rate > random.random() and flag != True:
+                damage *= 1.2
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
+                print("Critical hit! Time for an All-Out Attack!")
+                all_out_dmg = random.randint(210,250)
+                print(f"The party deals an extra {all_out_dmg} damage to {enemy.name}!")
+                damage += all_out_dmg
+                enemy.HP -= damage
+            else:
+                enemy.HP -= damage
+                print(f"{self.name} deals {damage} damage to {enemy.name}!")
         
     
     def sukunda(self, party_members):
         #Decrease 1 foe's Hit/Evasion rate by 10%*. Coste: 6 sp 
         print(f"{self.name} usa sukunda!")
-        if self.fail_rate > random.random():
-            print("The attack missed!")
-        else:
-            self.SP -= 6
-            for member in party_members:
-                if member.status != "fallen":
-                    member.fail_rate -= 0.10
-                print(f"{self.name} decreases the Hit/Evasion rate of {member.name} by 10%!")
-                break #the first who is not fallen is affected
-    
+        self.SP -= 6
+        for member in party_members:
+            if member.status != "fallen":
+                member.ev_buff_turns = 3
+                print(f"{self.name} increases the Evasion of {member.name} by 10%!")

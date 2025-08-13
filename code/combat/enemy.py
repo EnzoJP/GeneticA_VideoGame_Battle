@@ -6,12 +6,16 @@ class Enemy:
         self.HP = 1700
         self.SP = 500
         self.block= ["light", "dark"]
-        self.strong = ["basic_attack", "physical","piercing"]
+        self.strong = [ "strike", "slash","pierce"]
         self.low_damage = ["fire"]
         self.low_damage_rate = 0.25
         self.status = "normal" #normal es el estado por defecto
         self.fail_rate = 0.15
         self.critic_rate = 0.10
+        self.atk_debuff_turns = 0
+        self.def_debuff_turns = 0
+        self.defense = 20
+        self.attack = 24
         self.list_of_actions = ["basic_attack", "maragidyne", "hamaon", "megidola", "evil_touch", "ghastly_wail"]
         self.weak = ""
         self.reflect = None
@@ -43,9 +47,20 @@ class Enemy:
             return "megidola"
         elif attack < maragidyne + hamaon + megidola + evil_touch:
             return "evil_touch"
-        
-    def take_turn(self, party): # Enemy decides what to do based on attack probabilities
 
+    def get_defense(self):
+        # Return current defense, applying debuff if active
+        if self.def_debuff_turns > 0:
+            return self.defense * 0.25
+        return self.defense
+
+    def get_attack(self):
+        # Return current attack, applying debuff if active
+        if self.atk_debuff_turns > 0:
+            return self.attack * 0.25
+        return self.attack
+
+    def take_turn(self, party): # Enemy decides what to do based on attack probabilities
         action_name = self.attacks_rate(party)
         action = getattr(self, action_name)
         action(party) # Call the action method by name
@@ -57,11 +72,12 @@ class Enemy:
         if self.fail_rate > random.random():
             print("The attack missed!")
         else:
-            
             target = random.choice(party)
+            defense_value = target.get_defense()
+            attack_value = self.get_attack()
             if target.status == "fallen":
                 target = random.choice([m for m in party if m.status != "fallen"])  # Choose another target if fallen
-            damage = 70  # Base damage
+            damage = random.randint(50, 70) * attack_value  / defense_value   # Base damage
             if target.strong == "strike":
                 damage *= 0.6  # Less damage if party member is strong
             elif target.block == "strike":
@@ -82,10 +98,12 @@ class Enemy:
             self.SP -= 24
             print(f"{self.name} uses maragidyne!")
             for member in party:
-                damage = random.randint(196, 238)
                 if member.status == "fallen":
                     continue
                 else:
+                    defense_value = member.get_defense()
+                    attack_value = self.get_attack()
+                    damage = random.randint(196, 238) * attack_value / defense_value
                     if self.critic_rate > random.random():
                         damage *= 1.5  # ??
                     if member.weak == "fire":
@@ -109,7 +127,7 @@ class Enemy:
             if target.status == "fallen":
                 target = random.choice([m for m in party if m.status != "fallen"])
             print(f"{self.name} uses Hamaon on {target.name}!")
-            if random.random() < 0.40:  # 40% prob 
+            if random.random() < 0.30:  # 40% prob 
                 target.HP = 0
                 print(f"{target.name} was killed!")
                 target.status = "fallen"
@@ -131,7 +149,9 @@ class Enemy:
                     if self.fail_rate > random.random():
                         print(f"The attack missed! on [{member.name}]")
                     else: 
-                        damage = random.randint(172, 189)
+                        defense_value = member.get_defense()
+                        attack_value = self.get_attack()
+                        damage = random.randint(172, 189) * attack_value / defense_value
                         if self.critic_rate > random.random():
                             damage *= 1.5  # ??
                         member.HP -= damage
