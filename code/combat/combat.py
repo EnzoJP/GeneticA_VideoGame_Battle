@@ -1,6 +1,7 @@
 import combat.enemy as enemy
 import combat.party as party
 import random
+import combat.metrics_and_plots as metrics
 
 
 def start_combat(party_members, enemy):
@@ -166,8 +167,8 @@ def simulate_combat(party_members, enemy):
         print("Select an algorithm to use for combat simulation:")
 
         print("1. Random")
-        print("2. genetico modelo")
-        print("3. genetico modificado")
+        print("2. model genetic")
+        print("3. modified genetic")
         print("4. NGSA-II")
 
         choice = input("Enter your choice (1-4): ")
@@ -175,8 +176,49 @@ def simulate_combat(party_members, enemy):
         if choice in ['1', '2', '3', '4']:
             if choice == '1':
                 import genetics.random as random_algo
-                random_algo.start_combat_random(party_members, enemy)
+                wins = 0
+                losses = 0
+                random_win = random_algo.start_combat_random(party_members, enemy)
+                if random_win: wins += 1
+                else: losses += 1
+                win_rate = metrics.calculate_win_rate(wins, losses)
+
+                
+
+            elif choice == '2':
+                import genetics.model_genetic as model_genetic_algo
+                wins = 0
+                losses = 0
+                model_genetic_win = model_genetic_algo.start_combat_model_genetic(party_members, enemy)
+                if model_genetic_win: wins += 1
+                else: losses += 1
+                win_rate = metrics.calculate_win_rate(wins, losses)
+
+                
+
+            elif choice == '3':
+                import genetics.modified_genetic as modified_genetic_algo
+                wins = 0
+                losses = 0
+                modified_genetic_win = modified_genetic_algo.start_combat_modified_genetic(party_members, enemy)
+                if modified_genetic_win: wins += 1
+                else: losses += 1
+                win_rate = metrics.calculate_win_rate(wins, losses)
+
+                
+
+            elif choice == '4':
+                import genetics.NGSA_ii as ngsa_ii_algo
+                wins = 0
+                losses = 0
+                ngsa_ii_win = ngsa_ii_algo.start_combat_ngsa_ii(party_members, enemy)
+                if ngsa_ii_win: wins += 1
+                else: losses += 1
+                win_rate = metrics.calculate_win_rate(wins, losses)
+
+                
             menu_finished = True
+            
         else:
             print("Invalid choice. Please try again.")
         

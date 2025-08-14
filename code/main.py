@@ -34,6 +34,9 @@ def main():
             print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
+    #seed
+    import random
+    random.seed(33) # tu tu tu max verstappen xd
     print("Starting the game...")
     main()
     
