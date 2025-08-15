@@ -99,19 +99,36 @@ def start_combat(party_members, enemy):
                     else:
                         print("Invalid choice. Please try again.")
 
+                if enemy.def_debuff_turns > 0:
+                    enemy.def_debuff_turns -= 1
+                    if enemy.def_debuff_turns == 0:
+                        print(f"{enemy.name}'s defense debuff has worn off.")
+            
+
+            if protagonist.HP <= 0:
+                break
+
             if member != protagonist:
                 # pseudo_aleatorias (they follow tactics)
                 print(f"{member.name}'s turn:")
-                # hacer lista de acciones dependiendo del personaje y su sp disponible
 
-                if member.name == "Yukari":
-                    actions = member.list_of_actions
+                action_name = member.choose_action(party_members, enemy)
+                
+                if action_name in ["recarm", "mediarama", "me_patra", "marakukaja", "sukunda"]:
+                    getattr(member, action_name)(party_members)
+                elif action_name in ["rakukaja", "diarama"]:
+                    # Select random ally
+                    valid_allies = [ally for ally in party_members if ally.status != "fallen"]
+                    if valid_allies:
+                        target = random.choice(valid_allies)
+                        getattr(member, action_name)(target)
+                    else:
+                        print("No valid targets! Skipping turn.")
+                else:
+                    getattr(member, action_name)(enemy)
 
-                elif member.name == "Akihiko":
-                    actions = member.list_of_actions
 
-                elif member.name == "Junpei":
-                    actions = member.list_of_actions
+            
             if member != enemy:
                 if member.def_buff_turns > 0:
                     member.def_buff_turns -= 1
@@ -125,15 +142,14 @@ def start_combat(party_members, enemy):
                     member.ev_buff_turns -= 1
                     if member.ev_buff_turns == 0:
                         print(f"{member.name}'s evasion buff has worn off.")
+                
+                if enemy.atk_debuff_turns > 0:
+                    enemy.atk_debuff_turns -= 1
+                    if enemy.atk_debuff_turns == 0:
+                        print(f"{enemy.name}'s attack debuff has worn off.")
 
-        if enemy.atk_debuff_turns > 0:
-            enemy.atk_debuff_turns -= 1
-            if enemy.atk_debuff_turns == 0:
-                print(f"{enemy.name}'s attack debuff has worn off.")
-        if enemy.def_debuff_turns > 0:
-            enemy.def_debuff_turns -= 1
-            if enemy.def_debuff_turns == 0:
-                print(f"{enemy.name}'s defense debuff has worn off.")
+        
+        
 
     if enemy.HP <= 0:
         print(f"{enemy.name} Victory!, The enemy has been defeated!")

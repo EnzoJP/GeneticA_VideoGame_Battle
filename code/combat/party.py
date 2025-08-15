@@ -82,7 +82,6 @@ class Makoto:
             attack_value = self.get_attack()
             enemy_defense = enemy.get_defense()
             damage = 100 * attack_value / enemy_defense
-            print ("damage inicial ", damage)
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [m for m in enemy.strong if m == "ice"]:
@@ -91,7 +90,6 @@ class Makoto:
                 damage *= 0
             elif enemy.weak == "ice":
                 damage *= 1.4
-            print("dammage final ", damage)
             enemy.HP -= damage
             print(f"{self.name} deals {damage} damage to {enemy.name}!")
             if random.random() < 0.10:  # 10% chance to freeze
@@ -250,6 +248,27 @@ class Yukari:
         if self.ev_buff_turns > 0:
             return self.fail_rate - 0.10
         return self.fail_rate
+    
+    def choose_action(self, party_members, enemy):
+        available_actions = ["basic_attack"]
+        fallen_ally = any(
+            m.status == "fallen" 
+            for m in party_members)
+        low_hp_allies = [m for m in party_members 
+                     if m.status != "fallen" and m.HP < m.max_HP * 0.65]
+        ally_with_status = any(m.status in ["panic", "fear", "distress"] for m in party_members)
+
+        if fallen_ally and self.SP >= 20:
+            return "recarm"
+        if len(low_hp_allies) >= 2 and self.SP >= 16:
+            return "mediarama" #If there are 2 or more low HP allies, cures all
+        elif len(low_hp_allies) == 1 and self.SP >= 8:
+            return "diarama" #If there is 1 low HP ally, cures them
+        if ally_with_status and self.SP >= 6:
+            return "me_patra"
+        if self.SP >= 6:
+            available_actions.append("garula")
+        return random.choice(available_actions)
 
     def basic_attack(self, enemy):
         #basic attack 
@@ -300,16 +319,16 @@ class Yukari:
                     member.HP = member.max_HP
         print("Party's HP restored by 100!")
 
-    def recarm(self, member):
+    def recarm(self, party_members):
         #Revives an ally, restoring 50% of HP. Coste: 20 SP.
-        print(f"{self.name} uses recarm!")
         self.SP -= 20
-        if member.status == "fallen":
-            member.status = "normal"
-            member.HP = 0.50 * member.max_HP
-            print(f"{self.name} revives {member.name} with 50% HP!")
-        else:
-            print(f"{member.name} is not fallen and cannot be revived.")
+        for member in party_members:
+            if member.status == "fallen":
+                member.status = "normal"
+                member.HP = 0.50 * member.max_HP
+                break
+        print(f"{self.name} uses recarm!")
+        print(f"{self.name} revives {member.name} with 50% HP!")
     
     def garula(self, enemy):
         #Deals medium Wind damage to one foe. Coste: 6 SP.
@@ -333,13 +352,16 @@ class Yukari:
             enemy.HP -= damage
             print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
-    def diarama(self,member):
+    def diarama(self, party_members):
         #Moderately restores 1 ally's HP. Coste: 8 sp.
         print(f"{self.name} uses diarama!")
         self.SP -= 8
-        member.HP += 100
-        if member.HP > member.max_HP:
-            member.HP = member.max_HP
+        for member in party_members:
+            if member.status != "fallen" and member.HP < member.max_HP * 0.65:
+                member.HP += 100
+                if member.HP > member.max_HP:
+                    member.HP = member.max_HP
+                break
         print(f"{self.name} restores 100 HP to {member.name}!")
     
 class Junpei:
@@ -382,6 +404,27 @@ class Junpei:
             return self.fail_rate - 0.10
         return self.fail_rate
 
+    def choose_action(self, party_members, enemy):
+        available_actions = ["basic_attack"]
+        low_defense = any(member.def_buff_turns == 0 
+                          for member in party_members 
+                          if member.status != "fallen")
+        if low_defense:
+            if self.SP >= 12:
+                available_actions.append("marakukaja")
+            elif self.SP >= 6:
+                valid_allies = [member for member in party_members 
+                                if member.status != "fallen" 
+                                and member.def_buff_turns == 0]
+                if valid_allies:
+                    available_actions.append("rakukaja")
+        if self.HP > self.max_HP * 0.16:  
+            available_actions.append("blade_of_fury")
+        if self.HP > self.max_HP * 0.10: 
+            available_actions.append("torrent_shot")
+        
+        return random.choice(available_actions)
+
     def basic_attack(self, enemy):
         #Normal attack
         print(f"{self.name} uses basic attack!")
@@ -410,12 +453,13 @@ class Junpei:
                 enemy.HP -= damage
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
-    def rakukaja(self, member):
+    def rakukaja(self, party_members):
         #Increases 1 ally's defense by 25%. Coste: 6 sp.
         print(f"{self.name} uses rakukaja!")
         self.SP -= 6
-        member.def_buff_turns = 3
-        print(f"{member.name}'s Defense increased for 3 turns!")
+        target = random.choice(party_members)
+        target.def_buff_turns = 3
+        print(f"{target.name}'s Defense increased for 3 turns!")
 
     def marakukaja(self, party_members):
         #Increases party's defense by 25%. Coste: 12 SP
@@ -526,6 +570,30 @@ class Akihiko:
             return self.fail_rate - 0.10
         return self.fail_rate
 
+    def choose_action(self, party_members, enemy):
+        # Prioritizes buffing and debuffing over attacking
+        available_actions1 = []
+        if enemy.def_debuff_turns == 0 and self.SP >= 6:
+            available_actions1.append("rakunda")
+        if enemy.atk_debuff_turns == 0 and self.SP >= 6:
+            available_actions1.append("tarunda")
+        for member in party_members:
+            if member.status != "fallen" and member.ev_buff_turns == 0 and self.SP >= 6:
+                available_actions1.append("sukunda")
+                break
+        available_actions2 = ["basic_attack"]
+        if  self.HP > self.max_HP * 0.09:  
+            available_actions2.append("sonic_punch")
+        if self.SP >= 8:
+            available_actions2.append("zionga")
+        if len(available_actions1) > 0:
+            probBuffs = 0.85
+            if random.random() < probBuffs:
+                return random.choice(available_actions1)
+            else:
+                return random.choice(available_actions2)
+        return random.choice(available_actions2)
+
     def basic_attack(self, enemy):
         #Normal attack
         print(f"{self.name} uses basic attack!")
@@ -540,9 +608,10 @@ class Akihiko:
                 damage *= 0.6  # Less damage if the enemy is strong
             elif [m for m in enemy.block if m == "strike"]:
                 damage *= 0
+                enemy_blocks = True
             elif enemy.weak == "strike":
                 damage *= 1.4  # Increased damage if the enemy is weak
-            if self.critic_rate > random.random():
+            if self.critic_rate > random.random() and enemy_blocks != True:
                 damage *= 1.2
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
                 print("Critical hit! Time for an All-Out Attack!")
@@ -595,7 +664,7 @@ class Akihiko:
         print(f"{self.name} decreases the Defense of {enemy.name} by 25%!")
 
     def sonic_punch(self,enemy):
-        #Deals light Strike damage to one foe. Coste: 9%.
+        #Deals light Strike damage to one foe. Coste: 9% HP.
         print(f"{self.name} usa sonic punch!")
         self.SP -= 9
         fail_rate = self.get_evasion()
@@ -608,11 +677,11 @@ class Akihiko:
             if [ m for m in enemy.strong if m == "strike"]:
                 damage *= 0.6
             elif [m for m in enemy.block if m == "strike"]:
-                flag = True
+                enemy_blocks = True
                 damage *= 0
             elif enemy.weak == "strike":
                 damage *= 1.4
-            if self.critic_rate > random.random() and flag != True:
+            if self.critic_rate > random.random() and enemy_blocks != True:
                 damage *= 1.2
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
                 print("Critical hit! Time for an All-Out Attack!")
