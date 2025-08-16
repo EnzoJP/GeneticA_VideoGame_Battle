@@ -207,7 +207,7 @@ def simulate_combat(party_members, enemy):
                 import genetics.model_genetic as model_genetic_algo
                 wins = 0
                 losses = 0
-                model_genetic_win = model_genetic_algo.start_combat_model_genetic(party_members, enemy)
+                model_genetic_win = model_genetic_algo.genetic_combat(party_members, enemy)
                 if model_genetic_win: wins += 1
                 else: losses += 1
                 win_rate = metrics.calculate_win_rate(wins, losses)
