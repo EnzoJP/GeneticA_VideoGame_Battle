@@ -152,7 +152,7 @@ def start_combat(party_members, enemy):
         
 
     if enemy.HP <= 0:
-        print(f"{enemy.name} Victory!, The enemy has been defeated!")
+        print("Victory!, The enemy has been defeated!")
     if protagonist.HP <= 0:
         print(f"{protagonist.name} has fallen! Game Over.")
 
@@ -201,6 +201,8 @@ def simulate_combat(party_members, enemy):
 
                 
 
+                
+
             elif choice == '2':
                 import genetics.model_genetic as model_genetic_algo
                 wins = 0
@@ -209,6 +211,8 @@ def simulate_combat(party_members, enemy):
                 if model_genetic_win: wins += 1
                 else: losses += 1
                 win_rate = metrics.calculate_win_rate(wins, losses)
+
+                
 
                 
 
@@ -223,6 +227,8 @@ def simulate_combat(party_members, enemy):
 
                 
 
+                
+
             elif choice == '4':
                 import genetics.NGSA_ii as ngsa_ii_algo
                 wins = 0
@@ -232,8 +238,8 @@ def simulate_combat(party_members, enemy):
                 else: losses += 1
                 win_rate = metrics.calculate_win_rate(wins, losses)
 
-                
             menu_finished = True
+
             
         else:
             print("Invalid choice. Please try again.")

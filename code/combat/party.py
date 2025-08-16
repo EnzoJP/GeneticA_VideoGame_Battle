@@ -203,13 +203,35 @@ class Makoto:
                         print("Invalid choice. Please try again.")
                         choice = input("Enter the number of the ally: ")
             elif item == "Magic Mirror":
-                for member in party_members: # Ver cómo hacer que se salga el reflect despues de que les peguen
+                for member in party_members: 
                     member.reflect = ["ice", "fire", "electricity", "wind", "light", "dark", "almighty"]
-                    # ver que no instakillee al boss si refleja hamaon
+                    
                 print(f"{self.name} uses {item}!")
         else:
             print("Invalid item or item not available.")
 
+    def use_item_auto(self, party_members, item):
+        if item in self.items and self.items[item] > 0:
+            self.items[item] -= 1
+            if item == "Soma":
+                for member in party_members:
+                    if member.status != "fallen":
+                        member.HP = member.max_HP
+                        member.SP = member.max_SP
+                print(f"{self.name} uses {item}!")
+            elif item == "Precious Egg":
+                if self.SP < 10:
+                    #uses Precious Egg on itself
+                    self.SP = self.max_SP
+                    print(f"{self.name} uses {item} on itself!")
+                else:
+                    target = random.choice(party_members)
+                    target.SP = target.max_SP
+                    print(f"{self.name} uses {item} on {target.name}!")
+            elif item == "Magic Mirror":
+                for member in party_members:
+                    member.reflect = ["ice", "fire", "electricity", "wind", "light", "dark", "almighty"]
+                print(f"{self.name} uses {item}!")
         
 class Yukari:
     def __init__(self):
@@ -352,16 +374,16 @@ class Yukari:
             enemy.HP -= damage
             print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
-    def diarama(self, party_members):
+    def diarama(self, member):
         #Moderately restores 1 ally's HP. Coste: 8 sp.
         print(f"{self.name} uses diarama!")
         self.SP -= 8
-        for member in party_members:
-            if member.status != "fallen" and member.HP < member.max_HP * 0.65:
-                member.HP += 100
-                if member.HP > member.max_HP:
-                    member.HP = member.max_HP
-                break
+        
+        if member.status != "fallen":
+            member.HP += 100
+            if member.HP > member.max_HP:
+                member.HP = member.max_HP
+        
         print(f"{self.name} restores 100 HP to {member.name}!")
     
 class Junpei:
@@ -453,11 +475,11 @@ class Junpei:
                 enemy.HP -= damage
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
 
-    def rakukaja(self, party_members):
+    def rakukaja(self, target):
         #Increases 1 ally's defense by 25%. Coste: 6 sp.
         print(f"{self.name} uses rakukaja!")
         self.SP -= 6
-        target = random.choice(party_members)
+        
         target.def_buff_turns = 3
         print(f"{target.name}'s Defense increased for 3 turns!")
 
