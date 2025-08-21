@@ -51,13 +51,13 @@ class Enemy:
     def get_defense(self):
         # Return current defense, applying debuff if active
         if self.def_debuff_turns > 0:
-            return self.defense * 0.25
+            return self.defense - (self.defense * 0.25)
         return self.defense
 
     def get_attack(self):
         # Return current attack, applying debuff if active
         if self.atk_debuff_turns > 0:
-            return self.attack * 0.25
+            return self.attack - (self.attack * 0.25)
         return self.attack
 
     def take_turn(self, party): # Enemy decides what to do based on attack probabilities
@@ -103,7 +103,7 @@ class Enemy:
                 else:
                     defense_value = member.get_defense()
                     attack_value = self.get_attack()
-                    damage = random.randint(196, 238) * attack_value / defense_value
+                    damage = random.randint(200, 238) * attack_value / defense_value
                     if self.critic_rate > random.random():
                         damage *= 1.5  # ??
                     if member.weak == "fire":
@@ -127,7 +127,9 @@ class Enemy:
             if target.status == "fallen":
                 target = random.choice([m for m in party if m.status != "fallen"])
             print(f"{self.name} uses Hamaon on {target.name}!")
-            if random.random() < 0.30:  # 40% prob 
+            if random.random() < self.fail_rate:
+                print(f"The attack missed!")
+            elif random.random() < 0.36:  
                 target.HP = 0
                 print(f"{target.name} was killed!")
                 target.status = "fallen"
@@ -151,7 +153,7 @@ class Enemy:
                     else: 
                         defense_value = member.get_defense()
                         attack_value = self.get_attack()
-                        damage = random.randint(172, 189) * attack_value / defense_value
+                        damage = random.randint(172, 200) * attack_value / defense_value
                         if self.critic_rate > random.random():
                             damage *= 1.5  # ??
                         member.HP -= damage
@@ -171,7 +173,7 @@ class Enemy:
         target = random.choice(party)
         if target.status == "fallen":
             target = random.choice([m for m in party if m.status != "fallen"])
-        if random.random() < 0.25: #25% chance to inflict fear
+        if random.random() < 0.40: #40% chance to inflict fear
             print(f"{self.name} inflicts fear on {target.name}!")
             target.status = "fear"
         else:

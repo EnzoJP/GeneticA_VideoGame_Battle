@@ -7,10 +7,10 @@ def maximize_damage():
 def minimize_damage_taken():
     pass
 
-def minimze_turns():
+def minimize_turns():
     pass
 
-def combine_with_wheights():
+def combine_with_weights():
     pass
 
 
