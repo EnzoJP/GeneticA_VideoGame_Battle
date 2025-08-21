@@ -651,10 +651,9 @@ class Akihiko:
                 damage *= 0.6  # Less damage if the enemy is strong
             elif [m for m in enemy.block if m == "strike"]:
                 damage *= 0
-                enemy_blocks = True
             elif enemy.weak == "strike":
                 damage *= 1.4  # Increased damage if the enemy is weak
-            if self.critic_rate > random.random() and enemy_blocks != True:
+            if self.critic_rate > random.random():
                 damage *= 1.2
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
                 damage += self.all_out_attack(party_members, enemy)
@@ -717,11 +716,10 @@ class Akihiko:
             if [ m for m in enemy.strong if m == "strike"]:
                 damage *= 0.6
             elif [m for m in enemy.block if m == "strike"]:
-                enemy_blocks = True
                 damage *= 0
             elif enemy.weak == "strike":
                 damage *= 1.4
-            if self.critic_rate > random.random() and enemy_blocks != True:
+            if self.critic_rate > random.random():
                 damage *= 1.2
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
                 damage += self.all_out_attack(party_members, enemy)
