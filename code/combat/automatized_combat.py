@@ -5,6 +5,37 @@ import random
 import combat.metrics_and_plots as metrics
 from combat.combat import show_member_actions, show_status
 
+def effects_turns(party_members, enemy):
+    # Party buffs
+    for m in party_members:
+        # defense buff
+        if hasattr(m, "def_buff_turns") and m.def_buff_turns > 0:
+            m.def_buff_turns -= 1
+            if m.def_buff_turns == 0:
+                print(f"{m.name}'s defense buff has worn off.")
+        # attack buff
+        if hasattr(m, "atk_buff_turns") and m.atk_buff_turns > 0:
+            m.atk_buff_turns -= 1
+            if m.atk_buff_turns == 0:
+                print(f"{m.name}'s attack buff has worn off.")
+        # evasion buff
+        if hasattr(m, "ev_buff_turns") and m.ev_buff_turns > 0:
+            m.ev_buff_turns -= 1
+            if m.ev_buff_turns == 0:
+                print(f"{m.name}'s evasion buff has worn off.")
+
+    # Enemy debuffs
+    if hasattr(enemy, "def_debuff_turns") and enemy.def_debuff_turns > 0:
+        enemy.def_debuff_turns -= 1
+        if enemy.def_debuff_turns == 0:
+            print(f"{enemy.name}'s defense debuff has worn off.")
+    if hasattr(enemy, "atk_debuff_turns") and enemy.atk_debuff_turns > 0:
+        enemy.atk_debuff_turns -= 1
+        if enemy.atk_debuff_turns == 0:
+            print(f"{enemy.name}'s attack debuff has worn off.")
+
+
+
 def automatized_combat(party_members, enemy,list_of_actions):
     #simulate combat, list of actions is the list of makoto's actions
     """returns the boolean result of the combat"""
@@ -92,8 +123,10 @@ def automatized_combat(party_members, enemy,list_of_actions):
                 print("-------------------------------------------------------------------")
                 if action in ["recarm","mediarama"]:
                     getattr(member, action)(party_members) # calls with party_members as parameter 
-                elif action in ["basic_attack","bufula","torrent_shot", "hamaon","rakunda"]:
+                elif action in ["bufula", "hamaon", "rakunda"]:
                     getattr(member, action)(enemy) # calls with enemy as parameter
+                elif action in ["basic_attack", "torrent_shot"]:
+                    getattr(member,action)(enemy, party_members) #calls with enemy and party as parameters
                 elif action in ["Soma", "Precious Egg", "Magic Mirror"]:
                     if action == "Soma":
                         member.use_item_auto(party_members, "Soma")
@@ -102,10 +135,6 @@ def automatized_combat(party_members, enemy,list_of_actions):
                     elif action == "Magic Mirror":
                         member.use_item_auto(party_members, "Magic Mirror")
                 
-                if enemy.def_debuff_turns > 0:
-                    enemy.def_debuff_turns -= 1
-                    if enemy.def_debuff_turns == 0:
-                        print(f"{enemy.name}'s defense debuff has worn off.")
             
 
             if protagonist.HP <= 0:
@@ -127,31 +156,14 @@ def automatized_combat(party_members, enemy,list_of_actions):
                         getattr(member, action_name)(target)
                     else:
                         print("No valid targets! Skipping turn.")
+                elif action_name in ["basic_attack", "torrent_shot", "blade_of_fury", "sonic_punch"]:
+                    getattr(member, action_name)(enemy, party_members)
                 else:
                     getattr(member, action_name)(enemy)
 
-
+        effects_turns(party_members, enemy)
             
-            if member != enemy:
-                if member.def_buff_turns > 0:
-                    member.def_buff_turns -= 1
-                    if member.def_buff_turns == 0:
-                        print(f"{member.name}'s defense buff has worn off.")
-                if member.atk_buff_turns > 0:
-                    member.atk_buff_turns -= 1
-                    if member.atk_buff_turns == 0:
-                        print(f"{member.name}'s attack buff has worn off.")
-                if member.ev_buff_turns > 0:
-                    member.ev_buff_turns -= 1
-                    if member.ev_buff_turns == 0:
-                        print(f"{member.name}'s evasion buff has worn off.")
-                
-                if enemy.atk_debuff_turns > 0:
-                    enemy.atk_debuff_turns -= 1
-                    if enemy.atk_debuff_turns == 0:
-                        print(f"{enemy.name}'s attack debuff has worn off.")
 
-        
         
 
     if enemy.HP <= 0:

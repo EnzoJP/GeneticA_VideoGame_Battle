@@ -153,8 +153,6 @@ def start_combat(party_members, enemy):
                     getattr(member, action_name)(enemy, party_members)
                 else:
                     getattr(member, action_name)(enemy)
-
-
             
         effects_turns(party_members, enemy)
 
