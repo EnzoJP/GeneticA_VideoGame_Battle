@@ -9,6 +9,7 @@ class Makoto:
         self.HP = 366
         self.SP = 246
         self.strong = "fire"
+        self.block = ""
         self.weak = ""
         self.reflect = None
         self.critic_rate = 0.15
@@ -245,6 +246,7 @@ class Yukari:
         self.HP = 287
         self.SP = 285
         self.block= "wind"
+        self.strong = ""
         self.weak = "electric"
         self.critic_rate = 0.10
         self.status = "normal" #normal es el estado por defecto
@@ -407,6 +409,7 @@ class Junpei:
         self.SP = 201
         self.strong = "fire"
         self.weak = "wind"
+        self.block = ""
         self.critic_rate = 0.25
         self.prob_counter_phisical = 0.15 #pasiva
         self.status = "normal" #normal es el estado por defecto
@@ -575,6 +578,7 @@ class Akihiko:
         self.SP = 210
         self.block = "electric"
         self.weak = "ice"
+        self.strong = ""
         self.critic_rate = 0.10
         self.status = "normal" #normal es el estado por defecto
         self.fail_rate = 0.15

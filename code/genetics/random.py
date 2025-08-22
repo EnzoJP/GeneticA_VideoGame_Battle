@@ -32,7 +32,7 @@ def generate_random_actions(actions, num_actions,makoto):
 
     random_actions = []
     items_avaliable = ["Soma", "Precious Egg", "Magic Mirror"]
-    print(f"Items available: {items_avaliable}")
+    #print(f"Items available: {items_avaliable}")
     for i in range(num_actions):
         action = random.choice(actions)
         if action == "use_item" and items_avaliable: # if there are items available

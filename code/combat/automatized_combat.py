@@ -45,6 +45,8 @@ def automatized_combat(party_members, enemy,list_of_actions):
     fight_list = [protagonist, enemy] + party_members[1:]
     while enemy.HP > 0 and protagonist.HP > 0:
         for member in fight_list:
+            if protagonist.HP <= 0:
+                return False
             show_status(party_members, enemy)
             if member.HP <= 0:
                 print(f"{member.name} has fallen!")
@@ -117,6 +119,9 @@ def automatized_combat(party_members, enemy,list_of_actions):
             if member == protagonist:
                 print(f"{member.name}'s turn:")
                 
+                if len(list_of_actions) == 0:
+                    print("No more actions left for the protagonist!")
+                    return False
                 action = list_of_actions.pop(0)  # get the next action from the list
                 print(f"{member.name} uses {action}!")
                 
