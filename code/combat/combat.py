@@ -1,4 +1,4 @@
-import combat.enemy as enemy
+import combat.enemy as enemy1
 import combat.party as party
 import random
 import combat.metrics_and_plots as metrics
@@ -199,10 +199,21 @@ def simulate_combat(party_members, enemy):
                 import genetics.random as random_algo
                 wins = 0
                 losses = 0
-                random_win = random_algo.start_combat_random(party_members, enemy)
-                if random_win: wins += 1
-                else: losses += 1
+                for i in range(100):
+                    print(f"--- Simulation {i+1} -------------------------------------------------------------")
+                    # new enemy and members instance for each simulation
+                    enemy = enemy1.Enemy()
+                    Makoto = party.Makoto()
+                    Yukari = party.Yukari()
+                    Akihiko = party.Akihiko()
+                    Junpei = party.Junpei()
+                    party_list = [Makoto, Yukari, Akihiko, Junpei]
+
+                    random_win = random_algo.start_combat_random(party_list, enemy)
+                    if random_win: wins += 1
+                    else: losses += 1
                 win_rate = metrics.calculate_win_rate(wins, losses)
+                print  (f"Win rate for random algorithm: {win_rate}%")
 
                 
 
