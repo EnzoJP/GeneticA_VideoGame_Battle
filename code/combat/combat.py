@@ -201,6 +201,7 @@ def simulate_combat(party_members, enemy):
                 wins = 0
                 losses = 0
                 for i in range(100):
+                    random.seed(33 + i) #Reseed before every simulation
                     print(f"--- Simulation {i+1} -------------------------------------------------------------")
                     # new enemy and members instance for each simulation
                     enemy = enemy1.Enemy()
@@ -210,23 +211,30 @@ def simulate_combat(party_members, enemy):
                     Junpei = party.Junpei()
                     party_list = [Makoto, Yukari, Akihiko, Junpei]
 
-                    random_win = random_algo.start_combat_random(party_list, enemy)
-                    if random_win: wins += 1
+                    result = random_algo.start_combat_random(party_list, enemy)
+                    if result["won"]:
+                        wins += 1
                     else: losses += 1
                 win_rate = metrics.calculate_win_rate(wins, losses)
                 print  (f"Win rate for random algorithm: {win_rate}%")
 
-
             elif choice == '2':
-                import genetics.model_genetic as model_genetic_algo
                 wins = 0
                 losses = 0
+                BASE_SEED = 33
                 for i in range(50):
-                    print(f"--- Simulation {i+1} -------------------------------------------------------------")
+                    # different seeds for each simulation
+                    seeds = [BASE_SEED + i*4 + j for j in range(4)]  # 4 seeds if max_workers=4
+                    print(f"--- Simulation {i+1} ) -------------------------------------------------------------")
                     with ThreadPoolExecutor(max_workers=4) as executor:
-                        results = list(executor.map(run_simulation, range(2)))
+                        results = list(executor.map(run_simulation_with_seed, seeds))
                     for result in results:
-                        if result: wins += 1
+                        # result can be dictionary or bool
+                        if isinstance(result, dict):
+                            won = result.get("won", False)
+                        else:
+                            won = bool(result)
+                        if won: wins += 1
                         else: losses += 1
 
                 win_rate = metrics.calculate_win_rate(wins, losses)
@@ -277,6 +285,18 @@ def simulate_combat(party_members, enemy):
         
 
 def run_simulation(_):
+    import genetics.model_genetic as model_genetic_algo
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    return model_genetic_algo.genetic_combat(party_members, enemy)
+
+def run_simulation_with_seed(seed):
+    import random
+    random.seed(seed)
     import genetics.model_genetic as model_genetic_algo
     enemy = enemy1.Enemy()
     Makoto = party.Makoto()

@@ -15,16 +15,14 @@ def genetic_combat(party_members, enemy):
     population_size = 12
     population = [generate_random_actions(actions, 25, makoto) for _ in range(population_size)]
 
-    actions_results = genetic_algorithm(population,makoto)
+    actions_results = genetic_algorithm(population, makoto)
+    result = automatized_combat(party_members, enemy, actions_results[:])
 
-    finished = automatized_combat(party_members, enemy, actions_results[:])
-
-    if finished:
+    if result["won"]:
         print("Combat finished with a win.")
-        return True
     else:
         print("Combat finished with a loss.")
-        return False
+    return result
     
 def genetic_algorithm(population,makoto):
     # this is the implementation of the genetic algorithm in AIMA book, adapted for our combat scenario
@@ -53,6 +51,7 @@ def genetic_algorithm(population,makoto):
 
         #sort the new population based on fitness 
         new_population.sort(key=lambda x: fitnessF.just_a_test_fitness(x[:]), reverse=True)
+        #new_population.sort(key=lambda x: fitnessF.fitness_test_1(x[:]), reverse=True)
 
         # drop the worst 10 and replace with the best 10 of the old population (elitism)
         new_population = new_population[:pop_long - 10] + old_population[:10]
@@ -88,6 +87,7 @@ def  crossover(parent1, parent2,makoto):
                 temporary_items.append(child1[i])
 
     fitness1 = fitnessF.just_a_test_fitness(child1[:])
+    #fitness1 = fitnessF.fitness_test_1(child1[:])
 
     #do the opposite, keep the last time an item appears and mutate the previous ones
     child2 = copy.deepcopy(child)
@@ -104,6 +104,7 @@ def  crossover(parent1, parent2,makoto):
                 temporary_items.append(child2[i])
 
     fitness2 = fitnessF.just_a_test_fitness(child2[:])
+    #fitness2 = fitnessF.fitness_test_1(child2[:])
 
     if fitness1 > fitness2:
         return child1
@@ -142,14 +143,3 @@ def check_sp_cost(list_actions, makoto):
         else:
             continue
     return actions
-
-
-
-
-
-
-
-    
-
-
-    

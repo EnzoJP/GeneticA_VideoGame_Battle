@@ -40,13 +40,20 @@ def automatized_combat(party_members, enemy,list_of_actions):
     #simulate combat, list of actions is the list of makoto's actions
     """returns the boolean result of the combat"""
     print("Starting automatized combat...")
+    turn_count = 0
+    total_damage_done = 0
+    total_damage_taken = 0
+    death_count = 0
+    previous_statuses = {member.name: member.status for member in party_members}
 
     protagonist = party_members[0]
     fight_list = [protagonist, enemy] + party_members[1:]
-    while enemy.HP > 0 and protagonist.HP > 0:
+    while enemy.HP > 0 and protagonist.HP > 0 and turn_count < 50:
+        turn_count += 1
+        print(f"--- Turn {turn_count} ---")
         for member in fight_list:
             if protagonist.HP <= 0:
-                return False
+                break
             show_status(party_members, enemy)
             if member.HP <= 0:
                 print(f"{member.name} has fallen!")
@@ -58,7 +65,8 @@ def automatized_combat(party_members, enemy,list_of_actions):
                     continue
                 attack = enemy.attacks_rate(party_members)
                 if attack == "basic_attack":
-                    enemy.basic_attack(party_members)
+                    damage_taken = enemy.basic_attack(party_members)
+                    total_damage_taken += damage_taken
                 elif attack == "maragidyne":
                         # check if the members are not under magic mirror
                         if any(m.reflect is not None for m in party_members):
@@ -70,14 +78,18 @@ def automatized_combat(party_members, enemy,list_of_actions):
                                 if m.reflect is not None:
                                     m.reflect = None
                             #for each memeber the enemy takes a small amount of damage between 40-60
+                            damage_dealt = 0
                             for m in party_members:
                                 if m.HP > 0 and m != enemy:
                                     damage = random.randint(40, 60)
+                                    damage_dealt += damage
                                     enemy.HP -= damage
                                     print(f"{enemy.name} takes {damage} damage from the enemy's maragidyne!")
+                            total_damage_done += damage_dealt
                             continue
                         else:
-                            enemy.maragidyne(party_members)
+                            damage_taken = enemy.maragidyne(party_members)
+                            total_damage_taken += damage_taken
                 elif attack == "hamaon":
                     print(f"{member.name} uses hamaon!")
                     if any(m.reflect is not None for m in party_members):
@@ -87,7 +99,7 @@ def automatized_combat(party_members, enemy,list_of_actions):
                                 m.reflect = None
                         continue
                     else:
-                        enemy.hamaon(party_members)
+                        enemy.hamaon(party_members) 
                 elif attack == "megidola":
                     print(f"{member.name} uses megidola!")
                     if any(m.reflect is not None for m in party_members):
@@ -95,11 +107,14 @@ def automatized_combat(party_members, enemy,list_of_actions):
                         for m in party_members:
                             if m.reflect is not None:
                                 m.reflect = None
+                        damage_dealt = 0
                         for m in party_members:
                             if m.HP > 0 and m != enemy:
                                 damage = random.randint(40, 60)
+                                damage_dealt += damage
                                 enemy.HP -= damage
                                 print(f"{enemy.name} takes {damage} damage from the enemy's megidola!")
+                        total_damage_done += damage_dealt
                         continue
                     else:
                         enemy.megidola(party_members)
@@ -121,17 +136,21 @@ def automatized_combat(party_members, enemy,list_of_actions):
                 
                 if len(list_of_actions) == 0:
                     print("No more actions left for the protagonist!")
-                    return False
+                    continue
                 action = list_of_actions.pop(0)  # get the next action from the list
                 print(f"{member.name} uses {action}!")
                 
                 print("-------------------------------------------------------------------")
                 if action in ["recarm","mediarama"]:
                     getattr(member, action)(party_members) # calls with party_members as parameter 
-                elif action in ["bufula", "hamaon", "rakunda"]:
+                elif action in ["bufula", "hamaon"]:
+                    damage_dealt = getattr(member, action)(enemy) # calls with enemy as parameter
+                    total_damage_done += damage_dealt
+                elif action in ["rakunda"]:
                     getattr(member, action)(enemy) # calls with enemy as parameter
                 elif action in ["basic_attack", "torrent_shot"]:
-                    getattr(member,action)(enemy, party_members) #calls with enemy and party as parameters
+                    damage_dealt = getattr(member,action)(enemy, party_members) #calls with enemy and party as parameters
+                    total_damage_done += damage_dealt
                 elif action in ["Soma", "Precious Egg", "Magic Mirror"]:
                     if action == "Soma":
                         member.use_item_auto(party_members, "Soma")
@@ -139,11 +158,9 @@ def automatized_combat(party_members, enemy,list_of_actions):
                         member.use_item_auto(party_members, "Precious Egg")
                     elif action == "Magic Mirror":
                         member.use_item_auto(party_members, "Magic Mirror")
-                
-            
 
             if protagonist.HP <= 0:
-                return False
+                break
 
             if member != protagonist:
                 # pseudo_aleatorias (they follow tactics)
@@ -166,14 +183,27 @@ def automatized_combat(party_members, enemy,list_of_actions):
                 else:
                     getattr(member, action_name)(enemy)
 
-        effects_turns(party_members, enemy)
-            
-
+        for member in party_members:
+            if member.status == "fallen" and previous_statuses[member.name] != "fallen":
+                death_count += 1
+            previous_statuses[member.name] = member.status
         
+        effects_turns(party_members, enemy)
 
+    #damage_done = enemy.max_HP - enemy.HP if enemy.HP > 0 else enemy.max_HP  -> esto es daño total de la party al bicho, lo dejo por si llega a servir
+    won = enemy.HP <= 0 and protagonist.HP > 0
+
+    return {
+        "won": won,
+        "turns": turn_count,
+        "damage_done": total_damage_done,
+        "damage_taken": total_damage_taken,
+        "deaths": death_count
+    }
+    """
     if enemy.HP <= 0:
         return True
     if protagonist.HP <= 0:
         return False
-    
+    """
 

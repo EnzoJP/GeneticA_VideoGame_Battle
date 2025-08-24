@@ -60,6 +60,7 @@ class Makoto:
         fail_rate = self.get_evasion()
         if fail_rate > random.random():
             print("The attack missed!")
+            return 0
         else:
             attack_value = self.get_attack()
             enemy_defense = enemy.get_defense()
@@ -78,6 +79,7 @@ class Makoto:
             else:
                 enemy.HP -= damage
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            return damage
 
     def bufula(self, enemy):
         #Deals medium Ice damage / Freezes one foe. (10% chance of freezing). Coste: 8 SP
@@ -86,6 +88,7 @@ class Makoto:
         fail_rate = self.get_evasion()
         if fail_rate > random.random():
             print("The attack missed!")
+            return 0
         else:
             attack_value = self.get_attack()
             enemy_defense = enemy.get_defense()
@@ -103,6 +106,7 @@ class Makoto:
             if random.random() < 0.10:  # 10% chance to freeze
                 enemy.status = "frozen"
                 print(f"{enemy.name} is frozen!")
+            return damage
     
     def torrent_shot(self, enemy, party_members):
         #Deals light Pierce damage to one foe. (2-3 hits). Coste: 10% HP
@@ -111,6 +115,7 @@ class Makoto:
         fail_rate = self.get_evasion()
         if fail_rate > random.random():
             print("The attack missed!")
+            return 0
         else:
             attack_value = self.get_attack()
             enemy_defense = enemy.get_defense()
@@ -131,6 +136,7 @@ class Makoto:
             else:
                 enemy.HP -= damage
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
+            return damage
 
     def hamaon(self, enemy):
         #(Light): instant kill, 1 foe (high odds). (40% chance). Coste: 12 SP
@@ -139,15 +145,18 @@ class Makoto:
         fail_rate = self.get_evasion()
         if fail_rate > random.random():
             print("The attack missed!")
+            return 0
         else:
             if [m for m in enemy.block if m == "light"]:
                 print(f"{enemy.name} is immune to light attacks!")
+                return 0
             else:
                 if random.random() < 0.40:  # 40% prob
+                    hp_enemy = enemy.HP
                     enemy.HP = 0
                     print(f"{enemy.name} was killed!")
                     enemy.status = "fallen"
-
+                    return enemy.max_HP - hp_enemy
 
     def recarm(self, party_members):
         #Revives an ally, restoring 50% of HP. Coste: 20 SP.
@@ -677,7 +686,7 @@ class Akihiko:
         else:
             attack_value = self.get_attack()
             enemy_defense = enemy.get_defense()
-            damage = (random.randint(45, 59) * 1.25 ) * attack_value / enemy_defense # 1.25 por pasiva
+            damage = (random.randint(40, 54) * 1.25 ) * attack_value / enemy_defense # 1.25 por pasiva
             if self.critic_rate > random.random():
                 damage *= 1.5
             if [ m for m in enemy.strong if m == "electric"]:
@@ -691,6 +700,7 @@ class Akihiko:
             if random.random() < 0.10:  # 10% chance to shock
                 enemy.status = "shocked"
                 print(f"{enemy.name} is shocked!")
+
     
     def tarunda(self,enemy):
         #Decreases 1 foe's Attack by 25%*. Coste: 6 SP
@@ -731,6 +741,7 @@ class Akihiko:
             else:
                 enemy.HP -= damage
                 print(f"{self.name} deals {damage} damage to {enemy.name}!")
+
         
     
     def sukunda(self, party_members):

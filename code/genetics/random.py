@@ -16,13 +16,12 @@ def start_combat_random(party_members, enemy):
 
     finished = automatized_combat(party_members, enemy, random_actions)
 
-    if finished:
+    if finished["won"]:
         print("Combat finished with a win.")
-        return True
     else:
         print("Combat finished with a loss.")
-        return False
-        
+    
+    return finished
         
 def generate_random_actions(actions, num_actions,makoto):
     #generate a list of random actions but it has to be legal

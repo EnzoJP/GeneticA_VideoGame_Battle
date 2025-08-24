@@ -3,6 +3,7 @@ import random
 class Enemy:
     def __init__(self):
         self.name = "Sleeping Table"
+        self.max_HP = 1700
         self.HP = 1700
         self.SP = 500
         self.block= ["light", "dark"]
@@ -35,17 +36,17 @@ class Enemy:
             return "basic_attack"
         
         for member in party:
-            if member.status == "fear":
+            if member.status == "fear" and self.SP >= 15:
                 return "ghastly_wail"
         
         attack = random.random()
-        if attack < maragidyne:
+        if attack < maragidyne and self.SP >= 24:
             return "maragidyne"
-        elif attack < maragidyne + hamaon:
+        elif attack < maragidyne + hamaon and self.SP >= 12:
             return "hamaon"
-        elif attack < maragidyne + hamaon + megidola:
+        elif attack < maragidyne + hamaon + megidola and self.SP >= 18:
             return "megidola"
-        elif attack < maragidyne + hamaon + megidola + evil_touch:
+        elif attack < maragidyne + hamaon + megidola + evil_touch and self.SP >= 5:
             return "evil_touch"
 
     def get_defense(self):
@@ -71,6 +72,7 @@ class Enemy:
         print(f"{self.name} uses basic attack!")
         if self.fail_rate > random.random():
             print("The attack missed!")
+            return 0
         else:
             target = random.choice(party)
             defense_value = target.get_defense()
@@ -78,11 +80,11 @@ class Enemy:
             if target.status == "fallen":
                 target = random.choice([m for m in party if m.status != "fallen"])  # Choose another target if fallen
             damage = random.randint(50, 70) * attack_value  / defense_value   # Base damage
-            if target.strong == "strike":
+            if [ m for m in target.strong if m == "strike"]:
                 damage *= 0.6  # Less damage if party member is strong
-            elif target.block == "strike":
+            elif [ m for m in target.block if m == "strike"]:
                 damage *= 0
-            elif target.weak == "strike":
+            elif [ m for m in target.weak if m == "strike"]:
                 damage *= 1.4  # Increased damage if party member is weak
             target.HP -= damage
             print(f"{self.name} deals {damage} damage to {target.name}!")
@@ -90,10 +92,12 @@ class Enemy:
                 print(f"{target.name} has fallen!")
                 target.status = "fallen"
                 target.HP = 0  # eliminate HP to avoid negative values
+            return damage
         
     
     def maragidyne(self, party):
         #Deals heavy Fire damage to all foes. (39%)  Coste: 24 SP.
+        damage_done = 0
         if self.SP >= 24:
             self.SP -= 24
             print(f"{self.name} uses maragidyne!")
@@ -108,16 +112,21 @@ class Enemy:
                         damage *= 1.5  # ??
                     if member.weak == "fire":
                         damage *= 1.25  # Increased damage if weak
-
+                    if member.block == "fire":
+                        damage *= 0
+                    if member.strong == "fire":
+                        damage *= 0.8
                     if self.fail_rate > random.random():
                         print(f"The attack missed! on [{member.name}]")
                     else:
+                        damage_done += damage
                         member.HP -= damage
                         print(f"{self.name} deals {damage} damage to {member.name}!")
                         if member.HP <= 0:
                             print(f"{member.name} has fallen!")
                             member.status = "fallen"
                             member.HP = 0  # eliminate HP to avoid negative values
+            return damage_done
 
     def hamaon(self, party):  # considerar prob de fail tambien!
         #instant kill, 1 foe (high odds). (40% chance) (25%) Coste 12 SP
@@ -141,6 +150,7 @@ class Enemy:
     
     def megidola(self, party):
         #Deals heavy Almighty damage to all foes. (15%) Coste: 65 SP.
+        damage_done = 0
         if self.SP >= 65:
             self.SP -= 65
             print(f"{self.name} uses megidola!")
@@ -157,12 +167,14 @@ class Enemy:
                         if self.critic_rate > random.random():
                             damage *= 1.5  # ??
                         member.HP -= damage
+                        damage_done += damage
                         print(f"{self.name} deals {damage} damage to {member.name}!")
                         if member.HP <= 0:
                             print(f"{member.name} has fallen!")
                             member.status = "fallen"
                             member.HP = 0  # eliminate HP to avoid negative values
-    
+                return damage_done
+
     def evil_touch(self, party):
         #Instills Fear in 1 foe. (40% chance) (19%) Coste: 5 SP.
         #and the 25% increase because of the fear boost
