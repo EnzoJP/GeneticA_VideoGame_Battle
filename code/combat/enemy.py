@@ -11,8 +11,8 @@ class Enemy:
         self.low_damage = ["fire"]
         self.low_damage_rate = 0.25
         self.status = "normal" #normal es el estado por defecto
-        self.fail_rate = 0.15
-        self.critic_rate = 0.10
+        self.fail_rate = 0.05
+        self.critic_rate = 0.20
         self.atk_debuff_turns = 0
         self.def_debuff_turns = 0
         self.defense = 20

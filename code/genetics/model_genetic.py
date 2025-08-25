@@ -12,8 +12,8 @@ def genetic_combat(party_members, enemy):
 
     #poulation starting with 50 random actions
 
-    population_size = 12
-    population = [generate_random_actions(actions, 25, makoto) for _ in range(population_size)]
+    population_size = 25
+    population = [generate_random_actions(actions, 50, makoto) for _ in range(population_size)]
 
     actions_results = genetic_algorithm(population, makoto)
     result = automatized_combat(party_members, enemy, actions_results[:])
@@ -29,14 +29,16 @@ def genetic_algorithm(population,makoto):
     """return the best action sequence from the population"""
     
     pop_long = len(population)
-    old_population = population
+    old_population = [evaluate(ind) for ind in population]
+    old_population.sort(key=lambda x: x[1], reverse=True)
+    jsut_a_test = old_population[:]
 
-    for generation in range(3):  # number of generations
+    for generation in range(30):  # number of generations
         new_population = []
         for i in range(pop_long): # make the new ones
             
-            parent1 = random.choice(old_population)
-            parent2 = random.choice(old_population)
+            parent1,_ = random.choice(old_population)
+            parent2,_ = random.choice(old_population)
 
             child = crossover(parent1, parent2,makoto)
 
@@ -44,21 +46,29 @@ def genetic_algorithm(population,makoto):
                 child = mutate(child,makoto)
                 # check if the action sequence is valid in terms of SP cost
                 child = check_sp_cost(child,makoto)
-                new_population.append(child)
+                new_population.append(evaluate(child))
             else:
                 child = check_sp_cost(child,makoto)
-                new_population.append(child)
+                new_population.append(evaluate(child))
 
         #sort the new population based on fitness 
-        new_population.sort(key=lambda x: fitnessF.just_a_test_fitness(x[:]), reverse=True)
-        #new_population.sort(key=lambda x: fitnessF.fitness_test_1(x[:]), reverse=True)
-
+        new_population.sort(key=lambda x: x[1], reverse=True)
+        
         # drop the worst 10 and replace with the best 10 of the old population (elitism)
         new_population = new_population[:pop_long - 10] + old_population[:10]
 
-        old_population = new_population
+        old_population = copy.deepcopy(new_population)
+    
+    final_order = sorted(old_population, key=lambda x: x[1], reverse=True)
 
-    return new_population[0]  # return the best action sequence
+    #print the fitness for debugging
+    for ind, fit in final_order:
+        print(f"Fitness: {fit}")
+
+    for ind, fit in jsut_a_test:
+        print(f"Just a test Fitness: {fit}")
+
+    return final_order[0][0]  # return the best action sequence
 
 def  crossover(parent1, parent2,makoto):
     #crossover between two parents to create a child action sequence using one point crossover
@@ -71,47 +81,50 @@ def  crossover(parent1, parent2,makoto):
     # check for duplicate items
     actions = makoto.list_of_actions
     items = ["Soma", "Precious Egg", "Magic Mirror"]
-    posible_actions = [action for action in actions if action not in items]
 
-    #keep the first time an item appears and mutate the duplicate
-    child1= copy.deepcopy(child)
-    temporary_items = []
-    for i in range(len(child1)):
-        if child1[i] in items:
-            if child1[i] in temporary_items:
-                new_action = random.choice(posible_actions)
-                while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror":
+    if child.count("Soma") > 1 or child.count("Precious Egg") > 1 or child.count("Magic Mirror") > 1:
+
+        posible_actions = [action for action in actions if action not in items]
+        #keep the first time an item appears and mutate the duplicate
+        child1= copy.deepcopy(child)
+        temporary_items = []
+        for i in range(len(child1)):
+            if child1[i] in items:
+                if child1[i] in temporary_items:
                     new_action = random.choice(posible_actions)
-                child1[i] = new_action
-            else:
-                temporary_items.append(child1[i])
+                    while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror":
+                        new_action = random.choice(posible_actions)
+                    child1[i] = new_action
+                else:
+                    temporary_items.append(child1[i])
 
-    fitness1 = fitnessF.just_a_test_fitness(child1[:])
-    #fitness1 = fitnessF.fitness_test_1(child1[:])
+        
+        fitness1 = fitnessF.fitness_test_1(child1[:])
 
-    #do the opposite, keep the last time an item appears and mutate the previous ones
-    child2 = copy.deepcopy(child)
-    temporary_items = []
+        #do the opposite, keep the last time an item appears and mutate the previous ones
+        child2 = copy.deepcopy(child)
+        temporary_items = []
 
-    for i in range(len(child2)-1, -1, -1):
-        if child2[i] in items:
-            if child2[i] in temporary_items:
-                new_action = random.choice(posible_actions)
-                while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror":
+        for i in range(len(child2)-1, -1, -1):
+            if child2[i] in items:
+                if child2[i] in temporary_items:
                     new_action = random.choice(posible_actions)
-                child2[i] = new_action
-            else:
-                temporary_items.append(child2[i])
+                    while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror":
+                        new_action = random.choice(posible_actions)
+                    child2[i] = new_action
+                else:
+                    temporary_items.append(child2[i])
 
-    fitness2 = fitnessF.just_a_test_fitness(child2[:])
-    #fitness2 = fitnessF.fitness_test_1(child2[:])
+        
+        fitness2 = fitnessF.fitness_test_1(child2[:])
 
-    if fitness1 > fitness2:
-        return child1
-    else:
-        return child2
+        if fitness1 > fitness2:
+            return child1
+        else:
+            return child2
 
-
+    else:   
+        return child
     
 def mutate(action_sequence,makoto):
     #mutate the action sequence by changing a random action, not items because it's difficult to track 
@@ -143,3 +156,10 @@ def check_sp_cost(list_actions, makoto):
         else:
             continue
     return actions
+
+
+
+
+def evaluate(ind):
+    #evaluate an stores the fitness of an individual,avoiding multiple evaluations
+    return (ind, fitnessF.fitness_test_1(ind[:]))

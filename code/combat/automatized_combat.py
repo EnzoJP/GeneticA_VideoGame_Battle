@@ -12,34 +12,39 @@ def effects_turns(party_members, enemy):
         if hasattr(m, "def_buff_turns") and m.def_buff_turns > 0:
             m.def_buff_turns -= 1
             if m.def_buff_turns == 0:
-                print(f"{m.name}'s defense buff has worn off.")
+                #print(f"{m.name}'s defense buff has worn off.")
+                pass
         # attack buff
         if hasattr(m, "atk_buff_turns") and m.atk_buff_turns > 0:
             m.atk_buff_turns -= 1
             if m.atk_buff_turns == 0:
-                print(f"{m.name}'s attack buff has worn off.")
+                #print(f"{m.name}'s attack buff has worn off.")
+                pass
         # evasion buff
         if hasattr(m, "ev_buff_turns") and m.ev_buff_turns > 0:
             m.ev_buff_turns -= 1
             if m.ev_buff_turns == 0:
-                print(f"{m.name}'s evasion buff has worn off.")
+                #print(f"{m.name}'s evasion buff has worn off.")
+                pass
 
     # Enemy debuffs
     if hasattr(enemy, "def_debuff_turns") and enemy.def_debuff_turns > 0:
         enemy.def_debuff_turns -= 1
         if enemy.def_debuff_turns == 0:
-            print(f"{enemy.name}'s defense debuff has worn off.")
+            #print(f"{enemy.name}'s defense debuff has worn off.")
+            pass
     if hasattr(enemy, "atk_debuff_turns") and enemy.atk_debuff_turns > 0:
         enemy.atk_debuff_turns -= 1
         if enemy.atk_debuff_turns == 0:
-            print(f"{enemy.name}'s attack debuff has worn off.")
+            #print(f"{enemy.name}'s attack debuff has worn off.")
+            pass
 
 
 
 def automatized_combat(party_members, enemy,list_of_actions):
     #simulate combat, list of actions is the list of makoto's actions
     """returns the boolean result of the combat"""
-    print("Starting automatized combat...")
+    #print("Starting automatized combat...")
     turn_count = 0
     total_damage_done = 0
     total_damage_taken = 0
@@ -48,19 +53,25 @@ def automatized_combat(party_members, enemy,list_of_actions):
 
     protagonist = party_members[0]
     fight_list = [protagonist, enemy] + party_members[1:]
-    while enemy.HP > 0 and protagonist.HP > 0 and turn_count < 50:
+    while enemy.HP > 0 and protagonist.HP > 0:
         turn_count += 1
-        print(f"--- Turn {turn_count} ---")
+        #print(f"--- Turn {turn_count} ---")
         for member in fight_list:
             if protagonist.HP <= 0:
-                break
-            show_status(party_members, enemy)
+                return {
+                    "won": False,
+                    "turns": turn_count,
+                    "damage_done": total_damage_done,
+                    "damage_taken": total_damage_taken,
+                    "deaths": death_count
+                }
+            #show_status(party_members, enemy)
             if member.HP <= 0:
-                print(f"{member.name} has fallen!")
+                #print(f"{member.name} has fallen!")
                 continue #skip turn if dead
             if member == enemy:
                 if enemy.status != "normal":
-                    print(f"{enemy.name} is affected by {enemy.status} and cannot act!")
+                    #print(f"{enemy.name} is affected by {enemy.status} and cannot act!")
                     enemy.status = "normal" # reset status after missing a turn
                     continue
                 attack = enemy.attacks_rate(party_members)
@@ -71,8 +82,8 @@ def automatized_combat(party_members, enemy,list_of_actions):
                         # check if the members are not under magic mirror
                         if any(m.reflect is not None for m in party_members):
                             # if the member is under magic mirror, skip their turn
-                            print(f"{member.name} uses maragidyne!")
-                            print("The party is under Magic Mirror!")
+                            #print(f"{member.name} uses maragidyne!")
+                            #print("The party is under Magic Mirror!")
                             # the enemy skips their turn and reset the reflect status of the party
                             for m in party_members:
                                 if m.reflect is not None:
@@ -84,16 +95,16 @@ def automatized_combat(party_members, enemy,list_of_actions):
                                     damage = random.randint(40, 60)
                                     damage_dealt += damage
                                     enemy.HP -= damage
-                                    print(f"{enemy.name} takes {damage} damage from the enemy's maragidyne!")
+                                    #print(f"{enemy.name} takes {damage} damage from the enemy's maragidyne!")
                             total_damage_done += damage_dealt
                             continue
                         else:
                             damage_taken = enemy.maragidyne(party_members)
                             total_damage_taken += damage_taken
                 elif attack == "hamaon":
-                    print(f"{member.name} uses hamaon!")
+                    #print(f"{member.name} uses hamaon!")
                     if any(m.reflect is not None for m in party_members):
-                        print("The attack was reflected but is not effective!")
+                        #print("The attack was reflected but is not effective!")
                         for m in party_members:
                             if m.reflect is not None:
                                 m.reflect = None
@@ -101,9 +112,9 @@ def automatized_combat(party_members, enemy,list_of_actions):
                     else:
                         enemy.hamaon(party_members) 
                 elif attack == "megidola":
-                    print(f"{member.name} uses megidola!")
+                    #print(f"{member.name} uses megidola!")
                     if any(m.reflect is not None for m in party_members):
-                        print("the party is under Magic Mirror!")
+                        #print("the party is under Magic Mirror!")
                         for m in party_members:
                             if m.reflect is not None:
                                 m.reflect = None
@@ -113,7 +124,7 @@ def automatized_combat(party_members, enemy,list_of_actions):
                                 damage = random.randint(40, 60)
                                 damage_dealt += damage
                                 enemy.HP -= damage
-                                print(f"{enemy.name} takes {damage} damage from the enemy's megidola!")
+                                #print(f"{enemy.name} takes {damage} damage from the enemy's megidola!")
                         total_damage_done += damage_dealt
                         continue
                     else:
@@ -127,20 +138,26 @@ def automatized_combat(party_members, enemy,list_of_actions):
 
             if member.status != "normal":
                 if member.status == "fear":
-                    print(f"{member.name} is too scared to act!")
+                    #print(f"{member.name} is too scared to act!")
                     continue
                 continue
 
             if member == protagonist:
-                print(f"{member.name}'s turn:")
+                #print(f"{member.name}'s turn:")
                 
                 if len(list_of_actions) == 0:
-                    print("No more actions left for the protagonist!")
-                    continue
+                    #print("No more actions left for the protagonist!")
+                    return {
+                        "won": False,
+                        "turns": turn_count,
+                        "damage_done": total_damage_done,
+                        "damage_taken": total_damage_taken,
+                        "deaths": death_count
+                    }
                 action = list_of_actions.pop(0)  # get the next action from the list
-                print(f"{member.name} uses {action}!")
+                #print(f"{member.name} uses {action}!")
                 
-                print("-------------------------------------------------------------------")
+                #print("-------------------------------------------------------------------")
                 if action in ["recarm","mediarama"]:
                     getattr(member, action)(party_members) # calls with party_members as parameter 
                 elif action in ["bufula", "hamaon"]:
@@ -160,11 +177,17 @@ def automatized_combat(party_members, enemy,list_of_actions):
                         member.use_item_auto(party_members, "Magic Mirror")
 
             if protagonist.HP <= 0:
-                break
+                return {
+                    "won": False,
+                    "turns": turn_count,
+                    "damage_done": total_damage_done,
+                    "damage_taken": total_damage_taken,
+                    "deaths": death_count
+                }
 
             if member != protagonist:
                 # pseudo_aleatorias (they follow tactics)
-                print(f"{member.name}'s turn:")
+                #print(f"{member.name}'s turn:")
 
                 action_name = member.choose_action(party_members, enemy)
                 

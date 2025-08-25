@@ -11,8 +11,8 @@ def start_combat_random(party_members, enemy):
 
     #a list of 50 actions is created 
     random_actions = generate_random_actions(actions, 50,makoto)
-    print ("Random actions generated for combat.")
-    print(random_actions)
+    #print ("Random actions generated for combat.")
+    #print(random_actions)
 
     finished = automatized_combat(party_members, enemy, random_actions)
 

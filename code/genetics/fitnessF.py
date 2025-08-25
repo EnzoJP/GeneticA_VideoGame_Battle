@@ -77,7 +77,7 @@ def just_a_test_fitness(list_of_actions):
     else:
         return 0
     
-def fitness_test_1(list_of_actions): # si en el automatized_combat.py no se indican los turnos maximos queda en bucle infinito!!!!
+def fitness_test_1(list_of_actions):
     enemy = enemy1.Enemy()
     Makoto = party.Makoto()
     Yukari = party.Yukari()
@@ -86,15 +86,20 @@ def fitness_test_1(list_of_actions): # si en el automatized_combat.py no se indi
     party_members = [Makoto, Yukari, Akihiko, Junpei]
     
     stats = automatized_combat(party_members, enemy, list_of_actions)
-    if not stats["won"]:
-        return 0 #If it loses, fitness 0
-    turn_score = 1000 / stats["turns"]  # Less turns = better
-    damage_score = stats["damage_done"] / enemy.max_HP  # Percentage of damage
-    death_penalty = 500 * stats["deaths"]  # Penalty for deaths
-    
-    fitness = turn_score + damage_score - death_penalty # Final fitness
-    
-    return min(1, fitness)
+
+    won = 1 if stats["won"] else 0
+    turns = stats["turns"]
+    damage = stats["damage_done"]
+    deaths = stats["deaths"]
+
+    """we start with a huge number and we subtract points for more turns and deaths and add points for damage done"""
+
+    if won:
+        enemy_max_hp = enemy.max_HP
+        return 1000000 - turns*1000 - deaths*100 + (damage / enemy_max_hp)
+    else:
+        return damage - deaths*10 - turns #only we care about damage and deaths
+
 
 def fitness_test_ponderada(list_of_actions):
     enemy = enemy1.Enemy()
