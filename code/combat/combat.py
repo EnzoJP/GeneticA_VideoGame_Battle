@@ -3,6 +3,7 @@ import combat.party as party
 import random
 import combat.metrics_and_plots as metrics
 from concurrent.futures import ThreadPoolExecutor
+import time
 
 def effects_turns(party_members, enemy):
     # Party buffs
@@ -201,6 +202,8 @@ def simulate_combat(party_members, enemy):
                 wins = 0
                 losses = 0
                 average_turns = 0
+
+                start_time = time.time()
                 for i in range(100):
                     print(f"--- Simulation {i+1} -------------------------------------------------------------")
                     # new enemy and members instance for each simulation
@@ -221,12 +224,16 @@ def simulate_combat(party_members, enemy):
                 average_turns = round(average_turns)
                 print (f"Average turns for random algorithm: {average_turns}")
                 print  (f"Win rate for random algorithm: {win_rate}%")
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
             elif choice == '2':
                 wins = 0
                 losses = 0
                 average_turns = 0
                 base_seed = 33
+                start_time = time.time()
                 results = [run_simulation(base_seed + i) for i in range(100)]
 
                 for result in results:
@@ -241,25 +248,34 @@ def simulate_combat(party_members, enemy):
                 print (f"Average turns for model genetic algorithm: {average_turns}")
                 win_rate = metrics.calculate_win_rate(wins, losses)
                 print(f"Win rate for model genetic algorithm: {win_rate}%")
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
             elif choice == '3':
                 import genetics.modified_genetic as modified_genetic
                 wins = 0
                 losses = 0
-                for i in range(100):
-                    print(f"--- Simulation {i+1} -------------------------------------------------------------")
-                    # new enemy and members instance for each simulation
-                    enemy = enemy1.Enemy()
-                    Makoto = party.Makoto()
-                    Yukari = party.Yukari()
-                    Akihiko = party.Akihiko()
-                    Junpei = party.Junpei()
-                    party_members = [Makoto, Yukari, Akihiko, Junpei]
-                    modified_genetic_win = modified_genetic.gentic_combat_mod(party_members, enemy)
-                    if modified_genetic_win: wins += 1
-                    else: losses += 1
+                average_turns = 0
+                base_seed = 33
+                start_time = time.time()
+                results = [run_simulation_modified_genetic(base_seed + i) for i in range(10)]
+
+                for result in results:
+                    if result["won"]:
+                        wins += 1
+                        average_turns += result["turns"]
+                    else:
+                        losses += 1
+                print(f"wins: {wins}, losses: {losses}")
+                average_turns = average_turns / wins if wins > 0 else 0
+                average_turns = round(average_turns)
+                print (f"Average turns for modified genetic algorithm: {average_turns}")
                 win_rate = metrics.calculate_win_rate(wins, losses)
                 print(f"Win rate for modified genetic algorithm: {win_rate}%")
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
             elif choice == '4':
                 import genetics.NGSA_ii as ngsa_ii_algo
@@ -298,3 +314,13 @@ def run_simulation(seed):
     return model_genetic_algo.genetic_combat(party_members, enemy)
 
 
+def run_simulation_modified_genetic(seed):
+    random.seed(seed)
+    import genetics.modified_genetic as modified_genetic_algo
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    return modified_genetic_algo.genetic_combat_mod(party_members, enemy)
