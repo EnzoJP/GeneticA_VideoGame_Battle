@@ -1,17 +1,19 @@
 from combat.automatized_combat import automatized_combat
 from genetics.random import generate_random_actions, calculate_sp_cost
-from genetics.model_genetic import evaluate, mutate, check_sp_cost
+from genetics.model_genetic import mutate, check_sp_cost
 import genetics.fitnessF as fitnessF
 import random
 import copy
+import combat.enemy as enemy1
+import combat.party as party
 
 def genetic_combat_mod(party_members, enemy):
     #more adapted version and imporoved
     # crossover two points
     # cut all solutions once they win to the length + 1 (to compesate randomness of the fight ) of the winning solution
     #More elitism, drop the worst 10 and replace with the best 10 of the old population,and,
-    #we keep the podium of all generations to the final result and compare them at the end
-    #mutation probability improved to 20% to compesate elitism
+    #we keep the podium of all generations to the final result and compare them at the end, doing a mini tournament winrate test
+    
 
     makoto  = party_members[0]
     actions = makoto.list_of_actions
@@ -34,15 +36,23 @@ def genetic_combat_mod(party_members, enemy):
 def genetic_algorithm_mod(population,makoto):
 
     pop_long = len(population)
-    old_population = [evaluate(ind) for ind in population]
+    min_index_to_cut = None
+    old_population = []
+    for ind in population:
+        turns,fit_tup = evaluate2(ind)
+        if turns is not None:
+            if min_index_to_cut is None or turns < min_index_to_cut:
+                min_index_to_cut = turns
+        old_population.append(fit_tup)
+
     old_population.sort(key=lambda x: x[1], reverse=True)
-    jsut_a_test = old_population[:]
-
-    ##
-    # #logic to cut here
-    ####
-
     best_of_all_generations = old_population[:3]  #keep the podium
+    jsut_a_test = old_population[:]
+    
+    # cut and re-evaluate the population if there is a winner
+    if min_index_to_cut is not None:
+        old_population = cut_it_All(old_population, min_index_to_cut + 1, makoto)
+       
 
     for generation in range(30):  # number of generations
         new_population = []
@@ -52,7 +62,7 @@ def genetic_algorithm_mod(population,makoto):
 
             child = crossover_two_points(parent1, parent2,makoto)
 
-            if random.random() < 0.20:  # mutation probability
+            if random.random() < 0.10:  # mutation probability
                 child = mutate(child,makoto)
                 # check if the action sequence is valid in terms of SP cost
                 child = check_sp_cost(child,makoto)
@@ -61,20 +71,47 @@ def genetic_algorithm_mod(population,makoto):
                 child = check_sp_cost(child,makoto)
                 new_population.append(evaluate(child))
         #sort the new population based on fitness and check if there is a winner, if so cut all
+        new_population.sort(key=lambda x: x[1], reverse=True)
+        best_of_all_generations = best_of_all_generations + new_population[:3]
 
-        ####
-        #logic to cut here
-        #####
+        for ind in new_population:
+            turns,fit_tup = evaluate2(ind[0])
+            if turns is not None:
+                if min_index_to_cut is None or turns < min_index_to_cut:
+                    min_index_to_cut = turns
+
+        if min_index_to_cut is not None:
+            new_population = cut_it_All(new_population, min_index_to_cut + 1, makoto)
         
         new_population.sort(key=lambda x: x[1], reverse=True)
-        #keep the podium
-        best_of_all_generations = best_of_all_generations + new_population[:3]
 
         #elitism - drop the worst 10 and replace with the best 10 of the old population
         new_population = new_population[:pop_long - 10] + old_population[:10]
         old_population = copy.deepcopy(new_population)
 
+    best_of_all_generations = best_of_all_generations + new_population[:3] #add the last generation podium
     final_order = sorted(best_of_all_generations, key=lambda x: x[1], reverse=True)
+
+    # test the 10 best of all generations in a mini tournament to choose the best one
+    tournament_candidates = final_order[:10]
+    tournament_results = []
+    for ind, fit in tournament_candidates:
+        wins = 0
+        for _ in range(25):  # best of 
+            enemy = enemy1.Enemy()
+            Makoto = party.Makoto()
+            Yukari = party.Yukari()
+            Akihiko = party.Akihiko()
+            Junpei = party.Junpei()
+            party_members = [Makoto, Yukari, Akihiko, Junpei]
+            result = automatized_combat(party_members, enemy, ind[:])
+            if result["won"]:
+                wins += 1
+        tournament_results.append((ind, wins))
+    
+    tournament_results.sort(key=lambda x: x[1], reverse=True)
+    print("Tournament results:")
+    print(tournament_results)
 
     #print the fitness for debugging
     for ind, fit in final_order:
@@ -83,15 +120,30 @@ def genetic_algorithm_mod(population,makoto):
     for ind, fit in jsut_a_test:
         print(f"Just a test Fitness: {fit}")
 
-    return final_order[0][0]  # return the best action sequence
+    
+    #final desicion if a draw in the tournament, choose the one with better fitness
+    if tournament_results[0][1] == tournament_results[1][1]:
+        if fitnessF.fitness_test_1(tournament_results[0][0][:]) >= fitnessF.fitness_test_1(tournament_results[1][0][:]):
+            return tournament_results[0][0]
+        else:
+            return tournament_results[1][0]
+    else:
+        return tournament_results[0][0]
 
-            
+    
 
 def cut_it_All(population, index, makoto):
+    #cut all the action sequences to the index given and re-evaluate them
     new_population = []
     for ind, fit in population:
-        cut_ind = ind[:index+1]
-        new_population.append(evaluate(cut_ind))
+        if len(ind) <= index or index <= 9: #avoid too small sequences
+            new_population.append((ind, fit))
+        else:
+            new_ind = ind[:index]
+            _,tuple_fit = evaluate2(new_ind)
+            new_population.append(tuple_fit)
+            
+            
     return new_population
     
 def  crossover_two_points(parent1, parent2,makoto):
@@ -153,3 +205,15 @@ def  crossover_two_points(parent1, parent2,makoto):
 
     else:   
         return child
+    
+
+def evaluate2(ind):
+    #evaluate the individual using the fitness function,avoiding multiple evaluation, and using turns
+    turns,fit = fitnessF.fitness_test_2(ind[:])
+    return turns,(ind, fit)
+
+
+def evaluate(ind):
+    #evaluate the individual using the fitness function,avoiding multiple evaluation
+    fit = fitnessF.fitness_test_1(ind[:])
+    return (ind, fit)

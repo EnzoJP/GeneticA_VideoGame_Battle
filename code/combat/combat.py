@@ -204,7 +204,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
 
                 start_time = time.time()
-                for i in range(100):
+                for i in range(50):
                     print(f"--- Simulation {i+1} -------------------------------------------------------------")
                     # new enemy and members instance for each simulation
                     enemy = enemy1.Enemy()
@@ -234,7 +234,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation(base_seed + i) for i in range(100)]
+                results = [run_simulation(base_seed + i) for i in range(50)]
 
                 for result in results:
                     if result["won"]:
