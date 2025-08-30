@@ -17,7 +17,7 @@ def maximize_damage(list_of_actions):
         return 0
     return stats["damage_done"]
 
-def minimize_damage_taken(list_of_actions):
+def minimize_damage_taken1(list_of_actions):
     enemy = enemy1.Enemy()
     Makoto = party.Makoto()
     Yukari = party.Yukari()
@@ -28,6 +28,19 @@ def minimize_damage_taken(list_of_actions):
     if not stats["won"]: # If it loses, fitness 0
         return 0
     return 1 / (1 + stats["damage_taken"]) # Normalize damage taken
+
+def minimize_damage_taken2(list_of_actions):
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    stats = automatized_combat(party_members, enemy, list_of_actions)
+    turns = stats["turns"]
+    if not stats["won"]: # If it loses, fitness 0
+        return None,0
+    return turns,(1 / (1 + stats["damage_taken"])) # Normalize damage taken
 
 def minimize_turns(list_of_actions):
     enemy = enemy1.Enemy()
@@ -136,8 +149,7 @@ def fitness_test_2(list_of_actions):
         enemy_max_hp = enemy.max_HP
         return turns,(1000000 - turns*1000 - deaths*100 + (damage / enemy_max_hp))
     else:
-        return None,(damage - deaths*10 - turns  ) #only we care about damage and deaths
-    
+        return None,(damage - deaths*10 - turns  ) #only we care about damage and deaths  
 
 
 

@@ -202,23 +202,26 @@ def simulate_combat(party_members, enemy):
                 wins = 0
                 losses = 0
                 average_turns = 0
-
+                base_seed = 33
                 start_time = time.time()
+                results = []
                 for i in range(50):
-                    print(f"--- Simulation {i+1} -------------------------------------------------------------")
-                    # new enemy and members instance for each simulation
+                    random.seed(base_seed + i)
                     enemy = enemy1.Enemy()
                     Makoto = party.Makoto()
                     Yukari = party.Yukari()
                     Akihiko = party.Akihiko()
                     Junpei = party.Junpei()
-                    party_list = [Makoto, Yukari, Akihiko, Junpei]
-
-                    result = random_algo.start_combat_random(party_list, enemy)
+                    party_members = [Makoto, Yukari, Akihiko, Junpei]
+                    result = random_algo.start_combat_random(party_members, enemy)
+                    results.append(result)
+                for result in results:
                     if result["won"]:
                         wins += 1
                         average_turns += result["turns"]
-                    else: losses += 1
+                    else:
+                        losses += 1
+                print(f"wins: {wins}, losses: {losses}")
                 win_rate = metrics.calculate_win_rate(wins, losses)
                 average_turns = average_turns / wins if wins > 0 else 0
                 average_turns = round(average_turns)
@@ -234,7 +237,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation(base_seed + i) for i in range(50)]
+                results = [run_simulation(base_seed + i) for i in range(10)]
 
                 for result in results:
                     if result["won"]:
@@ -259,7 +262,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation_modified_genetic(base_seed + i) for i in range(10)]
+                results = [run_simulation_modified_genetic(base_seed + i) for i in range(3)]
 
                 for result in results:
                     if result["won"]:
@@ -281,20 +284,25 @@ def simulate_combat(party_members, enemy):
                 import genetics.NGSA_ii as ngsa_ii_algo
                 wins = 0
                 losses = 0
-                for i in range(100):
-                    print(f"--- Simulation {i+1} -------------------------------------------------------------")
-                    # new enemy and members instance for each simulation
-                    enemy = enemy1.Enemy()
-                    Makoto = party.Makoto()
-                    Yukari = party.Yukari()
-                    Akihiko = party.Akihiko()
-                    Junpei = party.Junpei()
-                    party_members = [Makoto, Yukari, Akihiko, Junpei]
-                    ngsa_ii_win = ngsa_ii_algo.genetic_combat_ngsa_ii(party_members, enemy)
-                    if ngsa_ii_win: wins += 1
-                    else: losses += 1
+                average_turns = 0
+                base_seed = 33
+                start_time = time.time()
+                results = [ngsa_ii_algo.genetic_combat_nsga2(party_members, enemy) for i in range(2)]
+                for result in results:
+                    if result["won"]:
+                        wins += 1
+                        average_turns += result["turns"]
+                    else:
+                        losses += 1
+                print(f"wins: {wins}, losses: {losses}")
+                average_turns = average_turns / wins if wins > 0 else 0
+                average_turns = round(average_turns)
+                print (f"Average turns for NGSA-II algorithm: {average_turns}")
                 win_rate = metrics.calculate_win_rate(wins, losses)
                 print(f"Win rate for NGSA-II algorithm: {win_rate}%")
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                print(f"Time elapsed: {elapsed_time:.2f} seconds")
     
             menu_finished = True
   
@@ -324,3 +332,28 @@ def run_simulation_modified_genetic(seed):
     Junpei = party.Junpei()
     party_members = [Makoto, Yukari, Akihiko, Junpei]
     return modified_genetic_algo.genetic_combat_mod(party_members, enemy)
+
+def run_simulation_ngsa2(seed):
+    random.seed(seed)
+    import genetics.NGSA_ii as ngsa_ii_algo
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    return ngsa_ii_algo.genetic_combat_nsga2(party_members, enemy)
+
+def run_random_simulation(seed):
+    random.seed(seed)
+    import genetics.random as random_algo
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    return random_algo.start_combat_random(party_members, enemy)
+    
+    
+    

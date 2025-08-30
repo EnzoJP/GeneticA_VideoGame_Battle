@@ -16,6 +16,8 @@ def start_combat_random(party_members, enemy):
 
     finished = automatized_combat(party_members, enemy, random_actions)
 
+    print(random_actions)
+
     if finished["won"]:
         print("Combat finished with a win.")
     else:
@@ -30,15 +32,20 @@ def generate_random_actions(actions, num_actions,makoto):
     #one Precious Egg is reserved for the protagonist if he is without sp
 
     random_actions = []
+    random_without_items = []
     items_avaliable = ["Soma", "Precious Egg", "Magic Mirror"]
+    random_without_items = actions[:]
+    random_without_items.remove("use_item")
     #print(f"Items available: {items_avaliable}")
     for i in range(num_actions):
         action = random.choice(actions)
-        if action == "use_item" and items_avaliable: # if there are items available
+        if action == "use_item" and len(items_avaliable) != 0 : # if there are items available
+            print("Using an item...")
             item = random.choice(items_avaliable)
             random_actions.append(item)
             items_avaliable.remove(item)  # avoid using it again
         else:
+            action = random.choice(random_without_items)
             random_actions.append(action)
 
     # if the SP cost of the actions is less than the SP amount
@@ -57,6 +64,8 @@ def generate_random_actions(actions, num_actions,makoto):
         else:
             continue
         
+    
+    print(f"Final action sequence (length {len(random_actions)}): {random_actions}")
     return random_actions
             
 

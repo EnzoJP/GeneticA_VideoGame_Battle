@@ -80,6 +80,7 @@ def  crossover(parent1, parent2,makoto):
 
     # check for duplicate items
     actions = makoto.list_of_actions
+    actions = [act for act in actions if act != "use_item"]
     items = ["Soma", "Precious Egg", "Magic Mirror"]
 
     if child.count("Soma") > 1 or child.count("Precious Egg") > 1 or child.count("Magic Mirror") > 1:
@@ -131,7 +132,7 @@ def mutate(action_sequence,makoto):
     mutation_point = random.randint(0, len(action_sequence) - 1)
     actions = makoto.list_of_actions
     new_action = random.choice(actions)
-    while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror":
+    while new_action == "Soma" or new_action == "Precious Egg" or new_action == "Magic Mirror" or new_action == "use_item":
         new_action = random.choice(actions)
     action_sequence_new = copy.deepcopy(action_sequence)
     action_sequence_new[mutation_point] = new_action

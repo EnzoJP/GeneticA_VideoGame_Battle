@@ -10,7 +10,7 @@ import combat.party as party
 def genetic_combat_mod(party_members, enemy):
     #more adapted version and imporoved
     # crossover two points
-    # cut all solutions once they win to the length + 1 (to compesate randomness of the fight ) of the winning solution
+    # cut all solutions once they win to the length of the winning solution
     #More elitism, drop the worst 10 and replace with the best 10 of the old population,and,
     #we keep the podium of all generations to the final result and compare them at the end, doing a mini tournament winrate test
     
@@ -35,6 +35,9 @@ def genetic_combat_mod(party_members, enemy):
 
 def genetic_algorithm_mod(population,makoto):
 
+    #comon sense, we want to avoid son silly actions in the begining
+    population = comon_sense_start(population, makoto)
+    global_min_index_to_cut = 50
     pop_long = len(population)
     min_index_to_cut = None
     old_population = []
@@ -42,16 +45,24 @@ def genetic_algorithm_mod(population,makoto):
         turns,fit_tup = evaluate2(ind)
         if turns is not None:
             if min_index_to_cut is None or turns < min_index_to_cut:
-                min_index_to_cut = turns
+                if turns <= 15: #avoid too small sequences
+                    min_index_to_cut = 15
+                    global_min_index_to_cut = 15
+                else:
+                    min_index_to_cut = turns
+                    global_min_index_to_cut = turns
         old_population.append(fit_tup)
 
     old_population.sort(key=lambda x: x[1], reverse=True)
-    best_of_all_generations = old_population[:3]  #keep the podium
+    
     jsut_a_test = old_population[:]
     
     # cut and re-evaluate the population if there is a winner
-    if min_index_to_cut is not None:
-        old_population = cut_it_All(old_population, min_index_to_cut + 1, makoto)
+    if global_min_index_to_cut is not None:
+        old_population = cut_it_All(old_population[:], global_min_index_to_cut, makoto)
+    
+    best_of_all_generations = old_population[:3]  #keep the podium
+        
        
 
     for generation in range(30):  # number of generations
@@ -64,26 +75,33 @@ def genetic_algorithm_mod(population,makoto):
 
             if random.random() < 0.10:  # mutation probability
                 child = mutate(child,makoto)
+                child = comon_sense_child(child, makoto)
                 # check if the action sequence is valid in terms of SP cost
                 child = check_sp_cost(child,makoto)
                 new_population.append(evaluate(child))
             else:
+                child = comon_sense_child(child, makoto)
                 child = check_sp_cost(child,makoto)
                 new_population.append(evaluate(child))
         #sort the new population based on fitness and check if there is a winner, if so cut all
         new_population.sort(key=lambda x: x[1], reverse=True)
-        best_of_all_generations = best_of_all_generations + new_population[:3]
 
         for ind in new_population:
             turns,fit_tup = evaluate2(ind[0])
             if turns is not None:
-                if min_index_to_cut is None or turns < min_index_to_cut:
-                    min_index_to_cut = turns
+                if global_min_index_to_cut is None or turns < global_min_index_to_cut:
+                    if turns <= 15: #avoid too small sequences
+                        global_min_index_to_cut = 15
+                    else:
+                        global_min_index_to_cut = turns
 
-        if min_index_to_cut is not None:
-            new_population = cut_it_All(new_population, min_index_to_cut + 1, makoto)
+        if global_min_index_to_cut is not None:
+            new_population = cut_it_All(new_population[:], global_min_index_to_cut, makoto)
+            
         
         new_population.sort(key=lambda x: x[1], reverse=True)
+        best_of_all_generations = best_of_all_generations + new_population[:3] #add the podium of this generation to the best of all generations
+        
 
         #elitism - drop the worst 10 and replace with the best 10 of the old population
         new_population = new_population[:pop_long - 10] + old_population[:10]
@@ -92,7 +110,8 @@ def genetic_algorithm_mod(population,makoto):
     best_of_all_generations = best_of_all_generations + new_population[:3] #add the last generation podium
     final_order = sorted(best_of_all_generations, key=lambda x: x[1], reverse=True)
 
-    # test the 10 best of all generations in a mini tournament to choose the best one
+
+    # test the best of all generations in a mini tournament to choose the best one
     tournament_candidates = final_order[:10]
     tournament_results = []
     for ind, fit in tournament_candidates:
@@ -111,7 +130,9 @@ def genetic_algorithm_mod(population,makoto):
     
     tournament_results.sort(key=lambda x: x[1], reverse=True)
     print("Tournament results:")
-    print(tournament_results)
+    #print(tournament_results)
+    print(final_order)
+    print(f"Global min index to cut: {global_min_index_to_cut}")
 
     #print the fitness for debugging
     for ind, fit in final_order:
@@ -136,7 +157,7 @@ def cut_it_All(population, index, makoto):
     #cut all the action sequences to the index given and re-evaluate them
     new_population = []
     for ind, fit in population:
-        if len(ind) <= index or index <= 9: #avoid too small sequences
+        if len(ind) <= index or index <= 15: #avoid too small sequences
             new_population.append((ind, fit))
         else:
             new_ind = ind[:index]
@@ -160,6 +181,7 @@ def  crossover_two_points(parent1, parent2,makoto):
 
     # check for duplicate items
     actions = makoto.list_of_actions
+    actions = [act for act in actions if act != "use_item"]
     items = ["Soma", "Precious Egg", "Magic Mirror"]
 
     if child.count("Soma") > 1 or child.count("Precious Egg") > 1 or child.count("Magic Mirror") > 1:
@@ -217,3 +239,28 @@ def evaluate(ind):
     #evaluate the individual using the fitness function,avoiding multiple evaluation
     fit = fitnessF.fitness_test_1(ind[:])
     return (ind, fit)
+
+def comon_sense_start(population, makoto):
+    #avoid silly actions in the begining like using items of mana or basic attack aat the start
+    new_population = []
+    for ind in population:
+        new_ind = ind[:]
+        for i in range(10):  # first 10 actions
+            if new_ind[i] == "use_item" or new_ind[i] == "Precious Egg" or new_ind[i] == "basic_attack" or new_ind[i] == "hamaon" or new_ind[i] == "torrent_shot":
+                new_action = random.choice(makoto.list_of_actions)
+                while new_action == "use_item" or new_action == "Precious Egg" or new_action == "basic_attack":
+                    new_action = random.choice(makoto.list_of_actions)
+                new_ind[i] = new_action
+        new_population.append(new_ind)
+    return new_population
+
+def comon_sense_child(child, makoto):
+    #avoid silly actions in the begining like using items of mana or basic attack aat the start
+    new_child = child[:]
+    for i in range(10):  
+        if new_child[i] == "use_item" or new_child[i] == "Precious Egg" or new_child[i] == "basic_attack" or new_child[i] == "hamaon" or new_child[i] == "torrent_shot":
+            new_action = random.choice(makoto.list_of_actions)
+            while new_action == "use_item" or new_action == "Precious Egg" or new_action == "basic_attack":
+                new_action = random.choice(makoto.list_of_actions)
+            new_child[i] = new_action
+    return new_child
