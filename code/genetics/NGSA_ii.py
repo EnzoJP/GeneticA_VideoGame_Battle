@@ -33,7 +33,7 @@ class CombatProblem(ElementwiseProblem):
     def __init__(self, makoto):
         super().__init__(
             n_var=50,              # número de acciones en la secuencia
-            n_obj=2,               # turnos y score
+            n_obj=3,               # objetivos: turns, score, damage_taken
             n_constr=0,
             xl=0,                  # valor mínimo (índice de acción)
             xu=len(ACTION_MAP)-1   # valor máximo (último índice)
@@ -45,33 +45,60 @@ class CombatProblem(ElementwiseProblem):
         indiv_str = [ACTION_MAP_INV[i] for i in x]
 
         # correr tu simulación normal
-        turns, score = fitnessF.fitness_test_2(indiv_str)
+        turns, score = fitnessF.fitness_test_2(indiv_str[:])
+        if turns is None:
+            turns = 50  # penalización por perder
+        damage_taken = fitnessF.minimize_damage_taken1(indiv_str[:])
 
-        out["F"] = [turns, -score]
+        out["F"] = [turns, -score, damage_taken]
 
 class ActionSequenceSampling(Sampling):
     def __init__(self, makoto, actions):
         super().__init__()
         self.makoto = makoto
-        # filtramos "use_item" porque nuestra función ya lo reemplaza por los nombres de items
         self.actions = actions
 
     def _do(self, problem, n_samples, **kwargs):
         pop = []
         for _ in range(n_samples):
-            # 1) generar individuo en STRINGS usando tu función
-            print(self.actions)
-            indiv_int = []
+            # Generar individuo en strings
             indiv_str = generate_random_actions(self.actions, problem.n_var, self.makoto)
-            #indiv_str = check_sp_cost(indiv_str, self.makoto)
-            print(indiv_str)
-            # 2) convertir a INTs para que pymoo lo entienda
-            indiv_int = [ACTION_MAP[a] for a in indiv_str]
-
+            
+            # Asegurar que la secuencia tenga exactamente n_var elementos
+            if len(indiv_str) > problem.n_var:
+                indiv_str = indiv_str[:problem.n_var]  # Truncar si es más largo
+            elif len(indiv_str) < problem.n_var:
+                # Extender si es más corto con acciones aleatorias
+                extra_actions = generate_random_actions(
+                    self.actions, 
+                    problem.n_var - len(indiv_str), 
+                    self.makoto
+                )
+                indiv_str.extend(extra_actions)
+            
+            # Convertir a integers
+            indiv_int = []
+            for a in indiv_str:
+                if a in ACTION_MAP:
+                    indiv_int.append(ACTION_MAP[a])
+                else:
+                    # Manejar acciones no mapeadas (usar básico por defecto)
+                    indiv_int.append(ACTION_MAP["basic_attack"])
+                    print(f"Advertencia: acción '{a}' no encontrada en ACTION_MAP")
+            
             pop.append(indiv_int)
-
-        tree_array = np.array(pop)
-        return tree_array
+        
+        # Asegurar que todos los individuos tengan la misma longitud
+        for i, indiv in enumerate(pop):
+            if len(indiv) != problem.n_var:
+                print(f"Individuo {i} tiene longitud {len(indiv)}, esperada {problem.n_var}")
+                # Ajustar la longitud si es necesario
+                if len(indiv) > problem.n_var:
+                    pop[i] = indiv[:problem.n_var]
+                else:
+                    pop[i] = indiv + [ACTION_MAP["basic_attack"]] * (problem.n_var - len(indiv))
+        
+        return np.array(pop)
 
 
 
@@ -82,26 +109,34 @@ class MyCrossover(Crossover):
 
     def _do(self, problem, X, **kwargs):
         n_matings = X.shape[1]
-        children = []
+        n_offsprings = self.n_offsprings  # Esto debería ser 1 según tu super().__init__(2, 1)
+        
+        # Inicializar array para los hijos con la forma correcta
+        children = np.full((n_offsprings, n_matings, problem.n_var), -1, dtype=int)
+        
         for k in range(n_matings):
-            parent1, parent2 = X[0,k], X[1,k]  # arrays de ints
-
+            parent1, parent2 = X[0, k], X[1, k]
+            
             # 1) convertir a strings
             parent1_str = [ACTION_MAP_INV[i] for i in parent1]
             parent2_str = [ACTION_MAP_INV[i] for i in parent2]
 
-            # 2) aplicar TU crossover (que trabaja con strings)
+            # 2) aplicar TU crossover
             child_str = crossover_two_points(parent1_str, parent2_str, self.makoto)
-
-            # 3) volver a ints
-            print(f"Child after crossover (str): {child_str}")
-            child = np.array([ACTION_MAP[a] for a in child_str])
-
-            children.append(child)
-        children_array = np.array(children)
-        children_array = children_array[np.newaxis, :, :]
-        return children_array
-
+            
+            # Asegurar que el hijo tenga la longitud correcta
+            if len(child_str) != problem.n_var:
+                if len(child_str) > problem.n_var:
+                    child_str = child_str[:problem.n_var]
+                else:
+                    # Extender con acciones básicas si es más corto
+                    child_str.extend(['basic_attack'] * (problem.n_var - len(child_str)))
+            
+            # 3) volver a ints y almacenar
+            child_int = [ACTION_MAP[a] for a in child_str]
+            children[0, k] = child_int  # n_offsprings=1, así que usamos índice 0
+        
+        return children
 
 class MyMutation(Mutation):
     def __init__(self, makoto):

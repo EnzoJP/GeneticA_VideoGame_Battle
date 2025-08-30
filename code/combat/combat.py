@@ -287,7 +287,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [ngsa_ii_algo.genetic_combat_nsga2(party_members, enemy) for i in range(2)]
+                results = [run_simulation_ngsa2(base_seed + i) for i in range(10)]
                 for result in results:
                     if result["won"]:
                         wins += 1
