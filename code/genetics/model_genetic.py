@@ -100,7 +100,7 @@ def  crossover(parent1, parent2,makoto):
                     temporary_items.append(child1[i])
 
         
-        fitness1 = fitnessF.fitness_test_1(child1[:])
+        fitness1 = fitnessF.best_fitness(child1[:])
 
         #do the opposite, keep the last time an item appears and mutate the previous ones
         child2 = copy.deepcopy(child)
@@ -117,7 +117,7 @@ def  crossover(parent1, parent2,makoto):
                     temporary_items.append(child2[i])
 
         
-        fitness2 = fitnessF.fitness_test_1(child2[:])
+        fitness2 = fitnessF.best_fitness(child2[:])
 
         if fitness1 > fitness2:
             return child1
@@ -163,4 +163,4 @@ def check_sp_cost(list_actions, makoto):
 
 def evaluate(ind):
     #evaluate an stores the fitness of an individual,avoiding multiple evaluations
-    return (ind, fitnessF.fitness_test_1(ind[:]))
+    return (ind, fitnessF.best_fitness(ind[:]))

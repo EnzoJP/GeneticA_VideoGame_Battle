@@ -33,7 +33,7 @@ class CombatProblem(ElementwiseProblem):
     def __init__(self, makoto):
         super().__init__(
             n_var=50,              # número de acciones en la secuencia
-            n_obj=3,               # objetivos: turns, score, damage_taken
+            n_obj=2,               # objetivos: turns, score, damage_taken
             n_constr=0,
             xl=0,                  # valor mínimo (índice de acción)
             xu=len(ACTION_MAP)-1   # valor máximo (último índice)
@@ -45,12 +45,11 @@ class CombatProblem(ElementwiseProblem):
         indiv_str = [ACTION_MAP_INV[i] for i in x]
 
         # correr tu simulación normal
-        turns, score = fitnessF.fitness_test_2(indiv_str[:])
-        if turns is None:
-            turns = 50  # penalización por perder
-        damage_taken = fitnessF.minimize_damage_taken1(indiv_str[:])
-
-        out["F"] = [turns, -score, damage_taken]
+        win,damage,deaths,turns = fitnessF.retur_stats(indiv_str[:])
+        if not win:
+            out["F"] = [1000, 1000]
+        else:
+            out["F"] = [deaths, -damage]  # minimizar turns y damage_taken, maximizar score
 
 class ActionSequenceSampling(Sampling):
     def __init__(self, makoto, actions):
@@ -162,7 +161,7 @@ def genetic_combat_nsga2(party_members, enemy):
     problem = CombatProblem(makoto)
 
     algorithm = NSGA2(
-        pop_size=25,
+        pop_size=38,
         sampling=ActionSequenceSampling(makoto,actions),
         crossover=MyCrossover(makoto),
         mutation=MyMutation(makoto),
@@ -172,7 +171,7 @@ def genetic_combat_nsga2(party_members, enemy):
     res = minimize(
         problem,
         algorithm,
-        ('n_gen', 30),   # generaciones
+        ('n_gen', 55),   # generaciones
         verbose=True
     )
     best_solution = res.X[0]
@@ -230,7 +229,7 @@ def  crossover_two_points(parent1, parent2,makoto):
                     temporary_items.append(child1[i])
 
         
-        fitness1 = fitnessF.fitness_test_1(child1[:])
+        fitness1 = fitnessF.best_fitness(child1[:])
 
         #do the opposite, keep the last time an item appears and mutate the previous ones
         child2 = copy.deepcopy(child)
@@ -247,14 +246,17 @@ def  crossover_two_points(parent1, parent2,makoto):
                     temporary_items.append(child2[i])
 
         
-        fitness2 = fitnessF.fitness_test_1(child2[:])
+        fitness2 = fitnessF.best_fitness(child2[:])
 
         if fitness1 > fitness2:
+            child1 = comon_sense_child(child1, makoto)
             return child1
         else:
+            child2 = comon_sense_child(child2, makoto)
             return child2
 
-    else:   
+    else:
+        child = comon_sense_child(child, makoto)
         return child
     
 
@@ -269,3 +271,13 @@ def mutate(action_sequence,makoto):
     action_sequence_new[mutation_point] = new_action
     return action_sequence_new
   
+def comon_sense_child(child, makoto):
+    #avoid silly actions in the begining like using items of mana or basic attack aat the start
+    new_child = child[:]
+    for i in range(10):  
+        if new_child[i] == "use_item" or new_child[i] == "Precious Egg" or new_child[i] == "basic_attack" or new_child[i] == "hamaon" or new_child[i] == "torrent_shot":
+            new_action = random.choice(makoto.list_of_actions)
+            while new_action == "use_item" or new_action == "Precious Egg" or new_action == "basic_attack":
+                new_action = random.choice(makoto.list_of_actions)
+            new_child[i] = new_action
+    return new_child

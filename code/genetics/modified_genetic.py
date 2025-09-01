@@ -144,7 +144,7 @@ def genetic_algorithm_mod(population,makoto):
     
     #final desicion if a draw in the tournament, choose the one with better fitness
     if tournament_results[0][1] == tournament_results[1][1]:
-        if fitnessF.fitness_test_1(tournament_results[0][0][:]) >= fitnessF.fitness_test_1(tournament_results[1][0][:]):
+        if fitnessF.best_fitness(tournament_results[0][0][:]) >= fitnessF.best_fitness(tournament_results[1][0][:]):
             return tournament_results[0][0]
         else:
             return tournament_results[1][0]
@@ -201,7 +201,7 @@ def  crossover_two_points(parent1, parent2,makoto):
                     temporary_items.append(child1[i])
 
         
-        fitness1 = fitnessF.fitness_test_1(child1[:])
+        fitness1 = fitnessF.best_fitness(child1[:])
 
         #do the opposite, keep the last time an item appears and mutate the previous ones
         child2 = copy.deepcopy(child)
@@ -218,7 +218,7 @@ def  crossover_two_points(parent1, parent2,makoto):
                     temporary_items.append(child2[i])
 
         
-        fitness2 = fitnessF.fitness_test_1(child2[:])
+        fitness2 = fitnessF.best_fitness(child2[:])
 
         if fitness1 > fitness2:
             return child1
@@ -231,13 +231,13 @@ def  crossover_two_points(parent1, parent2,makoto):
 
 def evaluate2(ind):
     #evaluate the individual using the fitness function,avoiding multiple evaluation, and using turns
-    turns,fit = fitnessF.fitness_test_2(ind[:])
+    turns,fit = fitnessF.best_fitness_2(ind[:])
     return turns,(ind, fit)
 
 
 def evaluate(ind):
     #evaluate the individual using the fitness function,avoiding multiple evaluation
-    fit = fitnessF.fitness_test_1(ind[:])
+    fit = fitnessF.best_fitness(ind[:])
     return (ind, fit)
 
 def comon_sense_start(population, makoto):

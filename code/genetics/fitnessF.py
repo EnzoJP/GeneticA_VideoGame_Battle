@@ -180,3 +180,100 @@ def fitness_with_weights1(list_of_actions):
     fitness = base_score + turn_score + damage_bonus - death_penalty
     
     return min(1,fitness)
+
+def best_fitness(list_of_actions):
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+
+    stats = automatized_combat(party_members, enemy, list_of_actions)
+
+    # --- 1) Caso perder -> fitness muy bajo
+    if not stats["won"]:
+        # recompensa leve por daño para no ser TODO igual
+        return -1000 + (stats["damage_done"] / enemy.max_HP) * 500 - stats["deaths"] * 50
+
+    # --- 2) Caso ganar -> calcular score compuesto
+    # Normalizaciones (0–1)
+    turn_score   = 1 - (stats["turns"] / 50)         # menos turnos = mejor
+    death_score  = 1 - (stats["deaths"] / 4)         # menos muertes = mejor
+    damage_score = stats["damage_done"] / enemy.max_HP  # cuánto daño total hizo
+    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) # mientras más vida quede, mejor
+
+    # Pesos ajustables
+    W_TURN   = 0.4
+    W_DEATH  = 0.3
+    W_DAMAGE = 0.2
+    W_HP     = 0.1
+
+    score = (
+        10000   # gran bonus fijo por ganar
+        + W_TURN   * turn_score   * 1000
+        + W_DEATH  * death_score  * 1000
+        + W_DAMAGE * damage_score * 1000
+        + W_HP     * hp_bonus     * 1000
+    )
+
+    return score
+
+def best_fitness_2(list_of_actions):
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+
+    stats = automatized_combat(party_members, enemy, list_of_actions)
+
+    # --- 1) Caso perder -> fitness muy bajo
+    if not stats["won"]:
+        # recompensa leve por daño para no ser TODO igual
+        return None,(-1000 + (stats["damage_done"] / enemy.max_HP) * 500 - stats["deaths"] * 50)
+
+    # --- 2) Caso ganar -> calcular score compuesto
+    # Normalizaciones (0–1)
+    turn_score   = 1 - (stats["turns"] / 50)         # menos turnos = mejor
+    death_score  = 1 - (stats["deaths"] / 4)         # menos muertes = mejor
+    damage_score = stats["damage_done"] / enemy.max_HP  # cuánto daño total hizo
+    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) # mientras más vida quede, mejor
+
+    # Pesos ajustables
+    W_TURN   = 0.4
+    W_DEATH  = 0.3
+    W_DAMAGE = 0.2
+    W_HP     = 0.1
+
+    score = (
+        10000   # gran bonus fijo por ganar
+        + W_TURN   * turn_score   * 1000
+        + W_DEATH  * death_score  * 1000
+        + W_DAMAGE * damage_score * 1000
+        + W_HP     * hp_bonus     * 1000
+    )
+
+    return stats["turns"], score
+
+def retur_stats(list_of_actions):
+    enemy = enemy1.Enemy()
+    Makoto = party.Makoto()
+    Yukari = party.Yukari()
+    Akihiko = party.Akihiko()
+    Junpei = party.Junpei()
+    party_members = [Makoto, Yukari, Akihiko, Junpei]
+    stats = automatized_combat(party_members, enemy, list_of_actions)
+    if not stats["won"]:
+        damage = stats["damage_done"]
+        deaths = stats["deaths"]
+        #damage_taken = stats["damage_taken"]
+        turns = stats["turns"]
+        return False,damage,deaths,turns
+    else:
+        damage = stats["damage_done"]
+        deaths = stats["deaths"]
+        #damage_taken = stats["damage_taken"]
+        turns = stats["turns"]
+        return True,damage,deaths,turns
