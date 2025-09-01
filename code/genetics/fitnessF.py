@@ -191,26 +191,26 @@ def best_fitness(list_of_actions):
 
     stats = automatized_combat(party_members, enemy, list_of_actions)
 
-    # --- 1) Caso perder -> fitness muy bajo
+    # --- 1) if loose -> fitness very low
     if not stats["won"]:
-        # recompensa leve por daño para no ser TODO igual
+
         return -1000 + (stats["damage_done"] / enemy.max_HP) * 500 - stats["deaths"] * 50
 
-    # --- 2) Caso ganar -> calcular score compuesto
-    # Normalizaciones (0–1)
-    turn_score   = 1 - (stats["turns"] / 50)         # menos turnos = mejor
-    death_score  = 1 - (stats["deaths"] / 4)         # menos muertes = mejor
-    damage_score = stats["damage_done"] / enemy.max_HP  # cuánto daño total hizo
-    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) # mientras más vida quede, mejor
+    # --- 2) if won -> 
+    # calculate score 
+    turn_score   = 1 - (stats["turns"] / 50)         #
+    death_score  = 1 - (stats["deaths"] / 4)         
+    damage_score = stats["damage_done"] / enemy.max_HP  
+    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) 
 
-    # Pesos ajustables
+    # wheights
     W_TURN   = 0.4
     W_DEATH  = 0.3
     W_DAMAGE = 0.2
     W_HP     = 0.1
 
     score = (
-        10000   # gran bonus fijo por ganar
+        10000   # big bonus for winning
         + W_TURN   * turn_score   * 1000
         + W_DEATH  * death_score  * 1000
         + W_DAMAGE * damage_score * 1000
@@ -229,17 +229,16 @@ def best_fitness_2(list_of_actions):
 
     stats = automatized_combat(party_members, enemy, list_of_actions)
 
-    # --- 1) Caso perder -> fitness muy bajo
+    
     if not stats["won"]:
-        # recompensa leve por daño para no ser TODO igual
+
         return None,(-1000 + (stats["damage_done"] / enemy.max_HP) * 500 - stats["deaths"] * 50)
 
-    # --- 2) Caso ganar -> calcular score compuesto
-    # Normalizaciones (0–1)
-    turn_score   = 1 - (stats["turns"] / 50)         # menos turnos = mejor
-    death_score  = 1 - (stats["deaths"] / 4)         # menos muertes = mejor
-    damage_score = stats["damage_done"] / enemy.max_HP  # cuánto daño total hizo
-    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) # mientras más vida quede, mejor
+
+    turn_score   = 1 - (stats["turns"] / 50)         
+    death_score  = 1 - (stats["deaths"] / 4)         
+    damage_score = stats["damage_done"] / enemy.max_HP  
+    hp_bonus     = (1 - stats["damage_taken"] / (4*Makoto.max_HP)) 
 
     # Pesos ajustables
     W_TURN   = 0.4
@@ -248,7 +247,7 @@ def best_fitness_2(list_of_actions):
     W_HP     = 0.1
 
     score = (
-        10000   # gran bonus fijo por ganar
+        10000   
         + W_TURN   * turn_score   * 1000
         + W_DEATH  * death_score  * 1000
         + W_DAMAGE * damage_score * 1000

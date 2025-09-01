@@ -32,24 +32,24 @@ ACTION_MAP_INV = {v: k for k, v in ACTION_MAP.items()}
 class CombatProblem(ElementwiseProblem):
     def __init__(self, makoto):
         super().__init__(
-            n_var=50,              # número de acciones en la secuencia
-            n_obj=2,               # objetivos: turns, score, damage_taken
+            n_var=50,              # secuence length
+            n_obj=2,               # objetives death, -damage
             n_constr=0,
-            xl=0,                  # valor mínimo (índice de acción)
-            xu=len(ACTION_MAP)-1   # valor máximo (último índice)
+            xl=0,                  # min index
+            xu=len(ACTION_MAP)-1   # max index
         )
         self.makoto = makoto
 
     def _evaluate(self, x, out, *args, **kwargs):
-        # convertir individuo a STRINGS
+        # convert to strings
         indiv_str = [ACTION_MAP_INV[i] for i in x]
 
-        # correr tu simulación normal
+        
         win,damage,deaths,turns = fitnessF.retur_stats(indiv_str[:])
         if not win:
             out["F"] = [1000, 1000]
         else:
-            out["F"] = [deaths, -damage]  # minimizar turns y damage_taken, maximizar score
+            out["F"] = [deaths, -damage]  # minimize deaths, maximize damage
 
 class ActionSequenceSampling(Sampling):
     def __init__(self, makoto, actions):
@@ -60,14 +60,14 @@ class ActionSequenceSampling(Sampling):
     def _do(self, problem, n_samples, **kwargs):
         pop = []
         for _ in range(n_samples):
-            # Generar individuo en strings
+            # Generate string sequence
             indiv_str = generate_random_actions(self.actions, problem.n_var, self.makoto)
             
-            # Asegurar que la secuencia tenga exactamente n_var elementos
+            # make sure the length is correct
             if len(indiv_str) > problem.n_var:
-                indiv_str = indiv_str[:problem.n_var]  # Truncar si es más largo
+                indiv_str = indiv_str[:problem.n_var]  # cut if too long
             elif len(indiv_str) < problem.n_var:
-                # Extender si es más corto con acciones aleatorias
+                # just in case if too short
                 extra_actions = generate_random_actions(
                     self.actions, 
                     problem.n_var - len(indiv_str), 
@@ -75,23 +75,23 @@ class ActionSequenceSampling(Sampling):
                 )
                 indiv_str.extend(extra_actions)
             
-            # Convertir a integers
+            # Convert to int
             indiv_int = []
             for a in indiv_str:
                 if a in ACTION_MAP:
                     indiv_int.append(ACTION_MAP[a])
                 else:
-                    # Manejar acciones no mapeadas (usar básico por defecto)
+                    # just if action not found, should not happen
                     indiv_int.append(ACTION_MAP["basic_attack"])
                     print(f"Advertencia: acción '{a}' no encontrada en ACTION_MAP")
             
             pop.append(indiv_int)
         
-        # Asegurar que todos los individuos tengan la misma longitud
+        # make sure all individuals have the correct length
         for i, indiv in enumerate(pop):
             if len(indiv) != problem.n_var:
                 print(f"Individuo {i} tiene longitud {len(indiv)}, esperada {problem.n_var}")
-                # Ajustar la longitud si es necesario
+                # Ajust
                 if len(indiv) > problem.n_var:
                     pop[i] = indiv[:problem.n_var]
                 else:
@@ -108,22 +108,22 @@ class MyCrossover(Crossover):
 
     def _do(self, problem, X, **kwargs):
         n_matings = X.shape[1]
-        n_offsprings = self.n_offsprings  # Esto debería ser 1 según tu super().__init__(2, 1)
+        n_offsprings = self.n_offsprings  # number of children
         
-        # Inicializar array para los hijos con la forma correcta
+        # prepare array for children (1 child per generation)
         children = np.full((n_offsprings, n_matings, problem.n_var), -1, dtype=int)
         
         for k in range(n_matings):
             parent1, parent2 = X[0, k], X[1, k]
             
-            # 1) convertir a strings
+            
             parent1_str = [ACTION_MAP_INV[i] for i in parent1]
             parent2_str = [ACTION_MAP_INV[i] for i in parent2]
 
-            # 2) aplicar TU crossover
+            
             child_str = crossover_two_points(parent1_str, parent2_str, self.makoto)
             
-            # Asegurar que el hijo tenga la longitud correcta
+            
             if len(child_str) != problem.n_var:
                 if len(child_str) > problem.n_var:
                     child_str = child_str[:problem.n_var]
@@ -131,9 +131,9 @@ class MyCrossover(Crossover):
                     # Extender con acciones básicas si es más corto
                     child_str.extend(['basic_attack'] * (problem.n_var - len(child_str)))
             
-            # 3) volver a ints y almacenar
+            
             child_int = [ACTION_MAP[a] for a in child_str]
-            children[0, k] = child_int  # n_offsprings=1, así que usamos índice 0
+            children[0, k] = child_int  
         
         return children
 
@@ -144,13 +144,13 @@ class MyMutation(Mutation):
 
     def _do(self, problem, X, **kwargs):
         for i in range(len(X)):
-            # 1) convertir individuo a strings
+            
             indiv_str = [ACTION_MAP_INV[j] for j in X[i]]
 
-            # 2) mutar con tu función normal
+            
             mutated_str = mutate(indiv_str, self.makoto)
 
-            # 3) volver a ints para devolver a pymoo
+            
             X[i] = [ACTION_MAP[a] for a in mutated_str]
         return X
 
@@ -176,12 +176,12 @@ def genetic_combat_nsga2(party_members, enemy):
     )
     best_solution = res.X[0]
 
-    # mostrar resultados
+    
     print("Best solutions:")
-    print(res.X)   # acciones
-    print(res.F)   # [turns, -score]
+    print(res.X)   
+    print(res.F)   
 
-    # convertir la mejor solución a strings
+    
     best_actions = [ACTION_MAP_INV[i] for i in best_solution]
     print(f"Best action sequence: {best_actions}")
     result = automatized_combat(party_members, enemy, best_actions)
