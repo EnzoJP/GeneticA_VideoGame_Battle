@@ -262,7 +262,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation_modified_genetic(base_seed + i) for i in range(30)]
+                results = [run_simulation_modified_genetic(base_seed + i) for i in range(1)]
 
                 for result in results:
                     if result["won"]:
@@ -287,7 +287,7 @@ def simulate_combat(party_members, enemy):
                 average_turns = 0
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation_ngsa2(base_seed + i) for i in range(100)]
+                results = [run_simulation_ngsa2(base_seed + i) for i in range(10)]
                 for result in results:
                     if result["won"]:
                         wins += 1
@@ -342,7 +342,7 @@ def run_simulation_ngsa2(seed):
     Akihiko = party.Akihiko()
     Junpei = party.Junpei()
     party_members = [Makoto, Yukari, Akihiko, Junpei]
-    return ngsa_ii_algo.genetic_combat_nsga2(party_members, enemy)
+    return ngsa_ii_algo.genetic_combat_nsga2(party_members, enemy,seed)
 
 def run_random_simulation(seed):
     random.seed(seed)
