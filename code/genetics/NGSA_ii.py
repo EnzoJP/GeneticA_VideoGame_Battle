@@ -179,7 +179,8 @@ def genetic_combat_nsga2(party_members, enemy,seed):
     )
     best_solution = res.X[0]
 
-    
+    #Plot
+    """
     print("Best solutions:")
     print(res.X)   
     print(res.F)   
@@ -228,7 +229,7 @@ def genetic_combat_nsga2(party_members, enemy,seed):
     plt.grid(True, alpha=0.3)
     plt.legend()
     #plt.show()   
-    
+    """
     best_actions = [ACTION_MAP_INV[i] for i in best_solution]
     print(f"Best action sequence: {best_actions}")
     result = automatized_combat(party_members, enemy, best_actions)

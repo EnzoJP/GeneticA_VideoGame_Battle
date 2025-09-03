@@ -4,6 +4,9 @@ import random
 import combat.metrics_and_plots as metrics
 from concurrent.futures import ThreadPoolExecutor
 import time
+import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 def effects_turns(party_members, enemy):
     # Party buffs
@@ -163,8 +166,6 @@ def start_combat(party_members, enemy):
     if protagonist.HP <= 0:
         print(f"{protagonist.name} has fallen! Game Over.")
 
-    
-
 
 def show_status(party_members, enemy):
     print("Party Status:")
@@ -180,8 +181,88 @@ def show_member_actions(member):
     for action in member.list_of_actions:
         print(member.list_of_actions.index(action) + 1, action)
 
-
+def print_results(name, losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time):
+    # Show results -> stats
+    print(f"\n=== {name} Results ===")
+    print(f"Wins: {wins}, Losses: {losses}")
+    print(f"Win Rate: {win_rate:.2f}%")
+    print(f"Average Turns: {avg_turns:.2f} ± {std_turns:.2f}")
+    print(f"Average Damage Done: {avg_damage_done:.2f} ± {std_damage_done:.2f}")
+    print(f"Average Damage Taken: {avg_damage_taken:.2f} ± {std_damage_taken:.2f}")
+    print(f"Average Deaths: {avg_deaths:.2f} ± {std_deaths:.2f}")
+    print(f"Total Time: {elapsed_time:.4f} seconds")
+    print(f"Average Time per Simulation: {elapsed_time/50:.6f} seconds")
     
+# Compare algorithms and make plots
+def compare_all_algorithms(n_simulations=10, save_plots=False):
+    algorithms = {
+        'Random': run_random_simulation,
+        'Model Genetic': run_simulation,
+        'Modified Genetic': run_simulation_modified_genetic,
+        'NSGA-II': run_simulation_ngsa2
+    }
+    results = {}
+    
+    for algo_name, algo_func in algorithms.items():
+        print(f"\n=== Ejecutando {algo_name} ===")
+        
+        wins = 0
+        turns_list = []
+        damage_done_list = []
+        damage_taken_list = []
+        deaths_list = []
+        base_seed = 33
+        start_time = time.time()
+        
+        for i in range(n_simulations):
+            result = algo_func(base_seed + i)
+            
+            if result["won"]:
+                wins += 1
+            turns_list.append(result["turns"])
+            damage_done_list.append(result["damage_done"])
+            damage_taken_list.append(result["damage_taken"])
+            deaths_list.append(result["deaths"])
+        
+        win_rate = metrics.calculate_win_rate(wins, n_simulations - wins)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+
+        # Calculate stats
+        avg_turns = np.mean(turns_list)
+        std_turns = np.std(turns_list)
+        avg_damage_done = np.mean(damage_done_list)
+        std_damage_done = np.std(damage_done_list)
+        avg_damage_taken = np.mean(damage_taken_list)
+        std_damage_taken = np.std(damage_taken_list)
+        avg_deaths = np.mean(deaths_list)
+        std_deaths = np.std(deaths_list)
+
+        # Show results
+        print_results(algo_name, n_simulations - wins, wins, win_rate, avg_turns, std_turns, 
+                     avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, 
+                     avg_deaths, std_deaths, elapsed_time)
+
+        # Save results for plots
+        results[algo_name] = {
+            'turns': turns_list,
+            'damage_done': damage_done_list,
+            'damage_taken': damage_taken_list,
+            'deaths': deaths_list,
+            'win_rate': win_rate
+        }
+    # Make directory for plots if it doesn't exist
+    plot_dir = "comparison_plots"
+    if save_plots and not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
+    # Generate comparative plots
+    if save_plots:
+        metrics.create_all_comparative_plots(results, plot_dir)
+        print(f"\nGráficos guardados en el directorio: {plot_dir}")
+    else:
+        metrics.create_all_comparative_plots(results)
+    return results
+
 
 def simulate_combat(party_members, enemy):
     print("Simulating combat...")
@@ -193,19 +274,23 @@ def simulate_combat(party_members, enemy):
         print("2. model genetic")
         print("3. modified genetic")
         print("4. NGSA-II")
+        print("5. Compare all algorithms")
 
-        choice = input("Enter your choice (1-4): ")
+        choice = input("Enter your choice (1-5): ")
 
-        if choice in ['1', '2', '3', '4']:
+        if choice in ['1', '2', '3', '4','5']:
             if choice == '1':
                 import genetics.random as random_algo
                 wins = 0
                 losses = 0
-                average_turns = 0
+                turns_list = []
+                damage_done_list = []
+                damage_taken_list = []
+                deaths_list = []
                 base_seed = 33
                 start_time = time.time()
-                results = []
-                for i in range(50):
+                
+                for i in range(100):
                     random.seed(base_seed + i)
                     enemy = enemy1.Enemy()
                     Makoto = party.Makoto()
@@ -214,98 +299,153 @@ def simulate_combat(party_members, enemy):
                     Junpei = party.Junpei()
                     party_members = [Makoto, Yukari, Akihiko, Junpei]
                     result = random_algo.start_combat_random(party_members, enemy)
-                    results.append(result)
-                for result in results:
+                    
                     if result["won"]:
                         wins += 1
-                        average_turns += result["turns"]
                     else:
                         losses += 1
-                print(f"wins: {wins}, losses: {losses}")
+                    turns_list.append(result["turns"])
+                    damage_done_list.append(result["damage_done"])
+                    damage_taken_list.append(result["damage_taken"])
+                    deaths_list.append(result["deaths"])
+                
                 win_rate = metrics.calculate_win_rate(wins, losses)
-                average_turns = average_turns / wins if wins > 0 else 0
-                average_turns = round(average_turns)
-                print (f"Average turns for random algorithm: {average_turns}")
-                print  (f"Win rate for random algorithm: {win_rate}%")
                 end_time = time.time()
                 elapsed_time = end_time - start_time
-                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
+                # Calculate stats
+                avg_turns = np.mean(turns_list)
+                std_turns = np.std(turns_list)
+                avg_damage_done = np.mean(damage_done_list)
+                std_damage_done = np.std(damage_done_list)
+                avg_damage_taken = np.mean(damage_taken_list)
+                std_damage_taken = np.std(damage_taken_list)
+                avg_deaths = np.mean(deaths_list)
+                std_deaths = np.std(deaths_list)
+                print_results("Random Algorithm", losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time)
+                
+                
             elif choice == '2':
                 wins = 0
                 losses = 0
-                average_turns = 0
+                turns_list = []
+                damage_done_list = []
+                damage_taken_list = []
+                deaths_list = []
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation(base_seed + i) for i in range(50)]
-
-                for result in results:
+                
+                for i in range(100):
+                    result = run_simulation(base_seed + i)
+                    
                     if result["won"]:
                         wins += 1
-                        average_turns += result["turns"]
                     else:
                         losses += 1
-                print(f"wins: {wins}, losses: {losses}")
-                average_turns = average_turns / wins if wins > 0 else 0
-                average_turns = round(average_turns)
-                print (f"Average turns for model genetic algorithm: {average_turns}")
+                    turns_list.append(result["turns"])
+                    damage_done_list.append(result["damage_done"])
+                    damage_taken_list.append(result["damage_taken"])
+                    deaths_list.append(result["deaths"])
+                
                 win_rate = metrics.calculate_win_rate(wins, losses)
-                print(f"Win rate for model genetic algorithm: {win_rate}%")
                 end_time = time.time()
                 elapsed_time = end_time - start_time
-                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
+                # Calculate stats
+                avg_turns = np.mean(turns_list)
+                std_turns = np.std(turns_list)
+                avg_damage_done = np.mean(damage_done_list)
+                std_damage_done = np.std(damage_done_list)
+                avg_damage_taken = np.mean(damage_taken_list)
+                std_damage_taken = np.std(damage_taken_list)
+                avg_deaths = np.mean(deaths_list)
+                std_deaths = np.std(deaths_list)
+
+                print_results("Model Genetic Algorithm", losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time)
+                
             elif choice == '3':
-                import genetics.modified_genetic as modified_genetic
                 wins = 0
                 losses = 0
-                average_turns = 0
+                turns_list = []
+                damage_done_list = []
+                damage_taken_list = []
+                deaths_list = []
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation_modified_genetic(base_seed + i) for i in range(1)]
-
-                for result in results:
+                
+                for i in range(100):
+                    result = run_simulation_modified_genetic(base_seed + i)
+                    
                     if result["won"]:
                         wins += 1
-                        average_turns += result["turns"]
                     else:
                         losses += 1
-                print(f"wins: {wins}, losses: {losses}")
-                average_turns = average_turns / wins if wins > 0 else 0
-                average_turns = round(average_turns)
-                print (f"Average turns for modified genetic algorithm: {average_turns}")
+                    turns_list.append(result["turns"])
+                    damage_done_list.append(result["damage_done"])
+                    damage_taken_list.append(result["damage_taken"])
+                    deaths_list.append(result["deaths"])
+                
                 win_rate = metrics.calculate_win_rate(wins, losses)
-                print(f"Win rate for modified genetic algorithm: {win_rate}%")
                 end_time = time.time()
                 elapsed_time = end_time - start_time
-                print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
+                # Calculate stats
+                avg_turns = np.mean(turns_list)
+                std_turns = np.std(turns_list)
+                avg_damage_done = np.mean(damage_done_list)
+                std_damage_done = np.std(damage_done_list)
+                avg_damage_taken = np.mean(damage_taken_list)
+                std_damage_taken = np.std(damage_taken_list)
+                avg_deaths = np.mean(deaths_list)
+                std_deaths = np.std(deaths_list)
+
+                print_results("Modified Genetic Algorithm", losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time)
+                
             elif choice == '4':
-                import genetics.NGSA_ii as ngsa_ii_algo
                 wins = 0
                 losses = 0
-                average_turns = 0
+                turns_list = []
+                damage_done_list = []
+                damage_taken_list = []
+                deaths_list = []
                 base_seed = 33
                 start_time = time.time()
-                results = [run_simulation_ngsa2(base_seed + i) for i in range(10)]
-                for result in results:
+                
+                for i in range(100):
+                    result = run_simulation_ngsa2(base_seed + i)
+                    
                     if result["won"]:
                         wins += 1
-                        average_turns += result["turns"]
                     else:
                         losses += 1
-                print(f"wins: {wins}, losses: {losses}")
-                average_turns = average_turns / wins if wins > 0 else 0
-                average_turns = round(average_turns)
-                print (f"Average turns for NGSA-II algorithm: {average_turns}")
+                    turns_list.append(result["turns"])
+                    damage_done_list.append(result["damage_done"])
+                    damage_taken_list.append(result["damage_taken"])
+                    deaths_list.append(result["deaths"])
+                
                 win_rate = metrics.calculate_win_rate(wins, losses)
-                print(f"Win rate for NGSA-II algorithm: {win_rate}%")
                 end_time = time.time()
                 elapsed_time = end_time - start_time
-                print(f"Time elapsed: {elapsed_time:.2f} seconds")
-    
+                
+                # Calculate stats
+                avg_turns = np.mean(turns_list)
+                std_turns = np.std(turns_list)
+                avg_damage_done = np.mean(damage_done_list)
+                std_damage_done = np.std(damage_done_list)
+                avg_damage_taken = np.mean(damage_taken_list)
+                std_damage_taken = np.std(damage_taken_list)
+                avg_deaths = np.mean(deaths_list)
+                std_deaths = np.std(deaths_list)
+
+                print_results("NSGA-II Algorithm", losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time)
+            
             menu_finished = True
-  
+        if choice == '5':
+            # Compare all algorithms
+            save_plots = input("¿Guardar gráficos? (y/n): ").lower() == 'y'
+            n_simulations = int(input("Número de simulaciones por algoritmo: ") or "10")
+            compare_all_algorithms(n_simulations, save_plots)
+            menu_finished = True
         else:
             print("Invalid choice. Please try again.")
         
