@@ -205,7 +205,7 @@ def best_fitness(list_of_actions):
 
     # wheights
     W_TURN   = 0.4
-    W_DEATH  = 0.3
+    W_DEATH  = 0.99
     W_DAMAGE = 0.2
     W_HP     = 0.1
 
@@ -242,7 +242,7 @@ def best_fitness_2(list_of_actions):
 
     # Pesos ajustables
     W_TURN   = 0.4
-    W_DEATH  = 0.3
+    W_DEATH  = 0.99
     W_DAMAGE = 0.2
     W_HP     = 0.1
 

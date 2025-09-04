@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
+#import seaborn as sns
 from matplotlib import rcParams
 
 # Configurar estilo de gráficos

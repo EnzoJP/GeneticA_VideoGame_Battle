@@ -440,12 +440,12 @@ def simulate_combat(party_members, enemy):
                 print_results("NSGA-II Algorithm", losses, wins, win_rate, avg_turns, std_turns, avg_damage_done, std_damage_done, avg_damage_taken, std_damage_taken, avg_deaths, std_deaths, elapsed_time)
             
             menu_finished = True
-        if choice == '5':
-            # Compare all algorithms
-            save_plots = input("¿Guardar gráficos? (y/n): ").lower() == 'y'
-            n_simulations = int(input("Número de simulaciones por algoritmo: ") or "10")
-            compare_all_algorithms(n_simulations, save_plots)
-            menu_finished = True
+            if choice == '5':
+                # Compare all algorithms
+                save_plots = input("¿Guardar gráficos? (y/n): ").lower() == 'y'
+                n_simulations = int(input("Número de simulaciones por algoritmo: ") or "10")
+                compare_all_algorithms(n_simulations, save_plots)
+                menu_finished = True
         else:
             print("Invalid choice. Please try again.")
         
