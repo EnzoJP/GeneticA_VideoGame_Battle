@@ -231,7 +231,7 @@ def  crossover_two_points(parent1, parent2,makoto):
 
 def evaluate2(ind):
     #evaluate the individual using the fitness function,avoiding multiple evaluation, and using turns
-    turns,fit = fitnessF.best_fitness_2(ind[:])
+    turns,fit = fitnessF.best_fitness(ind[:])
     return turns,(ind, fit)
 
 

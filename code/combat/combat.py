@@ -208,6 +208,7 @@ def compare_all_algorithms(n_simulations=10, save_plots=False):
         
         wins = 0
         turns_list = []
+        turns_won_list = []  # Nueva lista para turnos de partidas ganadas
         damage_done_list = []
         damage_taken_list = []
         deaths_list = []
@@ -219,6 +220,7 @@ def compare_all_algorithms(n_simulations=10, save_plots=False):
             
             if result["won"]:
                 wins += 1
+                turns_won_list.append(result["turns"])  # Solo agregar si ganó
             turns_list.append(result["turns"])
             damage_done_list.append(result["damage_done"])
             damage_taken_list.append(result["damage_taken"])
@@ -246,21 +248,25 @@ def compare_all_algorithms(n_simulations=10, save_plots=False):
         # Save results for plots
         results[algo_name] = {
             'turns': turns_list,
+            'turns_won': turns_won_list,  # Nuevo campo para turnos de partidas ganadas
             'damage_done': damage_done_list,
             'damage_taken': damage_taken_list,
             'deaths': deaths_list,
             'win_rate': win_rate
         }
+    
     # Make directory for plots if it doesn't exist
     plot_dir = "comparison_plots"
     if save_plots and not os.path.exists(plot_dir):
         os.makedirs(plot_dir)
+    
     # Generate comparative plots
     if save_plots:
         metrics.create_all_comparative_plots(results, plot_dir)
         print(f"\nGráficos guardados en el directorio: {plot_dir}")
     else:
         metrics.create_all_comparative_plots(results)
+    
     return results
 
 

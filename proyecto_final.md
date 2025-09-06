@@ -36,7 +36,7 @@
 
 ## Introducción
 
-Persona 3 es un videojuego de rol lanzado en 2006 para la consola PlayStation 2. En este juego, el jugador controla a un grupo de estudiantes que se enfrentan contra criaturas conocidas como sombras en combates por turnos. En estos combates, el jugador debe elegir las acciones de sus personajes, como atacar, usar habilidades especiales, defenderse, usar ítems diversos, etc. Además, el jugador debe tener en cuenta las debilidades y resistencias de los enemigos, ya que algunos enemigos son débiles a ciertos tipos de ataques y resistentes a otros.
+Persona 3 es un videojuego de rol japonés por turnos (o sus siglas JRPG) desarrollado por Atlus en el año 2006 para la consola PlayStation 2. En este juego, el jugador controla a un grupo de estudiantes que se enfrentan contra criaturas conocidas como "sombras" en combates por turnos. En estos combates, el jugador debe elegir las acciones de sus personajes, como atacar, usar habilidades especiales, usar ítems diversos, etc. Además, el jugador debe tener en cuenta las debilidades y resistencias de los enemigos, ya que algunos enemigos son débiles a ciertos tipos de ataques y resistentes a otros.
 
 El enemigo que se eligió para realizar el proyecto es **Sleeping Table**, un enemigo que aparece en el piso 135 de la torre de Tartarus, la cual es una mazmorra que el jugador debe explorar. Este es un enemigo que tiene una alta resistencia a la mayoría de los ataques y no tiene debilidades, por lo que es considerado un *jefe* muy difícil.
 
@@ -50,35 +50,145 @@ Finalmente, el presente informe se encuentra dividido en diferentes secciones: e
 
 ## Descripción del juego
 
+Persona 3 es un videojuego de rol japonés por turnos (o sus siglas JRPG). En un RPG por turnos, el combate funciona de una manera parecida a un juego de mesa de estrategia: los participantes actúan por turnos. El jugador tiene un tiempo para decidir qué acción realizará su personaje (atacar, defenderse, usar un objeto, lanzar un hechizo, etc.), y luego el enemigo responde en su propio turno. Esto continúa hasta que uno de los bandos es derrotado.
+El sistema de combate de Persona 3 se basa en este formato. El jugador controla a un personaje que pertenece a un grupo, y estos enfrentan a diferentes enemigos. Cada personaje puede usar ataques físicos, usar [ítems](#ítems-disponibles) o invocar “Personas”, entidades o manifestaciones de sus "yo" interior que representan sus habilidades mágicas o espirituales, para realizar otro tipo de habilidades. El combate gira en torno a identificar y aprovechar las debilidades del enemigo (por ejemplo, un enemigo puede ser débil al fuego, pero resistente al hielo), ya que de esta forma este recibirá más daño. 
+
 ### Mecánicas del juego
 
-----Modificar----  --hablar de mejor de las probabilidades, etc todo lo de mecanicas del juego--
+* **HP (Health Points)**: representan la vida del personaje. Si bajan a cero, el personaje queda incapacitado.
+* **SP (Skill Points)**: son equivalentes al “maná” en otros juegos; sirven para usar habilidades especiales (hechizos, curaciones, técnicas avanzadas) las cuales consumen SP, por lo que es importante gestionarlos adecuadamente.
+* **Ataques físicos y mágicos**: cada personaje puede realizar ataques físicos o usar habilidades mágicas a través de su *Persona*, además de poder hacer ataques básicos físicos que no consumen nada.
+* **Debilidades y resistencias**: cada enemigo o personaje tiene afinidades elementales. Por ejemplo, algunos pueden ser débiles al fuego pero resistentes al hielo.
 
-Los combates en la saga "Persona" son por turnos, es decir, el jugador y los enemigos se turnan para realizar determinadas acciones. Las acciones, tanto del enemigo como las propias, muchas veces se ven afectadas por distintas probabilidades, por ejemplo, el enemigo puede esquivar el ataque con una *probabilidad p*,probabilidad de daño crítico, etc.
+  * *Débil*: el que es débil a un elemento, recibe daño multiplicado de ese mismo.
+  * *Resistente*: recibe menos daño.
+  * *Bloquea*: el ataque no surte efecto y no recibirá daño en absoluto.
+  * *Absorbe*: en lugar de recibir daño, recuperará una cantidad de HP (generalmente el mismo valor que el daño que habría recibido o una menor cantidad).
+  * *Repele*: devuelve parte del ataque al atacante (menos para los ataques de tipo "Almighty" o nuclear).
 
-En el caso de Persona 3, el jugador controla a un solo personaje y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. Este es un grupo de 4 personajes, cada uno con habilidades y características únicas, esto mediante el uso de "personas", seres invocados por el personaje que poseen habilidades especiales y estadísticas, además de debilidades o resistencias a ciertos tipos de ataques (Por ejemplo, un persona puede ser débil al elemento fuego y resistir el elemento hielo).
+En *Persona 3* existen 9 tipos de daño principales: fuego, hielo, electricidad, viento, luz, oscuridad, físico perforante, físico cortante y físico de golpe. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc).
 
-En el combate, el jugador debe elegir las acciones de sus personajes, las cuales son: atacar, habilidades (dependiendo el "persona" equipado) y usar ítems .
+* **Probabilidades y azar**: el combate no es determinista, sino que cada acción tiene una chance de éxito o fallo:
+  - Un ataque, ya sea físico o mágico, puede fallar o ser esquivado.
+  - Algunos ataques infligen estados alterados (miedo, sueño, parálisis, etc.) con una probabilidad determinada.
+  - Existen “críticos” (golpes especialmente fuertes) que dependen de la suerte.
 
-En este juego, hay 9 tipos de ataques: Fuego, Hielo, Electricidad, Viento, Luz, Oscuridad, Físico Perforante, Físico Golpe y Físico Cortante. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc). Además, cada ataque tiene un multiplicador de daño dependiendo de la debilidad o resistencia del enemigo. Por ejemplo, si un enemigo es débil al fuego, un ataque de fuego le hará más daño que uno normal.
+Esto significa que cada batalla tiene un componente de incertidumbre, y la estrategia debe adaptarse a esas probabilidades.
+
+Los personajes y enemigos tienen estadísticas que afectan estas probabilidades, como la precisión, la evasión, la resistencia a estados alterados, etc. Por ejemplo, un personaje con alta precisión tendrá más chances de acertar sus ataques, mientras que un enemigo con alta evasión será más difícil de golpear (porque esquiva más seguido). Estas probabilidades pueden modificarse durante el combate mediante habilidades especiales, ítems o efectos de estado.
+
+En el caso de Persona 3, el jugador controla a un solo personaje y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. En nuestra implementación, le dejamos ciertas tácticas por defecto a los personajes no controlables.
 
 ### Personajes
+El grupo de personajes o "party" está compuesto por 4 personajes:
 
-- Listar cada uno de los personajes, sus habilidades,características y tacticas.
+- Makoto Yuki: El protagonista, un personaje equilibrado con habilidades de ataque y soporte. Es el personaje controlable por el jugador, por lo que sus tácticas son decididas por el algoritmo.
+    - Estadísticas:
+        - HP: 366
+        - SP: 246
+        - Defensa: 24
+        - Ataque: 20
+        - Probabilidad de crítico: 15%
+        - Resiste: Fuego
+    - Habilidades:
+        - Ataque básico: Inflinge daño físico cortante leve. Sin costo.
+        - Recarm: Revive a un aliado caído con un 50% de su HP. Cuesta 20 SP.
+        - Mediarama: Cura moderadamente a todos los aliados. Cuesta 16 SP.
+        - Rakunda: Le sube la defensa a un aliado a elección. Cuesta 6 SP.
+        - Bufula: Inflinge daño moderado de hielo a un enemigo con 10% de probabilidad de congelarlo. Cuesta 8 SP.
+        - Torrent Shot: Inflinge daño físico perforante leve a un enemigo. Cuesta el 10% del HP actual del usuario.
+        - Hamaon: Ataque de tipo "luz" que mata instantáneamente a un enemigo con un 40% de probabilidad. Cuesta 12 SP.
+
+- Yukari Takeba: Especialista en ataques de viento y habilidades de curación. Su táctica es la siguiente: prioriza revivir a los aliados caídos, si están todos en el grupo vivos entonces prioriza curar. Si todos los aliados tienen más del 70% de su HP, entonces verifica que no hayan compañeros con estados alterados (pánico, miedo o angustia). Si no los hay, entonces ataca con ataques de viento o con su ataque básico.
+    - Estadísticas:
+        - HP: 287
+        - SP: 285
+        - Defensa: 24
+        - Ataque: 18
+        - Probabilidad de crítico: 10%
+        - Bloquea: Viento
+        - Debilidad: Electricidad
+    - Habilidades:
+        - Ataque básico: Inflinge daño físico perforante leve. Sin costo.
+        - Recarm: Revive a un aliado caído con un 50% de su HP. Cuesta 20 SP
+        - Mediarama: Cura moderadamente a todos los aliados. Cuesta 16 SP.
+        - Me Patra: Cura los estados alterados de pánico, miedo y angustia a todos los aliados. Cuesta 6 SP.
+        - Garula: Inflinge daño moderado de viento al enemigo. Cuesta 6 SP.
+        - Diarama: Cura moderadamente a un aliado a elección. Cuesta 8 SP.
+
+- Junpei Iori: Luchador ágil con habilidades físicas. NN tiene una táctica definida, por lo que sus habilidades son elegidas al azar (las que suben la defensa a los aliados solo son agregadas a la lista de elecciones si los aliados no tienen la defensa subida).
+    - Estadísticas:
+        - HP: 381
+        - SP: 201
+        - Defensa: 24
+        - Ataque: 20
+        - Probabilidad de crítico: 25%
+        - Resiste: Fuego
+        - Debilidad: Viento
+    - Habilidades: 
+        - Ataque básico: Inflinge daño físico cortante leve. Sin costo.
+        - Rakukaja: Le sube la defensa a un aliado a elección. Cuesta 6 SP.
+        - Mararukaja: Sube la defensa de todos los aliados. Cuesta 12 SP.
+        - Torrent Shot: Inflinge daño físico perforante leve a un enemigo. Cuesta el 10% del HP actual del usuario.
+        - Blade of Fury: Inflinge daño físico cortante moderado a un enemigo. Cuesta el 16% del HP actual del usuario.
+        - Counterstrike: 15% de probabilidad de contraatacar un ataque físico con un ataque físico leve. Habildad pasiva.
+
+- Akihiko Sanada: Guerrero con habilidades de electricidad. Su táctica es la siguiente: Prioriza las habilidades de "buffos" o "debuffos", las cuales aumentan las estadísticas de los aliados o disminuyen las del enemigo. Tiene un 85% de probabilidad de usar estas habilidades (si es que no están activas en ese momento. Es decir, si el enemigo ya tiene la defensa baja entonces no va a bajarle la defensa al enemigo), sino ataca con ataques físicos o de electricidad.
+    - Estadísticas:
+        - HP: 369
+        - SP: 210
+        - Defensa: 24
+        - Ataque: 22
+        - Probabilidad de crítico: 10%
+        - Bloquea: Electricidad
+        - Debilidad: Hielo
+    - Habilidades:
+        - Ataque básico: Inflinge daño físico de golpe leve. Sin costo.
+        - Zionga: Inflinge daño moderado de electricidad a un enemigo con 10% de probabilidad de paralizarlo. Cuesta 8 SP.
+        - Tarunda: Le baja el ataque a un enemigo a elección. Cuesta 6 SP.
+        - Rakunda: Le baja la defensa a un enemigo a elección. Cuesta 6 SP.
+        - Sukunda: Le baja la evasión a un enemigo a elección. Cuesta 6 SP.
+        - Sonic Punch: Inflinge daño físico de golpe leve a un enemigo. Cuesta el 9% del HP actual del usuario.
+    
 
 ### Enemigo: Sleeping Table
 
-- idem de arriba
+El enemigo elegido fue "Sleeping Table", un jefe que aparece en el piso 135 de la torre de Tartarus, la cual podría decirse que es el "nido" de los "Shadows", quienes son los enemigos. Esta torre tiene 264 pisos en total la cual cuenta con 25 jefes (y uno opcional). Este enemigo es muy resistente y no tiene debilidades, por lo que es considerado un jefe muy difícil.
+- Estadísticas:
+    - HP:1700
+    - SP: 500
+    - Resiste: Físico cortante, Físico perforante, Físico de golpe, Fuego.
+    - Bloquea: Luz, Oscuridad.
+    - Defensa: 20
+    - Ataque: 24
+    - Probabilidad de crítico: 20%
+    - Probabilidad de fallar: 5%
+- Habilidades:
+    - Strike attack: Ataque básico que inflinge daño físico de golpe leve. Sin costo.
+    - Hamaon: Ataque de tipo "luz" que mata instantáneamente a un enemigo con un 40% de probabilidad. Cuesta 12 SP.
+    - Maragidyne: Inflinge daño fuerte de fuego a todos los enemigos. Cuesta 24 SP.
+    - Megidola: Inflinge daño fuerte de "nuclear" a todos los enemigos. Cuesta 65 SP.
+    - Evil Touch: Aplica el estado alterado "miedo" a un enemigo con un 40% de probabilidad de acertar. Cuesta 5 SP.
+    - Ghastly Wail: Mata instantáneamente a todos los enemigos que tengan el estado de "miedo" con un 100% de probabilidad de acertar. Cuesta 15 SP.
+    - Fear Boost: Incrementa la probabilidad de acertar el estado de "miedo" en un 15%. Habilidad Pasiva.
+
+Cada ataque de 'Sleeping Table', menos 2, tiene una probabilidad de ser usado en cada turno:
+    - Hamaon: 25%
+    - Maragidyne: 40%
+    - Megidola: 15%
+    - Evil Touch: 20%
+Si no tiene SP suficiente para usar alguna de estas habilidades, usa su ataque básico. 
+Ghastly Wail solo lo usará si hay al menos un enemigo que tiene el estado de "miedo".
 
 ### Ítems disponibles
 
 Hay varios ítems disponibles en el juego, pero para este combate se utilizaron los siguientes:
 
-- **Un Soma**: completar
+- **Un Soma**: Soma se utiliza en todos los miembros del grupo, restaurando por completo tanto su HP como su SP. No se puede utilizar en aliados caídos. 
 
-- **Dos Precious Egg**: completar
+- **Dos Precious Egg**: Restaura completamente los SP de un aliado. No se puede utilizar en aliados caídos.
 
-- **Un Magic Mirror**: completar
+- **Un Magic Mirror**: Inflinge a todos los miembros del grupo el estado "Repeler elemento", una barrera que repele un ataque mágico (excepto ataques Almighty o "nuclear") durante un turno.
 
 ## Marco Teórico
 
@@ -320,10 +430,108 @@ Una vez que se tuvo una comprensión sólida del combate, los personajes, los í
 
 Con el entorno de simulación listo, se implementaron los cuatro algoritmos y la capacidad de ejecutar múltiples simulaciones de combate para evaluar el desempeño de cada algoritmo. Se decidió ejecutar pruebas de 1000,500 y 100 simulaciones por cada algoritmo para obtener una muestra representativa de su desempeño, considerando el tiempo de ejecución y la variabilidad inherente a las probabilidades del combate.
 
+### Resultados Obtenidos
+
+Se usaron dos funciones de fitness diferentes para los algoritmos en distinta cantidad de simulaciones. A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones utilizando la función de fitness 1.
+
+### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 1
+
+| Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
+|-----------|----------------------|-----------------------|-------------------------------|-------------------------------|------------------------|---------------------------|
+| Random | 24.20 | 7.88 ± 3.92 | 245.80 ± 193.92 | 1690.28 ± 995.32 | 0.95 ± 1.08 | 0.045139 |
+| Model Genetic | 29.00 | 8.04 ± 3.61 | 383.03 ± 214.05 | 1601.11 ± 1012.53 | 0.83 ± 1.04 | 41.783550 |
+| Modified Genetic | 39.70 | 8.98 ± 3.72 | 317.51 ± 175.47 | 1769.01 ± 1064.27 | 0.85 ± 1.06 | 120.794004 |
+| NSGA-II | 34.80 | 8.26 ± 3.60 | 400.87 ± 213.41 | 1606.19 ± 952.13 | 0.82 ± 1.03 | 64.35 |
+
+### Gráficos comparativos usando función de fitness 1
+
+- Daños realizados por algoritmo:
+
+    - 100 simulaciones:
+![Resultados de daños realizados en 100 simulaciones](/images/fitness_1/100_iteraciones/damage_done_comparison.png)
+    - 500 simulaciones:
+![Resultados de daños realizados en 500 simulaciones](/images/fitness_1/500_iteraciones/damage_done_comparison.png)
+    - 1000 simulaciones:
+![Resultados de daños realizados en 1000 simulaciones](/images/fitness_1/1000_iteraciones/damage_done_comparison.png)
+
+- Daños recibidos por algoritmo:
+
+    - 100 simulaciones:
+![Resultados de daños recibidos en 100 simulaciones](/images/fitness_1/100_iteraciones/damage_taken_comparison.png)
+    - 500 simulaciones:
+![Resultados de daños recibidos en 500 simulaciones](/images/fitness_1/500_iteraciones/damage_taken_comparison.png)
+    - 1000 simulaciones:
+![Resultados de daños recibidos en 1000 simulaciones](/images/fitness_1/1000_iteraciones/damage_taken_comparison.png)
+
+- Muertes por algoritmo:
+
+    - 100 simulaciones:
+![Resultados de muertes en 100 simulaciones](/images/fitness_1/100_iteraciones/deaths_comparison.png)
+    - 500 simulaciones:
+![Resultados de muertes en 500 simulaciones](/images/fitness_1/500_iteraciones/deaths_comparison.png)
+    - 1000 simulaciones:
+![Resultados de muertes en 1000 simulaciones](/images/fitness_1/1000_iteraciones/deaths_comparison.png)
+
+- Turnos en partidas ganadas por algoritmo:
+    - 100 simulaciones:
+![Resultados de turnos en partidas ganadas en 100 simulaciones](/images/fitness_1/100_iteraciones/turns_comparison.png)
+    - 500 simulaciones:
+![Resultados de turnos en partidas ganadas en 500 simulaciones](/images/fitness_1/500_iteraciones/turns_comparison.png)
+    - 1000 simulaciones:
+![Resultados de turnos en partidas ganadas en 1000 simulaciones](/images/fitness_1/1000_iteraciones/turns_comparison.png)
+
+- Winrate por algoritmo:
+    - 100 simulaciones:
+![Resultados de winrate en 100 simulaciones](/images/fitness_1/100_iteraciones/win_rate_comparison.png)
+    - 500 simulaciones:
+![Resultados de winrate en 500 simulaciones](/images/fitness_1/500_iteraciones/win_rate_comparison.png)
+    - 1000 simulaciones:
+![Resultados de winrate en 1000 simulaciones](/images/fitness_1/1000_iteraciones/win_rate_comparison.png)
+
+A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones utilizando la función de fitness 2.
+
+### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2
+
+| Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
+|-----------|----------------------|-----------------------|-------------------------------|-------------------------------|------------------------|---------------------------|
+| Random | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
+| Model Genetic | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
+| Modified Genetic | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
+| NSGA-II | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
+
+### Gráficos comparativos usando función de fitness 2
+
+- Daños realizados por algoritmo:
+
+    - 100 simulaciones: ![Resultados de daños realizados en 100 simulaciones](/images/fitness_2/100_iteraciones/damage_done_comparison.png)
+    - 500 simulaciones: ![Resultados de daños realizados en 500 simulaciones](/images/fitness_2/500_iteraciones/damage_done_comparison.png)
+    - 1000 simulaciones: ![Resultados de daños realizados en 1000 simulaciones](/images/fitness_2/1000_iteraciones/damage_done_comparison.png)
+
+- Daños recibidos por algoritmo:
+
+    - 100 simulaciones: ![Resultados de daños recibidos en 100 simulaciones](/images/fitness_2/100_iteraciones/damage_taken_comparison.png)
+    - 500 simulaciones: ![Resultados de daños recibidos en 500 simulaciones](/images/fitness_2/500_iteraciones/damage_taken_comparison.png)
+    - 1000 simulaciones: ![Resultados de daños recibidos en 1000 simulaciones](/images/fitness_2/1000_iteraciones/damage_taken_comparison.png)
+
+- Muertes por algoritmo:
+
+    - 100 simulaciones: ![Resultados de muertes en 100 simulaciones](/images/fitness_2/100_iteraciones/deaths_comparison.png)
+    - 500 simulaciones: ![Resultados de muertes en 500 simulaciones](/images/fitness_2/500_iteraciones/deaths_comparison.png)
+    - 1000 simulaciones: ![Resultados de muertes en 1000 simulaciones](/images/fitness_2/1000_iteraciones/deaths_comparison.png)
+
+- Turnos en partidas ganadas por algoritmo:
+    - 100 simulaciones: ![Resultados de turnos en partidas ganadas en 100 simulaciones](/images/fitness_2/100_iteraciones/turns_comparison.png)
+    - 500 simulaciones: ![Resultados de turnos en partidas ganadas en 500 simulaciones](/images/fitness_2/500_iteraciones/turns_comparison.png)
+    - 1000 simulaciones: ![Resultados de turnos en partidas ganadas en 1000 simulaciones](/images/fitness_2/1000_iteraciones/turns_comparison.png)
+
+- Winrate por algoritmo:
+    - 100 simulaciones: ![Resultados de winrate en 100 simulaciones](/images/fitness_2/100_iteraciones/win_rate_comparison.png)
+    - 500 simulaciones: ![Resultados de winrate en 500 simulaciones](/images/fitness_2/500_iteraciones/win_rate_comparison.png)
+    - 1000 simulaciones: ![Resultados de winrate en 1000 simulaciones](/images/fitness_2/1000_iteraciones/win_rate_comparison.png)
+
 ## Análisis y Discusión de Resultados
 
-- Presentar los resultados obtenidos y discutir las diferencias entre los algoritmos y el porque de cada resultado
-usar todos los plots aca y tablas necesarias
+
 
 ## Conclusiones Finales
 

@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
-#import seaborn as sns
 from matplotlib import rcParams
+from matplotlib.ticker import MaxNLocator  
 
-# Configurar estilo de gráficos
+# graph style settings
 plt.style.use('seaborn-v0_8')
 rcParams['figure.figsize'] = (12, 8)
 rcParams['font.size'] = 12
 
-def plot_comparative_results(results_dict, metric_name, title, ylabel, save_path=None):
+def plot_comparative_results(results_dict, metric_name, title, ylabel, save_path=None, discrete=False):
     """
     Args:
         results_dict: Dictionary with algorithm as key and list of values as value
@@ -16,13 +16,14 @@ def plot_comparative_results(results_dict, metric_name, title, ylabel, save_path
         title: Title of the plot
         ylabel: Y-axis label
         save_path: Path to save the image (optional)
+        discrete: Whether to use discrete values on Y-axis (for deaths)
     """
     algorithms = list(results_dict.keys())
     data = list(results_dict.values())
     
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    boxplot = ax.boxplot(data, labels=algorithms, patch_artist=True) #Box plot
+    boxplot = ax.boxplot(data, labels=algorithms, patch_artist=True)  # Box plot
     
     colors = ['lightblue', 'lightgreen', 'lightcoral', 'lightyellow', 'lightpink']
     for patch, color in zip(boxplot['boxes'], colors):
@@ -37,6 +38,10 @@ def plot_comparative_results(results_dict, metric_name, title, ylabel, save_path
     ax.set_title(title, fontsize=16, fontweight='bold')
     ax.set_ylabel(ylabel, fontsize=14)
     ax.grid(True, alpha=0.3)
+    
+    # For discrete values (like deaths), set integer ticks on Y-axis
+    if discrete:
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     # Adjust layout
     plt.tight_layout()
@@ -46,7 +51,7 @@ def plot_comparative_results(results_dict, metric_name, title, ylabel, save_path
     
     plt.show()
 
-def plot_win_rate_comparison(win_rates_dict, title="Comparación de Tasas de Victoria", save_path=None): # Makes a bar plot to compare win rates
+def plot_win_rate_comparison(win_rates_dict, title="Comparación de Tasas de Victoria", save_path=None):
     """
     Args:
         win_rates_dict: Dictionary with algorithm as key and win rate as value
@@ -85,7 +90,8 @@ def create_all_comparative_plots(results, save_directory=None):
         save_directory: directory to save the images (optional)
     """
     # Extract data for each metric
-    turns_data = {algo: results[algo]['turns'] for algo in results}
+    # Usar turns_won en lugar de turns para el gráfico de turnos
+    turns_data = {algo: results[algo]['turns_won'] for algo in results}
     damage_done_data = {algo: results[algo]['damage_done'] for algo in results}
     damage_taken_data = {algo: results[algo]['damage_taken'] for algo in results}
     deaths_data = {algo: results[algo]['deaths'] for algo in results}
@@ -95,7 +101,7 @@ def create_all_comparative_plots(results, save_directory=None):
     plot_comparative_results(
         turns_data, 
         "turns", 
-        "Comparación de Turnos por Algoritmo", 
+        "Comparación de Turnos (solo partidas ganadas) por Algoritmo", 
         "Número de Turnos",
         save_path=f"{save_directory}/turns_comparison.png" if save_directory else None
     )
@@ -116,12 +122,14 @@ def create_all_comparative_plots(results, save_directory=None):
         save_path=f"{save_directory}/damage_taken_comparison.png" if save_directory else None
     )
     
+    # Para muertes, usar el parámetro discrete=True
     plot_comparative_results(
         deaths_data, 
         "deaths", 
         "Comparación de Muertes por Algoritmo", 
         "Número de Muertes",
-        save_path=f"{save_directory}/deaths_comparison.png" if save_directory else None
+        save_path=f"{save_directory}/deaths_comparison.png" if save_directory else None,
+        discrete=True  # Este parámetro hace que el eje Y muestre solo valores enteros
     )
     
     plot_win_rate_comparison(
@@ -145,7 +153,3 @@ def calculate_win_rate (wins, losses):
     if total == 0:
         return 0.0
     return (wins / total) * 100
-
-
-
-

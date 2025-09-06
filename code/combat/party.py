@@ -420,8 +420,8 @@ class Junpei:
         self.weak = "wind"
         self.block = ""
         self.critic_rate = 0.25
-        self.prob_counter_phisical = 0.15 #pasiva
-        self.status = "normal" #normal es el estado por defecto
+        self.prob_counter_phisical = 0.15 # passive ability counter rate
+        self.status = "normal" # default status
         self.fail_rate = 0.15
         self.defense = 24
         self.attack = 20
