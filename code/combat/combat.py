@@ -341,7 +341,7 @@ def simulate_combat(party_members, enemy):
                 base_seed = 33
                 start_time = time.time()
                 
-                for i in range(100):
+                for i in range(10):
                     result = run_simulation(base_seed + i)
                     
                     if result["won"]:
@@ -379,7 +379,7 @@ def simulate_combat(party_members, enemy):
                 base_seed = 33
                 start_time = time.time()
                 
-                for i in range(100):
+                for i in range(10):
                     result = run_simulation_modified_genetic(base_seed + i)
                     
                     if result["won"]:
@@ -417,7 +417,7 @@ def simulate_combat(party_members, enemy):
                 base_seed = 33
                 start_time = time.time()
                 
-                for i in range(100):
+                for i in range(10):
                     result = run_simulation_ngsa2(base_seed + i)
                     
                     if result["won"]:

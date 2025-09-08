@@ -66,7 +66,7 @@ El sistema de combate de Persona 3 se basa en este formato. El jugador controla 
   * *Absorbe*: en lugar de recibir daño, recuperará una cantidad de HP (generalmente el mismo valor que el daño que habría recibido o una menor cantidad).
   * *Repele*: devuelve parte del ataque al atacante (menos para los ataques de tipo "Almighty" o nuclear).
 
-En *Persona 3* existen 9 tipos de daño principales: fuego, hielo, electricidad, viento, luz, oscuridad, físico perforante, físico cortante y físico de golpe. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc).
+En *Persona 3* existen 10 tipos de daño: fuego, hielo, electricidad, viento, luz, oscuridad, nuclear, físico perforante, físico cortante y físico de golpe. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc).
 
 * **Probabilidades y azar**: el combate no es determinista, sino que cada acción tiene una chance de éxito o fallo:
   - Un ataque, ya sea físico o mágico, puede fallar o ser esquivado.
@@ -77,12 +77,14 @@ Esto significa que cada batalla tiene un componente de incertidumbre, y la estra
 
 Los personajes y enemigos tienen estadísticas que afectan estas probabilidades, como la precisión, la evasión, la resistencia a estados alterados, etc. Por ejemplo, un personaje con alta precisión tendrá más chances de acertar sus ataques, mientras que un enemigo con alta evasión será más difícil de golpear (porque esquiva más seguido). Estas probabilidades pueden modificarse durante el combate mediante habilidades especiales, ítems o efectos de estado.
 
-En el caso de Persona 3, el jugador controla a un solo personaje y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. En nuestra implementación, le dejamos ciertas tácticas por defecto a los personajes no controlables.
+En el caso de Persona 3, el jugador controla completamente a un solo personaje, el protagonista, y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. En nuestra implementación, le dejamos ciertas tácticas por defecto a los personajes no controlables.
+
+La forma de perder una pelea es un tanto particular en este videojuego. El jugador pierde si el protagonista (Makoto Yuki), muere, independientemente de si los otros personajes del grupo están vivos o no. Si Makoto muere, el juego termina y el jugador debe reiniciar desde el último punto de guardado. Por lo tanto, la supervivencia de el protagonista es crucial para continuar en el juego y poder ganar la batalla (lo cual sucede si la vida del o los enemigos llega a cero).
 
 ### Personajes
-El grupo de personajes o "party" está compuesto por 4 personajes:
+El grupo de personajes o "*party*" está compuesto por 4 personajes:
 
-- Makoto Yuki: El protagonista, un personaje equilibrado con habilidades de ataque y soporte. Es el personaje controlable por el jugador, por lo que sus tácticas son decididas por el algoritmo.
+- Makoto Yuki: El protagonista, un personaje equilibrado con habilidades de ataque y soporte. Es el personaje controlable por el jugador, por lo que sus tácticas son decididas por el algoritmo que esté jugando.
     - Estadísticas:
         - HP: 366
         - SP: 246
@@ -178,13 +180,13 @@ Cada ataque de 'Sleeping Table', menos 2, tiene una probabilidad de ser usado en
     - Megidola: 15%
     - Evil Touch: 20%
 Si no tiene SP suficiente para usar alguna de estas habilidades, usa su ataque básico. 
-Ghastly Wail solo lo usará si hay al menos un enemigo que tiene el estado de "miedo".
+Ghastly Wail solo lo usará si hay al menos un enemigo que tiene el estado de "miedo" en ese turno.
 
 ### Ítems disponibles
 
 Hay varios ítems disponibles en el juego, pero para este combate se utilizaron los siguientes:
 
-- **Un Soma**: Soma se utiliza en todos los miembros del grupo, restaurando por completo tanto su HP como su SP. No se puede utilizar en aliados caídos. 
+- **Un Soma**: Se utiliza en todos los miembros del grupo, restaurando por completo tanto su HP como su SP. No se puede utilizar en aliados caídos. 
 
 - **Dos Precious Egg**: Restaura completamente los SP de un aliado. No se puede utilizar en aliados caídos.
 
@@ -432,9 +434,85 @@ Con el entorno de simulación listo, se implementaron los cuatro algoritmos y la
 
 ### Resultados Obtenidos
 
-Se usaron dos funciones de fitness diferentes para los algoritmos en distinta cantidad de simulaciones. A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones utilizando la función de fitness 1.
+Se usaron dos funciones de fitness diferentes para los algoritmos en distinta cantidad de simulaciones. A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones.
 
-### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 1
+#### Daños Realizados
+
+- 100 simulaciones:
+Fitness 1:
+<image src="/images/fitness_1/100_iteraciones/damage_done_comparison.png" alt="Daño realizado fitness 1 en 100 iteraciones"/>
+Fitness 2:
+<image src="/images/fitness_2/100_iteraciones/damage_done_comparison.png" alt="Daño realizado fitness 2 en 100 iteraciones"/>
+
+- 500 simulaciones:
+
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/damage_done_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/damage_done_comparison.png"></td></tr></table>
+
+- 1000 simulaciones:
+
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/damage_done_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/1000_iteraciones/damage_done_comparison.png"></td></tr></table>
+
+
+#### Daños recibidos por algoritmo:
+
+- 100 simulaciones:
+
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/100_iteraciones/damage_taken_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/100_iteraciones/damage_taken_comparison.png"></td></tr></table>
+
+- 500 simulaciones:
+Fitness 1: 
+<img src="/images/fitness_1/500_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 1 en 500 iteraciones"/>
+Fitness 2:
+<img src="/images/fitness_2/500_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 2 en 500 iteraciones"/>
+
+- 1000 simulaciones:
+Fitness 1:
+<img src="/images/fitness_1/1000_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 1 en 1000 iteraciones"/>
+Fitness 2:
+<img src="/images/fitness_2/1000_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 2 en 1000 iteraciones"/>
+
+#### Muertes por algoritmo:
+
+- 100 simulaciones:
+Fitness 1:
+<img src="/images/fitness_1/100_iteraciones/deaths_comparison.png" alt="Muertes fitness 1 en 100 iteraciones"/>
+Fitness 2:
+<img src="/images/fitness_2/100_iteraciones/deaths_comparison.png" alt="Muertes fitness 2 en 100 iteraciones"/>
+
+- 500 simulaciones:
+
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/deaths_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/deaths_comparison.png"></td></tr></table>
+
+- 1000 simulaciones:
+Fitness 1:
+<img src="/images/fitness_1/1000_iteraciones/deaths_comparison.png" alt="Muertes fitness 1 en 1000 iteraciones"/>
+Fitness 2:
+<img src="/images/fitness_2/1000_iteraciones/deaths_comparison.png" alt="Muertes fitness 2 en 1000 iteraciones"/>
+
+#### Turnos en partidas ganadas por algoritmo:
+
+- 100 simulaciones:
+Fitness 1:
+<img src="/images/fitness_1/100_iteraciones/turns_comparison.png" alt="Turnos fitness 1 en 100 iteraciones"/>
+Fitness 2:
+<img src="/images/fitness_2/100_iteraciones/turns_comparison.png" alt="Turnos fitness 2 en 100 iteraciones"/>
+
+- 500 simulaciones:
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/turns_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/turns_comparison.png"></td></tr></table>
+
+- 1000 simulaciones:
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/turns_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/1000_iteraciones/turns_comparison.png"></td></tr></table>
+
+#### Winrate
+
+- 100 simulaciones:
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/100_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/100_iteraciones/win_rate_comparison.png"></td></tr></table>
+- 500 simulaciones:
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/500_iteraciones/win_rate_comparison.png"></td></tr></table>
+- 1000 simulaciones:
+<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/1000_iteraciones/win_rate_comparison.png"></td></tr></table>
+
+### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2
 
 | Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
 |-----------|----------------------|-----------------------|-------------------------------|-------------------------------|------------------------|---------------------------|
@@ -443,52 +521,6 @@ Se usaron dos funciones de fitness diferentes para los algoritmos en distinta ca
 | Modified Genetic | 39.70 | 8.98 ± 3.72 | 317.51 ± 175.47 | 1769.01 ± 1064.27 | 0.85 ± 1.06 | 120.794004 |
 | NSGA-II | 34.80 | 8.26 ± 3.60 | 400.87 ± 213.41 | 1606.19 ± 952.13 | 0.82 ± 1.03 | 64.35 |
 
-### Gráficos comparativos usando función de fitness 1
-
-- Daños realizados por algoritmo:
-
-    - 100 simulaciones:
-![Resultados de daños realizados en 100 simulaciones](/images/fitness_1/100_iteraciones/damage_done_comparison.png)
-    - 500 simulaciones:
-![Resultados de daños realizados en 500 simulaciones](/images/fitness_1/500_iteraciones/damage_done_comparison.png)
-    - 1000 simulaciones:
-![Resultados de daños realizados en 1000 simulaciones](/images/fitness_1/1000_iteraciones/damage_done_comparison.png)
-
-- Daños recibidos por algoritmo:
-
-    - 100 simulaciones:
-![Resultados de daños recibidos en 100 simulaciones](/images/fitness_1/100_iteraciones/damage_taken_comparison.png)
-    - 500 simulaciones:
-![Resultados de daños recibidos en 500 simulaciones](/images/fitness_1/500_iteraciones/damage_taken_comparison.png)
-    - 1000 simulaciones:
-![Resultados de daños recibidos en 1000 simulaciones](/images/fitness_1/1000_iteraciones/damage_taken_comparison.png)
-
-- Muertes por algoritmo:
-
-    - 100 simulaciones:
-![Resultados de muertes en 100 simulaciones](/images/fitness_1/100_iteraciones/deaths_comparison.png)
-    - 500 simulaciones:
-![Resultados de muertes en 500 simulaciones](/images/fitness_1/500_iteraciones/deaths_comparison.png)
-    - 1000 simulaciones:
-![Resultados de muertes en 1000 simulaciones](/images/fitness_1/1000_iteraciones/deaths_comparison.png)
-
-- Turnos en partidas ganadas por algoritmo:
-    - 100 simulaciones:
-![Resultados de turnos en partidas ganadas en 100 simulaciones](/images/fitness_1/100_iteraciones/turns_comparison.png)
-    - 500 simulaciones:
-![Resultados de turnos en partidas ganadas en 500 simulaciones](/images/fitness_1/500_iteraciones/turns_comparison.png)
-    - 1000 simulaciones:
-![Resultados de turnos en partidas ganadas en 1000 simulaciones](/images/fitness_1/1000_iteraciones/turns_comparison.png)
-
-- Winrate por algoritmo:
-    - 100 simulaciones:
-![Resultados de winrate en 100 simulaciones](/images/fitness_1/100_iteraciones/win_rate_comparison.png)
-    - 500 simulaciones:
-![Resultados de winrate en 500 simulaciones](/images/fitness_1/500_iteraciones/win_rate_comparison.png)
-    - 1000 simulaciones:
-![Resultados de winrate en 1000 simulaciones](/images/fitness_1/1000_iteraciones/win_rate_comparison.png)
-
-A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones utilizando la función de fitness 2.
 
 ### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2
 
@@ -499,35 +531,6 @@ A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulac
 | Modified Genetic | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
 | NSGA-II | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
 
-### Gráficos comparativos usando función de fitness 2
-
-- Daños realizados por algoritmo:
-
-    - 100 simulaciones: ![Resultados de daños realizados en 100 simulaciones](/images/fitness_2/100_iteraciones/damage_done_comparison.png)
-    - 500 simulaciones: ![Resultados de daños realizados en 500 simulaciones](/images/fitness_2/500_iteraciones/damage_done_comparison.png)
-    - 1000 simulaciones: ![Resultados de daños realizados en 1000 simulaciones](/images/fitness_2/1000_iteraciones/damage_done_comparison.png)
-
-- Daños recibidos por algoritmo:
-
-    - 100 simulaciones: ![Resultados de daños recibidos en 100 simulaciones](/images/fitness_2/100_iteraciones/damage_taken_comparison.png)
-    - 500 simulaciones: ![Resultados de daños recibidos en 500 simulaciones](/images/fitness_2/500_iteraciones/damage_taken_comparison.png)
-    - 1000 simulaciones: ![Resultados de daños recibidos en 1000 simulaciones](/images/fitness_2/1000_iteraciones/damage_taken_comparison.png)
-
-- Muertes por algoritmo:
-
-    - 100 simulaciones: ![Resultados de muertes en 100 simulaciones](/images/fitness_2/100_iteraciones/deaths_comparison.png)
-    - 500 simulaciones: ![Resultados de muertes en 500 simulaciones](/images/fitness_2/500_iteraciones/deaths_comparison.png)
-    - 1000 simulaciones: ![Resultados de muertes en 1000 simulaciones](/images/fitness_2/1000_iteraciones/deaths_comparison.png)
-
-- Turnos en partidas ganadas por algoritmo:
-    - 100 simulaciones: ![Resultados de turnos en partidas ganadas en 100 simulaciones](/images/fitness_2/100_iteraciones/turns_comparison.png)
-    - 500 simulaciones: ![Resultados de turnos en partidas ganadas en 500 simulaciones](/images/fitness_2/500_iteraciones/turns_comparison.png)
-    - 1000 simulaciones: ![Resultados de turnos en partidas ganadas en 1000 simulaciones](/images/fitness_2/1000_iteraciones/turns_comparison.png)
-
-- Winrate por algoritmo:
-    - 100 simulaciones: ![Resultados de winrate en 100 simulaciones](/images/fitness_2/100_iteraciones/win_rate_comparison.png)
-    - 500 simulaciones: ![Resultados de winrate en 500 simulaciones](/images/fitness_2/500_iteraciones/win_rate_comparison.png)
-    - 1000 simulaciones: ![Resultados de winrate en 1000 simulaciones](/images/fitness_2/1000_iteraciones/win_rate_comparison.png)
 
 ## Análisis y Discusión de Resultados
 
