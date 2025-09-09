@@ -512,6 +512,15 @@ Fitness 2:
 - 1000 simulaciones:
 <table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/1000_iteraciones/win_rate_comparison.png"></td></tr></table>
 
+### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 1
+
+| Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
+|-----------|----------------------|-----------------------|-------------------------------|-------------------------------|------------------------|---------------------------|
+| Random | 24.20 | 7.88 ± 3.92 | 245.80 ± 193.92 | 1690.28 ± 995.32 | 0.95 ± 1.08 | 0.045139 |
+| Model Genetic | 28.30 | 7.80 ± 3.47 | 387.11 ± 206.92 | 1533.93 ± 948.02 | 0.87 ± 1.05 | 54.833753 |
+| Modified Genetic | 38.80 | 8.95 ± 3.61 | 339.12 ± 172.42 | 1752.44 ± 1061.90 | 0.90 ± 1.09 | 72.177844 |
+| NSGA-II | 34.80 | 8.26 ± 3.60 | 400.87 ± 213.41 | 1606.19 ± 952.13 | 0.82 ± 1.03 | 64.35 |
+
 ### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2
 
 | Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
@@ -520,16 +529,6 @@ Fitness 2:
 | Model Genetic | 29.00 | 8.04 ± 3.61 | 383.03 ± 214.05 | 1601.11 ± 1012.53 | 0.83 ± 1.04 | 41.783550 |
 | Modified Genetic | 39.70 | 8.98 ± 3.72 | 317.51 ± 175.47 | 1769.01 ± 1064.27 | 0.85 ± 1.06 | 120.794004 |
 | NSGA-II | 34.80 | 8.26 ± 3.60 | 400.87 ± 213.41 | 1606.19 ± 952.13 | 0.82 ± 1.03 | 64.35 |
-
-
-### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2
-
-| Algoritmo | Tasa de Victoria (%) | Turnos Promedio (±DE) | Daño Infligido Promedio (±DE) | Daño Recibido Promedio (±DE) | Muertes Promedio (±DE) | Tiempo por Simulación (s) |
-|-----------|----------------------|-----------------------|-------------------------------|-------------------------------|------------------------|---------------------------|
-| Random | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
-| Model Genetic | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
-| Modified Genetic | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
-| NSGA-II | [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] ± [valor] | [valor] |
 
 
 ## Análisis y Discusión de Resultados
