@@ -6,7 +6,6 @@
 ---
 
 ## Índice
-
 - [Introducción](#introducción)
 - [Descripción del juego](#descripción-del-juego)
     - [Mecánicas del juego](#mecánicas-del-juego)
@@ -29,6 +28,15 @@
         - [Funciones de fitness para los algoritmos genéticos](#funciones-de-fitness-para-los-algoritmos-genéticos)
         - [Función de fitness para NSGA-II](#función-de-fitness-para-nsga-ii)
     - [Descripción de los experimentos realizados](#descripción-de-los-experimentos-realizados)
+    - [Resultados Obtenidos](#resultados-obtenidos)
+        - [Daños Realizados](#daños-realizados)
+        - [Daños recibidos por algoritmo](#daños-recibidos-por-algoritmo)
+        - [Muertes por algoritmo](#muertes-por-algoritmo)
+        - [Turnos en partidas ganadas por algoritmo](#turnos-en-partidas-ganadas-por-algoritmo)
+        - [Winrate](#winrate)
+        - [Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 1](#tabla-comparativa-de-resultados-obtenidos-en-1000-simulaciones---función-de-fitness-1)
+        - [Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2](#tabla-comparativa-de-resultados-obtenidos-en-1000-simulaciones---función-de-fitness-2)
+        - [Frente de pareto obtenido con NSGA-II](#frente-de-pareto-obtenido-con-nsga-ii)
 - [Análisis y Discusión de Resultados](#análisis-y-discusión-de-resultados)
 - [Conclusiones Finales](#conclusiones-finales)
 - [Bibliografía y referencias](#bibliografía-y-referencias)
