@@ -47,7 +47,7 @@ class CombatProblem(ElementwiseProblem):
         
         win,damage,deaths,turns = fitnessF.retur_stats(indiv_str[:])
         if not win:
-            out["F"] = [1000, 1000]
+            out["F"] = [deaths + 10, -damage]  # penalize losses heavily
         else:
             out["F"] = [deaths, -damage]  # minimize deaths, maximize damage
 
@@ -154,7 +154,7 @@ class MyMutation(Mutation):
             X[i] = [ACTION_MAP[a] for a in mutated_str]
         return X
 
-def genetic_combat_nsga2(party_members, enemy):
+def genetic_combat_nsga2(party_members, enemy,seed):
     makoto = party_members[0]
     actions = makoto.list_of_actions
 
@@ -165,23 +165,71 @@ def genetic_combat_nsga2(party_members, enemy):
         sampling=ActionSequenceSampling(makoto,actions),
         crossover=MyCrossover(makoto),
         mutation=MyMutation(makoto),
-        eliminate_duplicates=True
+        eliminate_duplicates=False
     )
 
     res = minimize(
         problem,
         algorithm,
         ('n_gen', 55),   # generaciones
-        verbose=True
+        verbose=True,
+        seed=seed,
+        save_history=True
+
     )
     best_solution = res.X[0]
 
-    
+    #Plot
+    """
     print("Best solutions:")
     print(res.X)   
     print(res.F)   
 
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
+
+    # Print basic info
+    #print("res.F shape:", res.F.shape)
+    #print("Number of final solutions:", len(res.F))
+    #print("First 10 solutions:")
+    #for i in range(min(10, len(res.F))):
+        #print(f"Solution {i}: {res.F[i]}")
+
+    # Collect all individuals from history (if save_history=True was used in minimize)
+    all_F = np.vstack([algo.pop.get("F") for algo in res.history])
+
+    # Extract values
+    turns_all = all_F[:, 0]
+    score_all = -all_F[:, 1]  # make score positive
+
+    # Final front only
+    turns_final = res.F[:, 0]
+    score_final = -res.F[:, 1]
+
+    # Plot all individuals (gray background points)
+    plt.figure(figsize=(12, 8))
+    plt.scatter(turns_all, score_all, color='gray', alpha=0.9, s=50, label='All evaluated solutions')
+
     
+    plt.scatter(turns_final, score_final, color='red', alpha=0.3, s=50)
+
+    # Highlight Pareto front
+    nds = NonDominatedSorting()
+    non_dominated_indices = nds.do(res.F, only_non_dominated_front=True)
+    non_dominated_F = res.F[non_dominated_indices]
+    plt.scatter(non_dominated_F[:, 0], -non_dominated_F[:, 1],
+                color='blue', s=80, edgecolors='black', alpha=0.9,
+                label='Pareto front (non-dominated)')
+
+    # Labels and title
+    plt.xlabel('Deaths (minimize)', fontsize=12)
+    plt.ylabel('Damage (maximize)', fontsize=12)
+    plt.title('NSGA-II Results (All Generations)', fontsize=14)
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    #plt.show()   
+    """
     best_actions = [ACTION_MAP_INV[i] for i in best_solution]
     print(f"Best action sequence: {best_actions}")
     result = automatized_combat(party_members, enemy, best_actions)

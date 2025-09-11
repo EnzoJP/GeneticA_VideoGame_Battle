@@ -32,7 +32,7 @@ def main():
             print("Exiting the game.")
             menu_finished = True
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice, try again.")
 
 if __name__ == "__main__":
     #seed
