@@ -44,21 +44,21 @@
 
 ## Introducción
 
-Persona 3 es un videojuego de rol japonés por turnos (o sus siglas JRPG) desarrollado por Atlus en el año 2006 para la consola PlayStation 2. En este juego, el jugador controla a el protagonista Makoto Yuki, perteneciente a un grupo de estudiantes que se enfrentan contra criaturas conocidas como "sombras" en combates por turnos. En estos combates, el jugador debe elegir las acciones de sus personajes, como atacar, usar habilidades especiales, usar ítems diversos, etc. Además, el jugador debe tener en cuenta las debilidades y resistencias de los enemigos, ya que algunos enemigos son débiles a ciertos tipos de ataques y resistentes a otros.
+Persona 3 es un videojuego de rol japonés por turnos (o sus siglas JRPG) desarrollado por Atlus en el año 2006 para la consola PlayStation 2. En este juego, el jugador controla a el protagonista Makoto Yuki, perteneciente a un grupo de estudiantes que se enfrentan contra criaturas conocidas como "sombras" en combates por turnos. En estos combates, el jugador debe elegir las acciones de sus personajes —atacar, utilizar habilidades especiales, usar ítems, entre otras— considerando además las debilidades y resistencias de los enemigos, ya que ciertos ataques pueden infligir un daño superior si se aplican sobre la debilidad correcta, mientras que otros pueden resultar ineficaces o incluso contraproducentes.
 
-El enemigo que se eligió para realizar el proyecto es **Sleeping Table**, un enemigo que aparece en el piso 135 de la torre de Tartarus, la cual es una mazmorra que el jugador debe explorar. Este es un enemigo que tiene una alta resistencia a la mayoría de los ataques y no tiene debilidades, por lo que es considerado un *jefe* muy difícil.
+En el presente proyecto se eligió como oponente al jefe **Sleeping Table**, ubicado en el piso 135 de la torre Tartarus, una mazmorra central del juego. Este enemigo no tiene debilidades y presenta múltiples resistencias, lo que lo convierte en un jefe particularmente difícil y, por lo tanto, un caso de estudio adecuado para evaluar diferentes estrategias de combate.
 
 Para combatir a este enemigo, se implementaron cuatro algoritmos diferentes:
 1. **Algoritmo Aleatorio**: Este algoritmo selecciona una acción al azar entre las disponibles hasta que el enemigo es derrotado o el jugador es derrotado.
-2. **Algoritmo Genético de modelo**: Este algoritmo genético es lo mas parecido a un algoritmo genético tradicional, descripto en el libro de *Inteligencia Artificial: Un Enfoque Moderno* de Russell y Norvig con un pequeño agregado de elitismo.
+2. **Algoritmo Genético de modelo**: Este algoritmo genético es lo mas parecido a un algoritmo genético tradicional, descripto en el libro de *Inteligencia Artificial: Un Enfoque Moderno* [1] de Russell y Norvig con un pequeño agregado de elitismo.
 3. **Algoritmo Genético modificado**: Este algoritmo genético es una versión modificada del algoritmo genético de base, en el cual se implementaron algunas mejoras para aumentar la eficacia del algoritmo y adaptarlo mejor al problema en cuestión.
 4. **Algoritmo NSGA-II**: Este algoritmo es una implementación del algoritmo NSGA-II, el cual es un algoritmo genético multiobjetivo. En este caso, se consideraron dos objetivos: minimizar las muertes de los personajes y maximizar el daño infligido al enemigo.
 
-Finalmente, el presente informe se encuentra dividido en diferentes secciones: en la sección de [Descripción del juego](#descripción-del-juego), se detallan las mecánicas del juego, los personajes y las características del enemigo seleccionado. En la sección de [Marco Teórico](#marco-teórico), se describen los algoritmos implementados y sus fundamentos teóricos. En la sección de [Diseño Experimental](#diseño-experimental), se explica cómo se llevaron a cabo los experimentos y qué métricas se utilizaron para evaluar el desempeño de los algoritmos. En la sección de [Análisis y Discusión de Resultados](#análisis-y-discusión-de-resultados), se presentan los resultados obtenidos y se discuten las diferencias entre los algoritmos. Finalmente, en la sección de [Conclusiones Finales](#conclusiones-finales), se resumen los hallazgos más importantes y se sugieren posibles mejoras para futuros trabajos.
+Finalmente, este informe se organiza en diferentes secciones: en la sección de [Descripción del juego](#descripción-del-juego), se detallan las mecánicas del juego, los personajes y las características del enemigo seleccionado. El [Marco Teórico](#marco-teórico) describe los fundamentos de los algoritmos empleados. A continuación, el [Diseño Experimental](#diseño-experimental) explica cómo se llevaron a cabo los experimentos y qué métricas se utilizaron para evaluar el desempeño de los algoritmos. En [Análisis y Discusión de Resultados](#análisis-y-discusión-de-resultados) se presentan los resultados obtenidos y se discuten las diferencias entre los algoritmos. Finalmente, en [Conclusiones Finales](#conclusiones-finales) se resumen los hallazgos más importantes y se sugieren posibles mejoras para futuros trabajos.
 
 ## Descripción del juego
 
-Persona 3 es un videojuego de rol japonés por turnos (o sus siglas JRPG). En un RPG por turnos, el combate funciona de una manera parecida a un juego de mesa de estrategia: los participantes actúan por turnos. El jugador tiene un tiempo para decidir qué acción realizará su personaje (atacar, defenderse, usar un objeto, lanzar un hechizo, etc.), y luego el enemigo responde en su propio turno. Esto continúa hasta que uno de los bandos es derrotado.
+Persona 3 es un videojuego de rol japonés por turnos (o sus siglas *JRPG*). En un RPG por turnos, el combate funciona de una manera parecida a un juego de mesa de estrategia: los participantes actúan por turnos. El jugador tiene un tiempo para decidir qué acción realizará su personaje (atacar, defenderse, usar un objeto, lanzar un hechizo, etc.), y luego el enemigo responde en su propio turno. Esto continúa hasta que uno de los bandos es derrotado.
 El sistema de combate de Persona 3 se basa en este formato. El jugador controla a un personaje que pertenece a un grupo, y estos enfrentan a diferentes enemigos. Cada personaje puede usar ataques físicos, usar [ítems](#ítems-disponibles) o invocar “Personas”, entidades o manifestaciones de sus "yo" interior que representan sus habilidades mágicas o espirituales, para realizar otro tipo de habilidades. El combate gira en torno a identificar y aprovechar las debilidades del enemigo (por ejemplo, un enemigo puede ser débil al fuego, pero resistente al hielo), ya que de esta forma este recibirá más daño. 
 
 ### Mecánicas del juego
@@ -85,14 +85,16 @@ Esto significa que cada batalla tiene un componente de incertidumbre, y la estra
 
 Los personajes y enemigos tienen estadísticas que afectan estas probabilidades, como la precisión, la evasión, la resistencia a estados alterados, etc. Por ejemplo, un personaje con alta precisión tendrá más chances de acertar sus ataques, mientras que un enemigo con alta evasión será más difícil de golpear (porque esquiva más seguido). Estas probabilidades pueden modificarse durante el combate mediante habilidades especiales, ítems o efectos de estado.
 
-En el caso de Persona 3, el jugador controla completamente a un solo personaje, el protagonista, y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. En nuestra implementación, le dejamos ciertas tácticas por defecto a los personajes no controlables.
+En el caso de Persona 3, el jugador controla completamente a un solo personaje, el protagonista, y los demás son controlados por el propio juego, aunque uno puede darle directrices generales, llamadas tácticas, de cómo encarar el combate. En nuestra implementación, se dejaron ciertas tácticas por defecto a los personajes no controlables.
 
-La forma de perder una pelea es un tanto particular en este videojuego. El jugador pierde si el protagonista (Makoto Yuki) muere, independientemente de si los otros personajes del grupo están vivos o no. Si Makoto muere, el juego termina y el jugador debe reiniciar desde el último punto de guardado. Por lo tanto, la supervivencia del protagonista es crucial para continuar en el juego y poder ganar la batalla (lo cual sucede si la vida del o los enemigos llega a cero).
+### Condiciones de victoria y derrota
+
+Un aspecto particular de este videojuego, o particularmente de la saga Persona, es la condición de derrota. El jugador pierde si el protagonista (Makoto Yuki) muere, independientemente de si los otros personajes del grupo siguen vivos o no. Si Makoto muere, el juego termina y el jugador debe reiniciar desde el último punto de guardado. Por lo tanto, la supervivencia del protagonista es crucial para continuar en el juego y poder ganar la batalla, la cual, en contrapartida, se alcanza cuando la vida de los enemigos en la batalla es reducida a cero HP.
 
 ### Personajes
 El grupo de personajes o "*party*" está compuesto por 4 personajes:
 
-- Makoto Yuki: El protagonista, un personaje equilibrado con habilidades de ataque y soporte. Es el personaje controlable por el jugador, por lo que sus tácticas son decididas por el algoritmo que esté jugando.
+- **Makoto Yuki**: El protagonista, un personaje equilibrado con habilidades de ataque y soporte. Es el personaje controlable por el jugador, por lo que sus tácticas son decididas por el algoritmo que esté jugando.
     - Estadísticas:
         - HP: 366
         - SP: 246
@@ -109,7 +111,7 @@ El grupo de personajes o "*party*" está compuesto por 4 personajes:
         - Torrent Shot: Inflinge daño físico perforante leve a un enemigo. Cuesta el 10% del HP actual del usuario.
         - Hamaon: Ataque de tipo "luz" que mata instantáneamente a un enemigo con un 40% de probabilidad. Cuesta 12 SP.
 
-- Yukari Takeba: Especialista en ataques de viento y habilidades de curación. Su táctica es la siguiente: prioriza revivir a los aliados caídos, si están todos en el grupo vivos entonces prioriza curar. Si todos los aliados tienen más del 70% de su HP, entonces verifica que no hayan compañeros con estados alterados (pánico, miedo o angustia). Si no los hay, entonces ataca con ataques de viento o con su ataque básico.
+- **Yukari Takeba**: Especialista en ataques de viento y habilidades de curación. Su táctica es la siguiente: prioriza revivir a los aliados caídos, si están todos en el grupo vivos entonces prioriza curar. Si todos los aliados tienen más del 70% de su HP, entonces verifica que no hayan compañeros con estados alterados (pánico, miedo o angustia). Si no los hay, entonces ataca con ataques de viento o con su ataque básico.
     - Estadísticas:
         - HP: 287
         - SP: 285
@@ -126,7 +128,7 @@ El grupo de personajes o "*party*" está compuesto por 4 personajes:
         - Garula: Inflinge daño moderado de viento al enemigo. Cuesta 6 SP.
         - Diarama: Cura moderadamente a un aliado a elección. Cuesta 8 SP.
 
-- Junpei Iori: Luchador ágil con habilidades físicas. NN tiene una táctica definida, por lo que sus habilidades son elegidas al azar (las que suben la defensa a los aliados solo son agregadas a la lista de elecciones si los aliados no tienen la defensa subida).
+- **Junpei Iori**: Luchador ágil con habilidades físicas. NN tiene una táctica definida, por lo que sus habilidades son elegidas al azar (las que suben la defensa a los aliados solo son agregadas a la lista de elecciones si los aliados no tienen la defensa subida).
     - Estadísticas:
         - HP: 381
         - SP: 201
@@ -143,7 +145,7 @@ El grupo de personajes o "*party*" está compuesto por 4 personajes:
         - Blade of Fury: Inflinge daño físico cortante moderado a un enemigo. Cuesta el 16% del HP actual del usuario.
         - Counterstrike: 15% de probabilidad de contraatacar un ataque físico con un ataque físico leve. Habildad pasiva.
 
-- Akihiko Sanada: Guerrero con habilidades de electricidad. Su táctica es la siguiente: Prioriza las habilidades de "buffos" o "debuffos", las cuales aumentan las estadísticas de los aliados o disminuyen las del enemigo. Tiene un 85% de probabilidad de usar estas habilidades (si es que no están activas en ese momento. Es decir, si el enemigo ya tiene la defensa baja entonces no va a bajarle la defensa al enemigo), sino ataca con ataques físicos o de electricidad.
+- **Akihiko Sanada**: Guerrero con habilidades de electricidad. Su táctica es la siguiente: Prioriza las habilidades de "buffos" o "debuffos", las cuales aumentan las estadísticas de los aliados o disminuyen las del enemigo. Tiene un 85% de probabilidad de usar estas habilidades (si es que no están activas en ese momento. Es decir, si el enemigo ya tiene la defensa baja entonces no va a bajarle la defensa al enemigo), sino ataca con ataques físicos o de electricidad.
     - Estadísticas:
         - HP: 369
         - SP: 210
@@ -204,65 +206,69 @@ Hay varios ítems disponibles en el juego, pero para este combate se utilizaron 
 
 ### Algoritmo Aleatorio
 
-Es un algoritmo muy simple que selecciona una acción al azar entre las disponibles hasta que el enemigo es derrotado o el jugador es derrotado. Este algoritmo no tiene en cuenta las características del enemigo ni las habilidades de los personajes, por lo que su desempeño es muy variable.
+Es un algoritmo muy simple que genera secuencias válidas de acciones del protagonista, Makoto, de forma aleatoria, respetando restricciones de SP e inventario, hasta que el enemigo o el jugador es derrotado. Este algoritmo no tiene en cuenta las características del enemigo ni las habilidades de los personajes, por lo que su desempeño es muy variable.
 
 -> Problemas encontrados:
 
-Al generar una acción al azar, el algoritmo puede seleccionar acciones que no son legales en el contexto del juego, como usar un ítem que no está disponible o encadenar ataques que no son posibles debido al número de SP disponible.
+Al elegir acciones de manera completamente aleatoria, era posible que se generaran acciones ilegales en el contexto del juego, como usar un ítem que no está disponible o encadenar habilidades sin disponer del SP suficiente para realizarlas.
 Para solucionar esto, se implementaron ciertas restricciones en la generación de acciones:
-+ No se pueden usar ítems si no hay ítems disponibles, si el algoritmo selecciona un ítem en este caso, se selecciona otra acción al azar.
-+ No se pueden encadenar ataques si no hay SP disponible, si el algoritmo selecciona un ataque en este caso, se usará un ítem reservado de "Precious Egg" para recuperar SP y luego se seguirá con la siguiente acción al azar.
++ No se pueden usar ítems si no hay disponibles. En caso de que el algoritmo seleccione un ítem inexistente, la acción se reemplaza por otra elegida al azar.
++ No se pueden encadenar ataques si no hay SP disponible. Si el algoritmo selecciona un ataque entonces se usará un ítem reservado de "Precious Egg" para recuperar SP y luego se seguirá con la siguiente acción al azar.
 
 Este algoritmo se utiliza como una línea base para comparar el desempeño de los otros algoritmos implementados.
 
 ### Algoritmo Genético: Fundamentos Teóricos
 
-Un algoritmo genético es un algoritmo de búsqueda y optimización inspirado en el proceso de selección natural. Estos algoritmos utilizan técnicas como la selección, el cruce y la mutación para evolucionar una población de soluciones hacia una solución óptima o cercana a la óptima.
+Los algoritmos genéticos (AG) son técnicas de búsqueda y optimización inspiradas en el proceso de selección natural. Estos algoritmos utilizan métodos como la selección, el cruce y la mutación para evolucionar una población de soluciones hacia una solución óptima o cercana a la óptima.
 
-Consta de los siguientes pasos:
+**Etapas principales de un algoritmo genético:**
 1. **Inicialización**: Se genera una población inicial de soluciones aleatorias asegurando que sean válidas dentro del contexto del juego.
-2. **Evaluación**: Se evalúa la aptitud (Fitness) de cada solución en la población utilizando una función de aptitud que reproduce el combate contra el enemigo y mide el desempeño de la solución.
-3. **Selección**: Se seleccionan las soluciones más aptas para reproducirse y generar una nueva población.
+2. **Evaluación**: Se evalúa la aptitud (*fitness*) de cada solución en la población utilizando una función de aptitud que reproduce el combate contra el enemigo y mide el desempeño de la solución.
+3. **Selección**: Se escogen las soluciones más aptas para reproducirse, de modo que tengan mayor probabilidad de transmitir sus características a la siguiente generación.
 4. **Cruzamiento (Crossover)**: Se combinan las soluciones seleccionadas para crear nuevas soluciones mediante un proceso de cruce.
 5. **Mutación**: Se aplican pequeñas modificaciones aleatorias a algunas soluciones para mantener la diversidad genética.
 6. **Reemplazo**: Se reemplaza la población actual con la nueva población generada.
 7. **Terminación**: Se repiten los pasos 2 a 6 hasta que se cumple un criterio de terminación, como alcanzar un número máximo de generaciones o encontrar una solución satisfactoria.
 
-En adición, se pueden implementar técnicas adicionales como el *elitismo*, que consiste en conservar las mejores soluciones de una generación a la siguiente o eliminar las menos aptas para asegurar que no se pierdan las mejores soluciones encontradas hasta el momento, torneos de selección, etc.
+En adición, se pueden implementar técnicas adicionales que mejoran su eficacia. Una de ellas es el *elitismo*, el cual consiste en conservar las mejores soluciones de una generación a la siguiente o eliminar las menos aptas para asegurar que no se pierdan las mejores soluciones encontradas hasta el momento. Otra técnica puede ser la *selección por torneo*, en la que varias soluciones compiten entre sí y la mejor es seleccionada para reproducción.
 
 ### Algoritmo Genético modelo
 
-Es un algoritmo genético tradicional, descripto en el libro de *Inteligencia Artificial: Un Enfoque Moderno* de Russell y Norvig, este algoritmo está compuesto por los siguientes componentes:
+Es un algoritmo genético tradicional, descripto en el libro de *Inteligencia Artificial: Un Enfoque Moderno* de Russell y Norvig [1], este algoritmo está compuesto por los siguientes componentes:
 
-- **Representación de la solución**: Cada solución es representada como una secuencia de acciones (genes) que el personaje debe realizar en el combate. Cada acción puede ser un ataque, un ataque mágico o el uso de un ítem. La longitud de la secuencia es fija y se determina antes de la ejecución del algoritmo. Se determinó que una longitud de 50 acciones es más que suficiente para derrotar al enemigo.
+- **Representación de la solución**: Cada individuo de la población representa una secuencia de acciones (genes) que el protagonista debe realizar en el combate. Cada acción puede ser un ataque físico, una habilidad mágica o el uso de un ítem. La longitud de la secuencia es fija y se determina antes de la ejecución del algoritmo. Se determinó que una longitud de 50 acciones es más que suficiente para derrotar al enemigo.
 Por supuesto, se deben tener en cuenta las restricciones mencionadas anteriormente en [Algoritmo Aleatorio](#algoritmo-aleatorio) para asegurar que las soluciones generadas sean válidas.
 
-- **Función de aptitud (Fitness)**: La función de aptitud evalúa el desempeño de cada solución en la población. En este caso, se simula el combate contra el enemigo utilizando la secuencia de acciones representada por la solución las dos funciones utilizadas se describen en detalle en la sección [Funciones de Fitness (Aptitud)](#funciones-de-fitness-aptitud).
+- **Función de aptitud (Fitness)**: La función de aptitud evalúa el desempeño de cada solución en la población. En este caso, se simula el combate contra el enemigo utilizando la secuencia de acciones representada por la solución. Los detalles específicos de estas funciones se desarrollan en la sección [Funciones de Fitness (Aptitud)](#funciones-de-fitness-aptitud).
 
 - **Cruce (Crossover)**: Se utiliza un cruce de un punto estándar, donde se selecciona un punto aleatorio en la secuencia de acciones y se mezclan las acciones de dos soluciones para crear hijos.
 
 -> Problemas encontrados:
 
-1. El cruce puede generar soluciones inválidas si las acciones seleccionadas no son legales en el contexto del juego por ejemplo, usar un ítem que no está disponible(es decir en la secuencia generada esta duplicado dicho ítem)
+1. El operador de cruce puede dar lugar a soluciones inválidas si las acciones seleccionadas no son legales dentro del contexto del juego. Un ejemplo de esto ocurre cuando se intenta utilizar un ítem no disponible, es decir, cuando en la secuencia generada dicho ítem aparece más veces de las permitidas.
 
-- Solución: Para ser justos y no perder de vista soluciones potencialmente buenas, se decidió que si se generaba una solución con ítems duplicados, se aplicaría el siguiente procedimiento: se contaba cuántas veces se había usado cada ítem en la secuencia y si se había usado más veces de las disponibles, medimos el fitness de la solución quedandonos solo con la primera aparición de cada ítem y reemplazando las apariciones restantes por ataques aleatorios y luego se medía el fitness de la solución quedandonos con la aparición última de cada ítem y reemplazando las apariciones restantes por ataques aleatorios, finalmente se tomaba el fitness más alto de las dos soluciones generadas.
+- Solución: Para ser justos y no perder de vista soluciones potencialmente buenas, se decidió que si se genera una solución con ítems duplicados, entonces se contabiliza la cantidad de veces que cada ítem es utilizado y, cuando se excede la disponibilidad real, se evalúan dos variantes de la solución:
+    - Se conserva únicamente la primera aparición válida de cada ítem y las repeticiones excedentes se reemplazan por ataques aleatorios.
+    - Se mantiene únicamente la última aparición válida de cada ítem, reemplazando las repeticiones anteriores por ataques aleatorios.
 
-2. El cruce puede generar soluciones que no fueran legales en términos de sp disponible (por ejemplo, encadenar ataques que no son posibles debido a el número de sp disponible).
+Finalmente, se calcula el valor de fitness de ambas variantes y se selecciona el mayor de ellos como representativo de la solución original.
 
-- Solución: Se procedió de la misma manera que en el caso de [Algoritmo Aleatorio](#algoritmo-aleatorio), es decir, si se generaba una solución con ataques encadenados sin sp suficiente, se usaba un ítem reservado de "Precious Egg" para recuperar sp y luego se seguía con la siguiente acción aleatoria.
+2. El cruce puede generar soluciones que no fueran legales en términos de SP disponible (por ejemplo, encadenar ataques que no son posibles debido a el número de SP disponible).
+
+- Solución: Se aplicó la misma estrategia utilizada en el [Algoritmo Aleatorio](#algoritmo-aleatorio), es decir, si se genera una solución con ataques encadenados sin SP suficiente, se usa un ítem reservado de "Precious Egg" para recuperar SP y luego se sigue con la siguiente acción aleatoria.
 
 - **Mutación**: Se aplica una mutación aleatoria a cada acción en la secuencia con una cierta probabilidad. Si se selecciona una acción para mutar, se reemplaza por una acción aleatoria válida.
 
 -> Problemas encontrados:
 
 1. La mutación puede generar soluciones inválidas si, por ejemplo, se muta una acción a un ítem que no está disponible.
-- Solución: El criterio que adoptamos fue de no permitir la mutación a un ítem si no hay ítems disponibles, en ese caso se selecciona otra acción al azar.
+- Solución: El criterio que se adoptó fue el de no permitir la mutación a un ítem si no hay ítems disponibles. En ese caso, se selecciona otra acción al azar.
 
-- **Elitismo**: Para asegurar que podamos converger rápidamente a una buena solución, se implementó elitismo, conservando las mejores soluciones de una generación a la siguiente y reemplazando a las peores 10 soluciones de la nueva generación con las mejores soluciones de la generación anterior.
+- **Elitismo**: Para asegurar que se pueda converger rápidamente a una buena solución, se implementó elitismo, conservando las mejores soluciones de una generación a la siguiente y reemplazando a las peores 10 soluciones de la nueva generación con las mejores soluciones de la generación anterior.
 
 - **Selección final**: El criterio de parada de la evolución es alcanzar un número máximo de generaciones y devolver la mejor solución encontrada de la última generación.
 
-Se decidió implementar este algoritmo genético de modelo para tener una línea de base para comparar con el algoritmo genético modificado ya que este representa un enfoque más tradicional, sencillo y general, mientras que el algoritmo modificado está más adaptado al problema en cuestión plasmando nuestras ideas y mejoras.
+Se decidió implementar este algoritmo genético de modelo a fin de tener una línea de base para comparar con el algoritmo genético modificado, ya que este representa un enfoque más tradicional, sencillo y general. Aunque no esté optimizado para el problema específico, permite identificar claramente las ventajas que poseen los algoritmos posteriores.
 
 ### Algoritmo Genético modificado
 
@@ -284,7 +290,7 @@ Mas concretamente, esta función mira las 10 primeras acciones de la secuencia e
 - **Selección final y torneo**: Para decidir qué soluciones son las mejores, en cada nueva generación se guardan en una lista a las mejores 3 soluciones, de esta manera podemos guardar soluciones potencialmente buenas que, luego, de otra forma se perderían en el proceso.
 Una vez que se alcanza el número máximo de generaciones, se realiza un torneo entre las mejores 10 soluciones de todas ellas para determinar la mejor solución final. En este torneo, cada solución se evalúa en múltiples combates (25 cada uno) contra el enemigo y se mide su desempeño. La solución que obtiene el mejor desempeño en el torneo es seleccionada como la mejor solución final.
 
-La implementación de estas modificaciones tiene como objetivo mejorar la eficiencia y efectividad del algoritmo genético, tratando de que, con nuestro conocimiento del problema, podamos guiar la evolución hacia soluciones con mayor probabilidad de éxito.
+La implementación de estas modificaciones tiene como objetivo mejorar la eficiencia y efectividad del algoritmo genético, tratando de que, con nuestro conocimiento del problema, se pueda guiar la evolución hacia soluciones con mayor probabilidad de éxito.
 
 ### Algoritmo NSGA-II
 
@@ -434,11 +440,11 @@ En el caso de NSGA-II, se utilizó una función de fitness simple que retorna di
 
 ### Descripción de los experimentos realizados
 
-Para evaluar y comparar el desempeño de los diferentes algoritmos implementados, primero teníamos la tarea de codificar el combate contra el jefe Sleeping Table, asegurándonos de que todas las mecánicas del juego fueran representadas con precisión.
-Para esto primeramente se planteó una extensa fase de investigación y recopilación de datos sobre las estadísticas, habilidades de los personajes, las características del jefe y las probabilidades asociadas a cada acción en el combate. Se consultaron diversas fuentes, incluyendo wikis especializadas en la saga Persona, para obtener información detallada sobre las mecánicas del juego, además de ver muchos videos donde se enfrentaban a este jefe en particular para entender mejor su comportamiento y las estrategias utilizadas por los jugadores.
-Una vez que se tuvo una comprensión sólida del combate, los personajes, los ítems y las probabilidades involucradas, se procedió a implementar el entorno de simulación del combate en Python. Este entorno debía ser capaz de reproducir fielmente las reglas del juego, incluyendo la gestión de turnos, ataques mágicos, uso de ítems, la aplicación de probabilidades en los resultados de las acciones (como golpes críticos, esquives, etc.) aplicar estados alterados y sus probabilidades (congelar, miedo, etc.), la gestión de la salud y el SP de los personajes, el comportamiento del jefe durante el combate, la gestión de aumentos y reducciones de estadísticas (buff y debuff) y cualquier otra mecánica relevante para el combate.
+Con el objetivo de evaluar y comparar el desempeño de los diferentes algoritmos implementados, el primer paso consistió en codificar el combate contra el jefe Sleeping Table, asegurando una representación precisa de todas las mecánicas del juego.
+Para ello, inicialmente se planteó una extensa fase de investigación y recopilación de datos sobre las estadísticas, habilidades de los personajes, las características del jefe y las probabilidades asociadas a cada acción en el combate. Se consultaron diversas fuentes, incluyendo wikis especializadas en la saga Persona [2][3], para obtener información detallada sobre las mecánicas del juego, así como numerosos videos de enfrentamientos contra este jefe en particular, con el fin de comprender en detalle su comportamiento y las estrategias utilizadas por los jugadores.
+Una vez que se tuvo una comprensión sólida del combate, los personajes, los ítems y las probabilidades involucradas, se procedió a implementar el entorno de simulación del combate en Python. Este debía ser capaz de reproducir fielmente las reglas del juego, incluyendo la gestión de turnos, ataques mágicos, uso de ítems, la aplicación de probabilidades en los resultados de las acciones (como golpes críticos, esquives, etc.) aplicar estados alterados y sus probabilidades (congelar, miedo, etc.), la gestión de la salud y el SP de los personajes, el comportamiento del jefe durante el combate, la gestión de aumentos y reducciones de estadísticas (buff y debuff) y cualquier otra mecánica relevante para el combate.
 
-Con el entorno de simulación listo, se implementaron los cuatro algoritmos y la capacidad de ejecutar múltiples simulaciones de combate para evaluar el desempeño de cada algoritmo. Se decidió ejecutar pruebas de 1000, 500 y 100 simulaciones por cada algoritmo para obtener una muestra representativa de su desempeño, considerando el tiempo de ejecución y la variabilidad inherente a las probabilidades del combate.
+Con el entorno de simulación terminado, se implementaron los cuatro algoritmos y la capacidad de ejecutar múltiples simulaciones de combate para evaluar el desempeño de cada algoritmo. Se decidió ejecutar pruebas de 1000, 500 y 100 simulaciones por cada algoritmo para obtener una muestra representativa de su desempeño, considerando el tiempo de ejecución y la variabilidad inherente a las probabilidades del combate.
 
 ### Resultados Obtenidos
 
@@ -448,77 +454,254 @@ Se usaron dos funciones de fitness diferentes para los algoritmos en distinta ca
 
 - 100 simulaciones:
 Fitness 1:
+<figure>
 <image src="/images/fitness_1/100_iteraciones/damage_done_comparison.png" alt="Daño realizado fitness 1 en 100 iteraciones"/>
+<figcaption>Figura 1. Daño realizado usando fitness 1 en 100 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <image src="/images/fitness_2/100_iteraciones/damage_done_comparison.png" alt="Daño realizado fitness 2 en 100 iteraciones"/>
+<figcaption>Figura 2. Daño realizado usando fitness 2 en 100 iteraciones.</figcaption>
+</figure>
 
 - 500 simulaciones:
 
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/damage_done_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/damage_done_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/500_iteraciones/damage_done_comparison.png">
+      <figcaption>Figura 3. Daño realizado usando fitness 1 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/500_iteraciones/damage_done_comparison.png">
+      <figcaption>Figura 4. Daño realizado usando fitness 2 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
+
 
 - 1000 simulaciones:
 
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/damage_done_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/1000_iteraciones/damage_done_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/1000_iteraciones/damage_done_comparison.png">
+      <figcaption>Figura 5. Daño realizado usando fitness 1 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/1000_iteraciones/damage_done_comparison.png">
+      <figcaption>Figura 6. Daño realizado usando fitness 2 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
 
 
 #### Daños recibidos por algoritmo:
 
 - 100 simulaciones:
 
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/100_iteraciones/damage_taken_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/100_iteraciones/damage_taken_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/100_iteraciones/damage_taken_comparison.png">
+      <figcaption>Figura 7. Daño recibido usando fitness 1 en 100 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/100_iteraciones/damage_taken_comparison.png">
+      <figcaption>Figura 8. Daño recibido usando fitness 2 en 100 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
 
 - 500 simulaciones:
 Fitness 1: 
+<figure>
 <img src="/images/fitness_1/500_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 1 en 500 iteraciones"/>
+<figcaption>Figura 9. Daño recibido usando fitness 1 en 500 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <img src="/images/fitness_2/500_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 2 en 500 iteraciones"/>
+<figcaption>Figura 10. Daño recibido usando fitness 2 en 500 iteraciones.</figcaption>
+</figure>
 
 - 1000 simulaciones:
 Fitness 1:
+<figure>
 <img src="/images/fitness_1/1000_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 1 en 1000 iteraciones"/>
+<figcaption>Figura 11. Daño recibido usando fitness 1 en 1000 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <img src="/images/fitness_2/1000_iteraciones/damage_taken_comparison.png" alt="Daño recibido fitness 2 en 1000 iteraciones"/>
+<figcaption>Figura 12. Daño recibido usando fitness 2 en 1000 iteraciones.</figcaption>
+</figure>
 
 #### Muertes por algoritmo:
 
 - 100 simulaciones:
 Fitness 1:
+<figure>
 <img src="/images/fitness_1/100_iteraciones/deaths_comparison.png" alt="Muertes fitness 1 en 100 iteraciones"/>
+<figcaption>Figura 13. Cantidad de muertes usando fitness 1 en 100 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <img src="/images/fitness_2/100_iteraciones/deaths_comparison.png" alt="Muertes fitness 2 en 100 iteraciones"/>
+<figcaption>Figura 14. Cantidad de muertes usando fitness 2 en 100 iteraciones.</figcaption>
+</figure>
 
 - 500 simulaciones:
 
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/deaths_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/deaths_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/500_iteraciones/deaths_comparison.png">
+      <figcaption>Figura 15. Cantidad de muertes usando fitness 1 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/500_iteraciones/deaths_comparison.png">
+      <figcaption>Figura 16. Cantidad de muertes usando fitness 2 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
+
 
 - 1000 simulaciones:
 Fitness 1:
+<figure>
 <img src="/images/fitness_1/1000_iteraciones/deaths_comparison.png" alt="Muertes fitness 1 en 1000 iteraciones"/>
+<figcaption>Figura 17. Cantidad de muertes usando fitness 1 en 1000 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <img src="/images/fitness_2/1000_iteraciones/deaths_comparison.png" alt="Muertes fitness 2 en 1000 iteraciones"/>
+<figcaption>Figura 18. Cantidad de muertes usando fitness 2 en 1000 iteraciones.</figcaption>
+</figure>
 
 #### Turnos en partidas ganadas por algoritmo:
 
 - 100 simulaciones:
 Fitness 1:
+<figure>
 <img src="/images/fitness_1/100_iteraciones/turns_comparison.png" alt="Turnos fitness 1 en 100 iteraciones"/>
+<figcaption>Figura 19. Cantidad de turnos usando fitness 1 en 100 iteraciones.</figcaption>
+</figure>
 Fitness 2:
+<figure>
 <img src="/images/fitness_2/100_iteraciones/turns_comparison.png" alt="Turnos fitness 2 en 100 iteraciones"/>
+<figcaption>Figura 20. Cantidad de turnos usando fitness 2 en 100 iteraciones.</figcaption>
+</figure>
 
 - 500 simulaciones:
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/turns_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/500_iteraciones/turns_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/500_iteraciones/turns_comparison.png">
+      <figcaption>Figura 21. Cantidad de turnos usando fitness 1 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/500_iteraciones/turns_comparison.png">
+      <figcaption>Figura 22. Cantidad de turnos usando fitness 2 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
+
 
 - 1000 simulaciones:
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/turns_comparison.png" ></td><td> Fitness  2<img  width="400" src="/images/fitness_2/1000_iteraciones/turns_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/1000_iteraciones/turns_comparison.png">
+      <figcaption>Figura 23. Cantidad de turnos usando fitness 1 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/1000_iteraciones/turns_comparison.png">
+      <figcaption>Figura 24. Cantidad de turnos usando fitness 2 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
 
 #### Winrate
 
 - 100 simulaciones:
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/100_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/100_iteraciones/win_rate_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/100_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 25. Win rate por algoritmo usando fitness 1 en 100 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/100_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 26. Win rate por algoritmo usando fitness 2 en 100 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
+
+
 - 500 simulaciones:
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/500_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/500_iteraciones/win_rate_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/500_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 27. Win rate por algoritmo usando fitness 1 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/500_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 28. Win rate por algoritmo usando fitness 2 en 500 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
+
 - 1000 simulaciones:
-<table ><tr><td> Fitness 1<img  width="400" src="/images/fitness_1/1000_iteraciones/win_rate_comparison.png" ></td><td> Fitness 2<img  width="400" src="/images/fitness_2/1000_iteraciones/win_rate_comparison.png"></td></tr></table>
+<table>
+<tr>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_1/1000_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 29. Win rate por algoritmo usando fitness 1 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+  <td>
+    <figure style="display: inline-block; margin: 0; text-align: center;">
+      <img width="400" src="/images/fitness_2/1000_iteraciones/win_rate_comparison.png">
+      <figcaption>Figura 30. Win rate por algoritmo usando fitness 2 en 1000 iteraciones.</figcaption>
+    </figure>
+  </td>
+</tr>
+</table>
 
 ### Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 1
 
@@ -542,13 +725,19 @@ Estas tablas son de extrema importancia ya que resumen los resultados obtenidos 
 
 ### Grafico integrativo de resultados obtenidos en 1000 simulaciones - función de fitness 2 (Spider Chart)
 
+<figure id="fig31">
 <img src="/images/spider.png" alt="Gráfico integrativo de resultados obtenidos en 1000 simulaciones - función de fitness 2"/>
+<figcaption>Figura 31. Gráfico integrativo de resultados obtenidos en 1000 simulaciones usando la función de fitness 2.</figcaption>
+</figure>
 
 ### Frente de pareto obtenido con NSGA-II
 
-A continuación, se muestra el frente de Pareto, en el cual los puntos azules representan el conjunto de soluciones no dominadas encontradas por el algoritmo al minimizar simultáneamente la cantidad de muertes y maximizar el daño infligido al jefe. Cada punto corresponde a una posible secuencia de acciones. Una solución pertenece al frente de Pareto si no existe otra que logre al mismo tiempo menos muertes y mayor daño. En contraste, los puntos grises corresponden a soluciones dominadas, es decir, estrategias que son estrictamente inferiores porque existe otra alternativa que las supera en ambos objetivos. La forma del frente de Pareto refleja el compromiso entre supervivencia y rendimiento ofensivo: las estrategias ubicadas hacia la izquierda logran minimizar las muertes aunque con un daño moderado, mientras que aquellas más hacia la parte superior, un poco a la derecha (ver figura), maximizan el daño a costa de un mayor número de muertes. De esta manera, el frente de Pareto no ofrece una única solución óptima, sino un conjunto de alternativas viables para derrotar al jefe.
+A continuación, se muestra el frente de Pareto, en el cual los puntos azules representan el conjunto de soluciones no dominadas encontradas por el algoritmo al minimizar simultáneamente la cantidad de muertes y maximizar el daño infligido al jefe. Cada punto corresponde a una posible secuencia de acciones. Una solución pertenece al frente de Pareto si no existe otra que logre al mismo tiempo menos muertes y mayor daño. En contraste, los puntos grises corresponden a soluciones dominadas, es decir, estrategias que son estrictamente inferiores porque existe otra alternativa que las supera en ambos objetivos. La forma del frente de Pareto refleja el compromiso entre supervivencia y rendimiento ofensivo: las estrategias ubicadas hacia la izquierda logran minimizar las muertes aunque con un daño moderado, mientras que aquellas más hacia la parte superior, un poco a la derecha (Como se observa en la [Figura 32](#fig32)), maximizan el daño a costa de un mayor número de muertes. De esta manera, el frente de Pareto no ofrece una única solución óptima, sino un conjunto de alternativas viables para derrotar al jefe.
 
+<figure id="fig32">
 <img src="/images/Figure_1.png" alt="Frente de pareto obtenido con NSGA-II"/>
+<figcaption>Figura 32. Frente de Pareto obtenido con NSGA-II.</figcaption>
+</figure>
 
 ## Análisis y Discusión de Resultados
 
@@ -591,7 +780,7 @@ En resumen, el análisis por métricas muestra que las modificaciones introducid
 
 En este trabajo se compararon diferentes algoritmos genéticos y un enfoque multiobjetivo (NSGA-II) para optimizar estrategias de combate en un entorno complejo y estocástico como Persona 3. Se observó que las modificaciones introducidas en el algoritmo genético tradicional, como el cruce de dos puntos, el corte temprano de secuencias y la función de sentido común, permitieron mejorar significativamente la tasa de victoria y la robustez de las soluciones a costa de un aumento significativo en el tiempo de ejecución. NSGA-II demostró ser eficaz para equilibrar múltiples objetivos, logrando minimizar muertes y maximizar el daño infligido, lo que resultó en estrategias más seguras y eficientes, con un tiempo de ejecución razonable.
 
-A modo de conclusión, se puede afirmar que el algoritmo genético modificado con la función de fitness 2 resulta el más adecuado para este problema en particular. Dicho enfoque alcanzó la mayor tasa de victorias (39,70%) y un buen equilibrio entre las demás métricas evaluadas (ver figura Spider chart), aunque con un mayor tiempo de ejecución. No obstante, si el tiempo de cómputo no constituye una limitación, este algoritmo se presenta como la opción más prometedora para optimizar estrategias en este tipo de combates. Este resultado se refuerza al analizar las estrategias ganadoras: las soluciones obtenidas por el genético modificado hacen un uso más eficiente de los ítems disponibles —especialmente Magic Mirror y Soma— y explotan con mayor eficacia los ataques mágicos, que son los que infligen mayor daño al jefe.
+A modo de conclusión, se puede afirmar que el algoritmo genético modificado con la función de fitness 2 resulta el más adecuado para este problema en particular. Dicho enfoque alcanzó la mayor tasa de victorias (39,70%) y un buen equilibrio entre las demás métricas evaluadas (ver [Figura 31](#fig31)), aunque con un mayor tiempo de ejecución. No obstante, si el tiempo de cómputo no constituye una limitación, este algoritmo se presenta como la opción más prometedora para optimizar estrategias en este tipo de combates. Este resultado se refuerza al analizar las estrategias ganadoras: las soluciones obtenidas por el genético modificado hacen un uso más eficiente de los ítems disponibles —especialmente Magic Mirror y Soma— y explotan con mayor eficacia los ataques mágicos, que son los que infligen mayor daño al jefe.
 
 Como posibles mejoras, para este tipo de combate sería muy interesante aplicar técnicas de aprendizaje por refuerzo para adaptar dinámicamente las estrategias durante el combate, también se podría adaptar mejor el algoritmo NSGA-II poniendole un mayor esfuerzo y tiempo de desarrollo para adaptarlo mejor al problema en cuestión, ya que en este trabajo se lo utilizó de manera más general, nuestra solución propuesta siempre fue la de adaptar el algoritmo genético modificado al problema en cuestión, pero NSGA-II tiene un gran potencial que no fue explotado completamente en este trabajo. Por otro lado, se podría explorar la utilización de otra función de fitness ya que al pasar de la función de fitness 1 a la 2, se observaron mejoras en el desempeño de los algoritmos genéticos, lo que sugiere que una función de fitness mejor diseñada puede tener un impacto significativo en la calidad de las soluciones encontradas. Otra posible mejora sería optimizar el tiempo de ejecución tratando de paralelizar las simulaciones de combate, o usar técnicas de algoritmos genéticos paralelos.
 
