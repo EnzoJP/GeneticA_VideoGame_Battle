@@ -74,7 +74,7 @@ El sistema de combate de Persona 3 se basa en este formato. El jugador controla 
   * *Absorbe*: en lugar de recibir daño, recuperará una cantidad de HP (generalmente el mismo valor que el daño que habría recibido o una cantidad menor).
   * *Repele*: devuelve parte del ataque al atacante (menos para los ataques de tipo "Almighty" o nuclear).
 
-En *Persona 3* existen 10 tipos de daño: fuego, hielo, electricidad, viento, luz, oscuridad, nuclear, físico perforante, físico cortante y físico de golpe. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc).
+En *Persona 3* existen 10 tipos de daño: fuego, hielo, electricidad, viento, luz, oscuridad, nuclear, físico perforante, físico cortante y físico de golpe. Cada uno de estos ataques tiene una probabilidad de causar un estado alterado en el enemigo (por ejemplo, congelar, quemar, aturdir, etc). [3]
 
 * **Probabilidades y azar**: el combate no es determinista, sino que cada acción tiene una chance de éxito o fallo:
   - Un ataque, ya sea físico o mágico, puede fallar o ser esquivado.
@@ -165,7 +165,7 @@ El grupo de personajes o "*party*" está compuesto por 4 personajes:
 
 ### Enemigo: Sleeping Table
 
-El enemigo elegido fue "Sleeping Table", un jefe que aparece en el piso 135 de la torre de Tartarus, la cual podría decirse que es el "nido" de los "Shadows", quienes son los enemigos. Esta torre tiene 264 pisos en total la cual cuenta con 25 jefes (y uno opcional). Este enemigo es muy resistente y no tiene debilidades, por lo que es considerado un jefe muy difícil.
+El enemigo elegido fue "Sleeping Table" [2], un jefe que aparece en el piso 135 de la torre de Tartarus, la cual podría decirse que es el "nido" de los "Shadows", quienes son los enemigos. Esta torre tiene 264 pisos en total la cual cuenta con 25 jefes (y uno opcional). Este enemigo es muy resistente y no tiene debilidades, por lo que es considerado un jefe muy difícil.
 - Estadísticas:
     - HP:1700
     - SP: 500
@@ -219,7 +219,7 @@ Este algoritmo se utiliza como una línea base para comparar el desempeño de lo
 
 ### Algoritmo Genético: Fundamentos Teóricos
 
-Los algoritmos genéticos (AG) son técnicas de búsqueda y optimización inspiradas en el proceso de selección natural. Estos algoritmos utilizan métodos como la selección, el cruce y la mutación para evolucionar una población de soluciones hacia una solución óptima o cercana a la óptima.
+Los algoritmos genéticos (AG) [6] son técnicas de búsqueda y optimización inspiradas en el proceso de selección natural. Estos algoritmos utilizan métodos como la selección, el cruce y la mutación para evolucionar una población de soluciones hacia una solución óptima o cercana a la óptima.
 
 **Etapas principales de un algoritmo genético:**
 1. **Inicialización**: Se genera una población inicial de soluciones aleatorias asegurando que sean válidas dentro del contexto del juego.
@@ -255,7 +255,7 @@ Finalmente, se calcula el valor de fitness de ambas variantes y se selecciona el
 
 2. El cruce puede generar soluciones que no fueran legales en términos de SP disponible (por ejemplo, encadenar ataques que no son posibles debido a el número de SP disponible).
 
-- Solución: Se aplicó la misma estrategia utilizada en el [Algoritmo Aleatorio](#algoritmo-aleatorio), es decir, si se genera una solución con ataques encadenados sin SP suficiente, se usa un ítem reservado de "Precious Egg" para recuperar SP y luego se sigue con la siguiente acción aleatoria.
+- Solución: Se aplicó la misma estrategia utilizada en el [Algoritmo Aleatorio](#algoritmo-aleatorio), es decir, si se genera una solución con ataques encadenados sin SP suficiente, se utiliza un ítem reservado de "Precious Egg" para recuperar SP y luego se continua con la siguiente acción aleatoria.
 
 - **Mutación**: Se aplica una mutación aleatoria a cada acción en la secuencia con una cierta probabilidad. Si se selecciona una acción para mutar, se reemplaza por una acción aleatoria válida.
 
@@ -264,9 +264,11 @@ Finalmente, se calcula el valor de fitness de ambas variantes y se selecciona el
 1. La mutación puede generar soluciones inválidas si, por ejemplo, se muta una acción a un ítem que no está disponible.
 - Solución: El criterio que se adoptó fue el de no permitir la mutación a un ítem si no hay ítems disponibles. En ese caso, se selecciona otra acción al azar.
 
-- **Elitismo**: Para asegurar que se pueda converger rápidamente a una buena solución, se implementó elitismo, conservando las mejores soluciones de una generación a la siguiente y reemplazando a las peores 10 soluciones de la nueva generación con las mejores soluciones de la generación anterior.
+- **Elitismo**: Para asegurar que se pueda converger rápidamente a una buena solución, se implementó elitismo, conservando las mejores soluciones de una generación a la siguiente y reemplazando a las peores 10 soluciones de la nueva generación con las mejores soluciones de la generación anterior para asegurar una mejora continua.
 
-- **Selección final**: El criterio de parada de la evolución es alcanzar un número máximo de generaciones y devolver la mejor solución encontrada de la última generación.
+- **Selección de padres**: Se utiliza la selección aleatoria para seleccionar las soluciones que se cruzarán y generarán la siguiente generación, esto se hace hasta completar la nueva población, con el objetivo de mantener la diversidad genética.
+
+- **Selección final**: El criterio de parada de la evolución es alcanzar un número máximo de generaciones y seleccionar la mejor solución encontrada de la última generación.
 
 Se decidió implementar este algoritmo genético de modelo a fin de tener una línea de base para comparar con el algoritmo genético modificado, ya que este representa un enfoque más tradicional, sencillo y general. Aunque no esté optimizado para el problema específico, permite identificar claramente las ventajas que poseen los algoritmos posteriores.
 
@@ -276,7 +278,7 @@ Es una versión modificada del algoritmo genético modelo, en el cual se impleme
 
 - **Cruce (Crossover)**: Se implementó un cruce de dos puntos en lugar de un cruce de un punto. Esto permite una mayor diversidad en las soluciones generadas y puede ayudar a evitar la convergencia prematura.
 
-- **Cortado de secuencia**: Se implementó un mecanismo que corta la secuencia de acciones en el momento en que el enemigo es derrotado, incluso si aún quedaban acciones por ejecutar. Esto permite que las soluciones sean más eficientes y evita acciones innecesarias. En el algoritmo modelo, si el enemigo era derrotado, por ejemplo, en la acción 30 de una secuencia de 50, las acciones 31 a 50 seguían siendo tenidas en cuenta en las evaluaciones posteriores, cruces, etc. Esto no tenía sentido y añadía ruido en la evaluación de la aptitud. Para solucionar esto, se decidió que si el enemigo era derrotado antes de completar la secuencia, se cortaban todas las secuencias de acciones en la posición donde el enemigo fue derrotado.
+- **Cortado de secuencia**: Se implementó un mecanismo que corta la secuencia de acciones en el momento en que el enemigo es derrotado, incluso si aún quedan acciones por ejecutar. Esto permite que las soluciones sean más eficientes y evita acciones innecesarias, en constraste con el algoritmo modelo, donde si el enemigo era derrotado, por ejemplo, en la acción 30 de una secuencia de 50, las acciones 31 a 50 seguían siendo tenidas en cuenta en las evaluaciones posteriores, cruces, etc, este enfoque carecía de sentido y añadía ruido en la evaluación de la aptitud. Para solucionar esto, se decidió que si el enemigo era derrotado antes de completar la secuencia, se cortaban todas las secuencias de acciones en la posición donde el enemigo fue derrotado.
 
 -> Problemas encontrados:
 
@@ -287,10 +289,10 @@ Es una versión modificada del algoritmo genético modelo, en el cual se impleme
 - **Función de sentido común**: Se implementó una función de sentido común que analiza la secuencia de acciones y realiza ajustes para mejorar la eficiencia y efectividad de la solución. Esta función se aplica después de la mutación y cruce, y antes de la evaluación de la aptitud.
 Mas concretamente, esta función mira las 10 primeras acciones de la secuencia en búsqueda de acciones potencialmente ineficientes, como por ejemplo, usar un ítem de "Precious Egg" para recuperar SP cuando no se ha usado tantos ataques mágicos que consuman SP, usar ataques físicos cuando los mágicos son más efectivos contra el enemigo, etc. Si se encuentra una acción ineficiente, se reemplaza por una acción aleatoria mejor.
 
-- **Selección final y torneo**: Para decidir qué soluciones son las mejores, en cada nueva generación se guardan en una lista a las mejores 3 soluciones, de esta manera podemos guardar soluciones potencialmente buenas que, luego, de otra forma se perderían en el proceso.
+- **Selección final y torneo**: Para decidir qué soluciones son las mejores, en cada nueva generación se guardan en una lista a las mejores 3 soluciones, de esta manera se logra guardar soluciones potencialmente buenas que de otra forma se perderían en el proceso.
 Una vez que se alcanza el número máximo de generaciones, se realiza un torneo entre las mejores 10 soluciones de todas ellas para determinar la mejor solución final. En este torneo, cada solución se evalúa en múltiples combates (25 cada uno) contra el enemigo y se mide su desempeño. La solución que obtiene el mejor desempeño en el torneo es seleccionada como la mejor solución final.
 
-La implementación de estas modificaciones tiene como objetivo mejorar la eficiencia y efectividad del algoritmo genético, tratando de que, con nuestro conocimiento del problema, se pueda guiar la evolución hacia soluciones con mayor probabilidad de éxito.
+La implementación de estas modificaciones tiene como objetivo mejorar la eficiencia y efectividad del algoritmo genético, tratando de que, con el conocimiento adquirido del problema, se pueda guiar la evolución hacia soluciones con mayor probabilidad de éxito.
 
 ### Algoritmo NSGA-II
 
@@ -310,10 +312,10 @@ NSGA-II (Non-dominated Sorting Genetic Algorithm II) es un algoritmo evolutivo m
 
 En el contexto de este trabajo, NSGA-II se implementó para optimizar simultáneamente dos objetivos principales en el combate contra el jefe *Sleeping Table*:
 
-1. **Minimizar la cantidad de muertes de los personajes:** Se busca que la estrategia elegida permita que la mayor cantidad posible de personajes sobreviva al combate.
-2. **Maximizar el daño infligido al enemigo:** Se intenta que la secuencia de acciones cause el mayor daño posible al jefe, incrementando las probabilidades de victoria.
+1. **Minimizar la cantidad de muertes de los personajes:** Esta estrategia elegida permite que la mayor cantidad posible de personajes sobreviva al combate, con el objetivo de mantener al protagonista vivo, además mientras más personajes sobrevivan, más acciones estarán disponibles en cada turno.
+2. **Maximizar el daño infligido al enemigo:** Permite que la secuencia de acciones cause el mayor daño posible al jefe, incrementando las probabilidades de victoria.
 
-Cada individuo en la población representa una secuencia de acciones (ataques o ítems) que los personajes pueden realizar durante el combate. La evaluación de cada individuo se realiza simulando el combate y calculando los valores de ambos objetivos.
+Cada individuo en la población representa una secuencia de acciones (ataques o ítems) que los personajes pueden realizar durante el combate. La evaluación de cada individuo se realizó simulando el combate y calculando los valores de ambos objetivos.
 
 Se decidió utilizar la misma función de sentido común, crossover de dos puntos y mutación del algoritmo genético modificado para mantener la coherencia en la representación de las soluciones y aprovechar las mejoras introducidas en dicho algoritmo.
 
@@ -343,7 +345,7 @@ Estas métricas fueron seleccionadas porque, en conjunto, permiten evaluar tanto
 
 ### Configuración y parámetros de los algoritmos
 
-A continuación se detallan los parámetros utilizados en cada uno de los algoritmos implementados. Cabe destacar que cada uno recibe una secuencia de acciones inicial aleatoria y luego evoluciona dicha secuencia.
+A continuación se detallan los parámetros utilizados en cada uno de los algoritmos implementados. Cabe destacar que cada uno recibe una secuencia de acciones inicial aleatoria y luego evoluciona dicha secuencia. Se realizaron diversas pruebas para encontrar los parámetros que ofrecieran un buen equilibrio entre calidad de las soluciones (mayor winrate) y tiempo de ejecución.
 
 #### Algoritmo Genético Modelo
 
@@ -352,7 +354,7 @@ A continuación se detallan los parámetros utilizados en cada uno de los algori
 - **Probabilidad de mutación:** 0.10
 - **Longitud de la secuencia de acciones:** 50
 
-Se decidió usar estos parámetros para tener una población suficientemente diversa y permitir una evolución adecuada sin un costo computacional excesivo, ya que cada evaluación de fitness implica simular un combate completo y esto tendría un impacto significativo en el tiempo de ejecución. Se realizaron diversas pruebas y estos fueron los mejores parámetros encontrados en relación costo-beneficio.
+Se decidió usar estos parámetros para tener una población suficientemente diversa y permitir una evolución adecuada sin un costo computacional excesivo, ya que cada evaluación de fitness implica simular un combate completo y esto tendría un impacto significativo en el tiempo de ejecución. Se realizaron diversas pruebas con números mayores de generaciones y tamaño de la población, pero estos fueron los mejores parámetros encontrados en relación costo-beneficio.
 
 #### Algoritmo Genético Modificado
 
@@ -361,7 +363,7 @@ Se decidió usar estos parámetros para tener una población suficientemente div
 - **Probabilidad de mutación:** 0.10
 - **Longitud de la secuencia de acciones:** 50
 
-Se mantuvieron los mismos parámetros que en el algoritmo genético modelo para asegurar una comparación justa entre ambos algoritmos y evaluar el impacto de las modificaciones introducidas.
+Se mantuvo los mismos parámetros que en el algoritmo genético modelo para asegurar una comparación justa entre ambos algoritmos y evaluar el impacto de las modificaciones introducidas.
 
 #### Algoritmo NSGA-II
 
@@ -371,7 +373,7 @@ Se mantuvieron los mismos parámetros que en el algoritmo genético modelo para 
 - **Longitud de la secuencia de acciones:** 50
 - **Número de objetivos:** 2 (Minimizar muertes y maximizar daño infligido)
 
-Se eligieron estos parámetros para permitir una exploración más amplia del espacio de soluciones, dado que NSGA-II maneja múltiples objetivos y requiere una población más grande para mantener la diversidad y cubrir adecuadamente la frontera de Pareto, además, el uso de la librería `pymoo` permite manejar poblaciones más grandes sin un costo computacional tan elevado.
+Estos parámetros permiten una exploración más amplia del espacio de soluciones dado que NSGA-II maneja múltiples objetivos y requiere una población más grande para mantener la diversidad, además, el uso de la librería `pymoo` permite manejar poblaciones más grandes sin un costo computacional tan elevado.
 
 ### Funciones de Fitness (Aptitud)
 
@@ -388,7 +390,7 @@ else:
     return damage - deaths*10 - turns
 ```
 
-En esta función de fitness, se asigna una alta recompensa por ganar el combate (1.000.000 puntos) y se penaliza el número de turnos y muertes, además de considerar el daño realizado al jefe. Si el combate no se gana, se penaliza el daño recibido y las muertes restándole puntos a el nivel de daño realizado, lo que nos asegura que las soluciones que ganen tengan una variedad de puntajes altos y las que no ganen tengan puntajes bajos, facilitando la selección de las mejores soluciones.
+En esta función de fitness, se asigna una alta recompensa por ganar el combate (1.000.000 puntos) y se penaliza el número de turnos y muertes, además de considerar el daño realizado al jefe. Si el combate no se gana, se penaliza el daño recibido y las muertes restándole puntos a el nivel de daño realizado, lo que asegura que las soluciones que ganen tengan una variedad de puntajes altos y las que no ganen tengan puntajes bajos, facilitando la selección de las mejores soluciones.
 
 **Función de fitness 2:**
 ```python
@@ -420,7 +422,7 @@ score = (
 return score
 ```
 
-Esta función de fitness es más compleja basada en pesos y considera múltiples aspectos del combate. Si el combate no se gana, se penaliza fuertemente la solución. Si se gana, se calcula un puntaje basado en varios factores: la cantidad de turnos (menos es mejor), las muertes (menos es mejor), el daño realizado (más es mejor) y el daño recibido (menos es mejor). Cada puntaje esta normalizado en relación al combate: en los turnos se divide por 50 (cantidad máxima de turnos), en las muertes por 4 (cantidad de personajes), en el daño realizado por la vida máxima del enemigo y en el daño recibido por la vida máxima total del grupo (aproximadamente).
+Esta función de fitness es más compleja basada en pesos y considera múltiples aspectos del combate [5]. Si el combate no se gana, se penaliza fuertemente la solución. Si se gana, se calcula un puntaje basado en varios factores: la cantidad de turnos (menos es mejor), las muertes (menos es mejor), el daño realizado (más es mejor) y el daño recibido (menos es mejor). Cada puntaje esta normalizado en relación al combate: en los turnos se divide por 50 (cantidad máxima de turnos), en las muertes por 4 (cantidad de personajes), en el daño realizado por la vida máxima del enemigo y en el daño recibido por la vida máxima total del grupo (aproximadamente).
 
 Cada uno de estos factores tiene un peso diferente, reflejando su importancia relativa en la evaluación de la estrategia (por ejemplo, se pondera mucho las muertes ya que es una métrica escencial). Luego se suman estos puntajes ponderados junto con un gran bono por ganar el combate para obtener el puntaje final de la solución.
 
@@ -448,7 +450,7 @@ Con el entorno de simulación terminado, se implementaron los cuatro algoritmos 
 
 ### Resultados Obtenidos
 
-Se usaron dos funciones de fitness diferentes para los algoritmos en distinta cantidad de simulaciones. A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones.
+Se realizaron las pruebas con dos funciones de fitness diferentes para los algoritmos en distinta cantidad de simulaciones. A continuación se presentan los resultados obtenidos en 100, 500 y 1000 simulaciones.
 
 #### Daños Realizados
 
@@ -730,9 +732,13 @@ Estas tablas son de extrema importancia ya que resumen los resultados obtenidos 
 <figcaption>Figura 31. Gráfico integrativo de resultados obtenidos en 1000 simulaciones usando la función de fitness 2.</figcaption>
 </figure>
 
+En esta gráfica se puede observar de manera integral el desempeño de cada algoritmo en las diferentes métricas evaluadas. Cada eje representa una métrica específica, y la distancia desde el centro indica el valor relativo alcanzado por cada algoritmo en esa métrica. Esto permite visualizar rápidamente las fortalezas y debilidades de cada enfoque, facilitando la comparación directa entre ellos
+
+Como se puede observar en la [Figura 31](#fig31), el algoritmo genético modificado destaca en la tasa de victoria pero con mayor tiempo empleado, mientras que NSGA-II sobresale en la minimización de muertes y maximización del daño infligido, mostrando un equilibrio entre eficiencia y efectividad. 
+
 ### Frente de pareto obtenido con NSGA-II
 
-A continuación, se muestra el frente de Pareto, en el cual los puntos azules representan el conjunto de soluciones no dominadas encontradas por el algoritmo al minimizar simultáneamente la cantidad de muertes y maximizar el daño infligido al jefe. Cada punto corresponde a una posible secuencia de acciones. Una solución pertenece al frente de Pareto si no existe otra que logre al mismo tiempo menos muertes y mayor daño. En contraste, los puntos grises corresponden a soluciones dominadas, es decir, estrategias que son estrictamente inferiores porque existe otra alternativa que las supera en ambos objetivos. La forma del frente de Pareto refleja el compromiso entre supervivencia y rendimiento ofensivo: las estrategias ubicadas hacia la izquierda logran minimizar las muertes aunque con un daño moderado, mientras que aquellas más hacia la parte superior, un poco a la derecha (Como se observa en la [Figura 32](#fig32)), maximizan el daño a costa de un mayor número de muertes. De esta manera, el frente de Pareto no ofrece una única solución óptima, sino un conjunto de alternativas viables para derrotar al jefe.
+A continuación, se presenta el frente de Pareto, en el cual los puntos azules representan el conjunto de soluciones no dominadas encontradas por el algoritmo al minimizar simultáneamente la cantidad de muertes y maximizar el daño infligido al jefe. Cada punto corresponde a una posible secuencia de acciones. Una solución pertenece al frente de Pareto si no existe otra que logre al mismo tiempo menos muertes y mayor daño. En contraste, los puntos grises corresponden a soluciones dominadas, es decir, estrategias que son estrictamente inferiores porque existe otra alternativa que las supera en ambos objetivos. La forma del frente de Pareto refleja el compromiso entre supervivencia y rendimiento ofensivo: las estrategias ubicadas hacia la izquierda logran minimizar las muertes aunque con un daño moderado, mientras que aquellas más hacia la parte superior, un poco a la derecha (Como se observa en la [Figura 32](#fig32)), maximizan el daño a costa de un mayor número de muertes. De esta manera, el frente de Pareto no ofrece una única solución óptima, sino un conjunto de alternativas viables para derrotar al jefe.
 
 <figure id="fig32">
 <img src="/images/Figure_1.png" alt="Frente de pareto obtenido con NSGA-II"/>
@@ -745,9 +751,9 @@ A continuación se presenta un análisis de los resultados obtenidos, desglosado
 
 #### 1. Tasa de Victoria (Winrate)
 
-- El algoritmo genético modificado con ambas funciones de fitness mostró la mejor tasa de victoria, alcanzando un 39.70% con la función de fitness 2 y un 38.80% con la función de fitness 1. Esto indica que las modificaciones introducidas en el algoritmo genético, como el cruce de dos puntos,corte temprano y la función de sentido común, fueron efectivas para mejorar la capacidad del algoritmo para encontrar estrategias ganadoras.
+Como se puede observar en la [Figura 29](#fig29) y la [Figura 30](#fig30), el algoritmo genético modificado con ambas funciones de fitness mostró la mejor tasa de victoria, alcanzando un 39.70% con la función de fitness 2 y un 38.80% con la función de fitness 1. Esto indica que las modificaciones introducidas en el algoritmo genético, como el cruce de dos puntos,corte temprano y la función de sentido común, fueron efectivas para mejorar la capacidad del algoritmo para encontrar estrategias ganadoras.
 
-- NSGA-II también mostró un buen desempeño en segundo lugar con una tasa de victoria del 34.80%, lo cual es para destacar, ya que no se diseñó específicamente para adaptarse a la pelea, con un mayor tiempo dedicado a él, como hicimos en el algoritmo genético modificado, podría haber alcanzado tasas de victoria aún más altas. Por otro lado,el alto winrate puede deberse a que la métrica de muertes es la más importante para ganar la pelea, y NSGA-II se enfoca en minimizar las muertes y maximizar el daño infligido.
+- NSGA-II también mostró un buen desempeño en segundo lugar con una tasa de victoria del 34.80%, lo cual es para destacar, ya que no se diseñó específicamente para adaptarse a la pelea, con un mayor tiempo dedicado a él, este podría haber alcanzado tasas de victoria aún más altas. Por otro lado,el alto winrate puede deberse a que la métrica de muertes es la más importante para ganar la pelea, y NSGA-II se enfoca en minimizar las muertes y maximizar el daño infligido.
 
 - El algoritmo genético modelo tuvo una tasa de victoria del 29.00% con la función de fitness 2 y un 28.30% con la función de fitness 1. Si bien es mejor que el algoritmo aleatorio, no logró superar a la versión modificada.
 
@@ -755,34 +761,34 @@ A continuación se presenta un análisis de los resultados obtenidos, desglosado
 
 #### 2. Turnos Promedio en Soluciones Ganadoras
 
-- Si bien todos los algoritmos mostraron un número similar de turnos promedio en las partidas ganadas (alrededor de 7-8 turnos), los algortimos random y el genético modelo tendieron a ganar en menos turnos en promedio en comparación con el genético modificado y NSGA-II. Esto podría indicar que las estrategias generadas por los algoritmos más avanzados tienden a ser más conservadoras, priorizando la supervivencia, lo que puede resultar en un mayor número de turnos para asegurar la victoria. Otra posible explicación es que, al tener un mayor winrate, tienen más combates ganados en situaciones difíciles que requieren más turnos, lo que nos deja como conclusión que ganar en menos turnos no es necesariamente sinónimo de una mejor estrategia.
+- Si bien todos los algoritmos mostraron un número similar de turnos promedio en las partidas ganadas (alrededor de 7-8 turnos) como se observa en la [Figura 23](#fig23) y la [Figura 24](#fig24), los algortimos random y el genético modelo tendieron a ganar en menos turnos en promedio en comparación con el genético modificado y NSGA-II. Esto podría indicar que las estrategias generadas por los algoritmos más avanzados tienden a ser más conservadoras, priorizando la supervivencia, lo que puede resultar en un mayor número de turnos para asegurar la victoria. Otra posible explicación es que, al tener un mayor winrate, logran alcanzar más combates ganados en situaciones difíciles que requieren más turnos, lo que deja como conclusión que ganar en menos turnos no es necesariamente sinónimo de una mejor estrategia.
 
 #### 3. Daño Infligido
 
-- NSGA-II fue el algoritmo que logró infligir el mayor daño promedio al jefe lo cual es coherente con su objetivo de maximizar el daño infligido. El algoritmo genético modelo también mostró un buen desempeño en esta métrica, mientras que el algoritmo genético modificado tuvo un daño infligido promedio ligeramente menor, lo que podría estar relacionado con el enfoque de usar la función de sentido común para optimizar las primeras acciones, lo que podría llevar a estrategias más equilibradas pero con un daño total ligeramente menor. Por último, el algoritmo aleatorio tuvo el daño infligido promedio más bajo, lo cual es esperado dado que no optimiza las acciones de ninguna manera.
+- Al analizar las métricas de daño infligido, como se observa en la [Figura 5](#fig5) y la [Figura 6](#fig6),y la tabla comparativa, se observa que, NSGA-II fue el algoritmo que logró infligir el mayor daño promedio al jefe lo cual es coherente con su objetivo de maximizar el daño infligido. El algoritmo genético modelo también mostró un buen desempeño en esta métrica, mientras que el algoritmo genético modificado tuvo un daño infligido promedio ligeramente menor, lo que podría estar relacionado con el enfoque de usar la función de sentido común para optimizar las primeras acciones, lo que podría llevar a estrategias más equilibradas pero con un daño total ligeramente menor. Por último, el algoritmo aleatorio tuvo el daño infligido promedio más bajo, lo cual es esperado dado que no optimiza las acciones de ninguna manera.
 
 #### 4. Daño Recibido
 
-- NSGA-II logró minimizar el daño recibido por los personajes debido a su enfoque en minimizar las muertes, el algoritmo genético modelo también mostró un buen desempeño en esta métrica. El algoritmo genético modificado tuvo un daño recibido promedio ligeramente mayor, lo que podría estar relacionado con su alto winrate, ya que al durar más turnos en promedio, los personajes tienen más oportunidades de recibir daño, el algoritmo aleatorio tampoco logró unos resultados destacados en esta métrica.
+- NSGA-II logró minimizar el daño recibido por los personajes debido a su enfoque en minimizar las muertes, como refleja la [Figura 11](#fig11) y la [Figura 12](#fig12), el algoritmo genético modelo también mostró un buen desempeño en esta métrica. El algoritmo genético modificado tuvo un daño recibido promedio ligeramente mayor, lo que podría estar relacionado con su alto winrate, ya que al durar más turnos en promedio, los personajes tienen más oportunidades de recibir daño, el algoritmo aleatorio tampoco logró unos resultados destacados en esta métrica.
 
 #### 5. Muertes Promedio
 
-- NSGA-II fue el algoritmo que logró minimizar el número de muertes promedio, lo cual es coherente con su objetivo de minimizar las muertes. Los algoritmos genéticos (modelo y modificado) también mostraron un buen desempeño en esta métrica, con un número de muertes promedio similar. El algoritmo aleatorio tuvo el mayor número de muertes promedio, lo cual es esperado y se corresponde con su baja tasa de victoria.
+-Como denota la [Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2](#tabla-comparativa-de-resultados-obtenidos-en-1000-simulaciones---función-de-fitness-2), NSGA-II fue el algoritmo que logró minimizar el número de muertes promedio, lo cual es coherente con su objetivo de minimizar las muertes. Los algoritmos genéticos (modelo y modificado) también mostraron un buen desempeño en esta métrica, con un número de muertes promedio similar. El algoritmo aleatorio tuvo el mayor número de muertes promedio, lo cual es esperado y se corresponde con su baja tasa de victoria. 
 
 #### 6. Tiempo por Simulación
 
-- El algoritmo aleatorio fue el más rápido por una gran diferencia, lo cual es esperado dado que no realiza ninguna optimización. Entre los algoritmos genéticos, el modelo fue el más rápido, pero el modificado fue el más lento debido a las modificaciones introducidas, ya que, al cortar las secuencias, se debe evaluar la función de fitness en las demás soluciones que fueron cortadas. La solución de torneo también implica evaluar múltiples combates por cada una de las mejores soluciones, lo que incrementa el tiempo de cómputo. NSGA-II tuvo un tiempo de ejecución intermedio, lo cual es razonable dado su enfoque multiobjetivo, la población más grande y el mayor número de generaciones.
+-Dado que el tiempo de cómputo es una métrica relevante en este caso, se analizó el tiempo promedio por simulación para cada algoritmo, como se observa en la [Tabla comparativa de resultados obtenidos en 1000 simulaciones - función de fitness 2](#tabla-comparativa-de-resultados-obtenidos-en-1000-simulaciones---función-de-fitness-2), el algoritmo aleatorio fue el más rápido por una gran diferencia, lo cual es esperado dado que no realiza ninguna optimización. Entre los algoritmos genéticos, el modelo fue el más rápido, pero el modificado fue el más lento debido a las modificaciones introducidas, ya que, al cortar las secuencias, se debe evaluar la función de fitness en las demás soluciones que fueron cortadas. La solución de torneo también implica evaluar múltiples combates por cada una de las mejores soluciones, lo que incrementa el tiempo de cómputo. NSGA-II tuvo un tiempo de ejecución intermedio, lo cual es razonable dado su enfoque multiobjetivo, la población más grande y el mayor número de generaciones.
 
-En resumen, el análisis por métricas muestra que las modificaciones introducidas en el algoritmo genético, junto con la función de fitness 2 y el uso de NSGA-II permiten obtener estrategias más efectivas y equilibradas, superando ampliamente al enfoque aleatorio y mejorando sobre el modelo genético tradicional en la mayoría de los aspectos relevantes para el combate, destacar que no nos detuvimos a analizar tanto la información de la desviación estándar, ya que no es tan relevante para el análisis en este caso, ya que dado el alto componente de azar en el combate, es esperable que haya una alta variabilidad en los resultados. Por ejemplo, si el jefe ataca al protagonista en el primer turno y le aplica "miedo", la pelea se vuelve mucho más difícil y es probable que el protagonista muera, lo que afecta todas las métricas, pero no necesariamente refleja una mala estrategia, sino simplemente un mal resultado debido al *azar*.
+En resumen, el análisis por métricas muestra que las modificaciones introducidas en el algoritmo genético, junto con la función de fitness 2 y el uso de NSGA-II permiten obtener estrategias más efectivas y equilibradas, superando ampliamente al enfoque aleatorio y mejorando sobre el modelo genético tradicional en la mayoría de los aspectos relevantes para el combate, destacar que la desviación estándar, en este caso, no es tan relevante para el análisis ya que dado el alto componente de azar en el combate, es esperable que haya una alta variabilidad en los resultados. Por ejemplo, si el jefe ataca al protagonista en el primer turno y le aplica "miedo", la pelea se vuelve mucho más difícil y es probable que el protagonista muera, lo que afecta todas las métricas, pero no necesariamente refleja una mala estrategia, sino simplemente un mal resultado debido al *azar*.
 
 
 ## Conclusiones Finales
 
 En este trabajo se compararon diferentes algoritmos genéticos y un enfoque multiobjetivo (NSGA-II) para optimizar estrategias de combate en un entorno complejo y estocástico como Persona 3. Se observó que las modificaciones introducidas en el algoritmo genético tradicional, como el cruce de dos puntos, el corte temprano de secuencias y la función de sentido común, permitieron mejorar significativamente la tasa de victoria y la robustez de las soluciones a costa de un aumento significativo en el tiempo de ejecución. NSGA-II demostró ser eficaz para equilibrar múltiples objetivos, logrando minimizar muertes y maximizar el daño infligido, lo que resultó en estrategias más seguras y eficientes, con un tiempo de ejecución razonable.
 
-A modo de conclusión, se puede afirmar que el algoritmo genético modificado con la función de fitness 2 resulta el más adecuado para este problema en particular. Dicho enfoque alcanzó la mayor tasa de victorias (39,70%) y un buen equilibrio entre las demás métricas evaluadas (ver [Figura 31](#fig31)), aunque con un mayor tiempo de ejecución. No obstante, si el tiempo de cómputo no constituye una limitación, este algoritmo se presenta como la opción más prometedora para optimizar estrategias en este tipo de combates. Este resultado se refuerza al analizar las estrategias ganadoras: las soluciones obtenidas por el genético modificado hacen un uso más eficiente de los ítems disponibles —especialmente Magic Mirror y Soma— y explotan con mayor eficacia los ataques mágicos, que son los que infligen mayor daño al jefe.
+A modo de buscar un **ganador** y concluir cuál es el mejor enfoque para este problema en particular, se puede afirmar que el algoritmo **genético modificado** con la función de fitness 2 **resulta el más adecuado** para este problema en particular. Dicho enfoque alcanzó la mayor tasa de victorias (39,70%) y un buen equilibrio entre las demás métricas evaluadas (ver [Figura 31](#fig31)), aunque con un mayor tiempo de ejecución. No obstante, si el tiempo de cómputo no constituye una limitación, este algoritmo se presenta como la opción más prometedora para optimizar estrategias en este tipo de combates. Este resultado se refuerza al analizar las estrategias ganadoras: las soluciones obtenidas por el genético modificado hacen un uso más eficiente de los ítems disponibles —especialmente Magic Mirror y Soma— y explotan con mayor eficacia los ataques mágicos, que son los que infligen mayor daño al jefe.
 
-Como posibles mejoras, para este tipo de combate sería muy interesante aplicar técnicas de aprendizaje por refuerzo para adaptar dinámicamente las estrategias durante el combate, también se podría adaptar mejor el algoritmo NSGA-II poniendole un mayor esfuerzo y tiempo de desarrollo para adaptarlo mejor al problema en cuestión, ya que en este trabajo se lo utilizó de manera más general, nuestra solución propuesta siempre fue la de adaptar el algoritmo genético modificado al problema en cuestión, pero NSGA-II tiene un gran potencial que no fue explotado completamente en este trabajo. Por otro lado, se podría explorar la utilización de otra función de fitness ya que al pasar de la función de fitness 1 a la 2, se observaron mejoras en el desempeño de los algoritmos genéticos, lo que sugiere que una función de fitness mejor diseñada puede tener un impacto significativo en la calidad de las soluciones encontradas. Otra posible mejora sería optimizar el tiempo de ejecución tratando de paralelizar las simulaciones de combate, o usar técnicas de algoritmos genéticos paralelos.
+Como posibles mejoras, para este tipo de combate resultaría muy interesante aplicar técnicas de aprendizaje por refuerzo para adaptar dinámicamente las estrategias durante el combate, también se podría adaptar mejor el algoritmo NSGA-II con un mayor esfuerzo y tiempo de desarrollo para adaptarlo mejor al problema en cuestión, ya que en este trabajo se lo utilizó de manera más general, la solución propuesta siempre fue la de adaptar el algoritmo genético modificado al problema en cuestión, pero NSGA-II tiene un gran potencial que no fue explotado completamente en este trabajo. Por otro lado, se puede explorar la utilización de otra función de fitness ya que al pasar de la función de fitness 1 a la 2, se observaron mejoras en el desempeño de los algoritmos genéticos, lo que sugiere que una función de fitness mejor diseñada puede tener un impacto significativo en la calidad de las soluciones encontradas. Otra posible mejora sería optimizar el tiempo de ejecución tratando de paralelizar las simulaciones de combate, o usar técnicas de algoritmos genéticos paralelos.
 
 Para finalizar, este trabajo demuestra el potencial de los algoritmos evolutivos y multiobjetivo para resolver problemas complejos en entornos con *alta incertidumbre*, ya que en un primer momento se pensó que el alto componente de azar en el combate haría que los algoritmos no pudieran encontrar buenas soluciones y se pensó que un enfoque de aprendizaje por refuerzo sería más adecuado, pero los resultados obtenidos muestran que, con un buen diseño y ajustes, los algoritmos genéticos y NSGA-II pueden ser herramientas poderosas para optimizar estrategias en este tipo de escenarios.
 
